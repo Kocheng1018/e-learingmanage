@@ -4,12 +4,12 @@
 </template>
 
 <script>
-import SignIn from './views/memberSystem/SignIn';
+import Welcome from './views/Welcome.vue';
 
 export default {
     name: 'app',
     components: {
-        SignIn
+        Welcome
     }
 };
 </script>
