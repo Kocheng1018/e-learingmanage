@@ -16,7 +16,8 @@ export default {
 <template lang="pug">
     #Welcome.Welcome
         .aa
-            img(:src='logo')
+            //- img(:src='logo')
+            h1 管理後台
             router-view
 </template>
 

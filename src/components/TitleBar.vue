@@ -9,8 +9,24 @@ export default {
         return {
             logo
         }
+    },
+    methods: {
+        change(name){
+            switch(name){
+                case `1`:
+                    this.topath(`/backstage/classlist`);
+                    break;
+                case `2`:
+                    this.topath();
+                    break;
+                default:
+                    console.log(`error name is ${name}`);
+            }
+        },
+        topath(path){
+            this.$router.push({path});
+        }
     }
-    
 }
 </script>
 <template lang="pug">
@@ -19,7 +35,7 @@ export default {
         .logo
             img(:src='logo')
         .menu
-            Menu(mode='horizontal' )
+            Menu(mode='horizontal' @on-select='change' active-name='1')
                 MenuItem(name='1') 目前課程
                 MenuItem(name='2') ???
         .createClass

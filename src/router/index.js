@@ -5,33 +5,36 @@ import SignIn from "../views/Welcome/SignIn.vue";
 import SignUp from '../views/Welcome/SignUp.vue';
 import Welcome from "../views/Welcome.vue"
 import Backstage from '../views/Backstage.vue';
+import ClassList from '../views/backstage/ClassList.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Welcome",
     component: Welcome,
     redirect: 'signin',
     children: [
       {
         path: 'signin',
-        name: 'signin',
         component: SignIn
       },
       {
         path: 'signup',
-        name: 'signup',
         component: SignUp
       }
     ]
   },
   {
     path: '/backstage',
-    name: 'Backstage',
     component: Backstage,
-    
+    redirect: `backstage/classlist`,
+    children: [
+      {
+        path: 'classlist',
+        component: ClassList
+      }
+    ]
   }
 ];
 

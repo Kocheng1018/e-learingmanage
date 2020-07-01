@@ -12,7 +12,6 @@ export default {
                 name: '',
                 department: ''
             }
-            
         };
     },
     methods: {
@@ -24,9 +23,6 @@ export default {
         register() {
             console.log(this.signUp)
         }
-    },
-    mounted() {
-
     }
 };
 </script>
@@ -35,7 +31,7 @@ export default {
     #SignUp.signup
         Card.signinCard
             h1 註冊
-            Form(:ref='signUp' :rules='rules')
+            Form(:ref='signUp')
                 FormItem(label='Account' prop='account')
                     Input(type='text' placeholder='請輸入帳號' v-model='signUp.account')
                 FormItem(label='Password' prop='passwd')
