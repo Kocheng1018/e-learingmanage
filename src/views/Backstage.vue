@@ -18,6 +18,7 @@ export default {
 <style lang='scss' scoped>
 
 .topbar{
+    background-color: white;
     position: fixed;
     top: 0px;
     right: 0px;

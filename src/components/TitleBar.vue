@@ -30,54 +30,81 @@ export default {
 }
 </script>
 <template lang="pug">
-#TitleBar
-    .bar
-        .logo
-            img(:src='logo')
-        .menu
-            Menu(mode='horizontal' @on-select='change' active-name='1')
-                MenuItem(name='1') 目前課程
-                MenuItem(name='2') ???
-        .createClass
-            .Icon
-                Icon(type='md-add' size='32')
-            .content 新增
+.bar
+    .img
+        img(:src='logo')
+    .menu
+        Menu(mode='horizontal' @on-select='change' active-name='1')
+            MenuItem(name='1') 目前課程
+    .createClass
+        Button(type="primary" shape='circle' icon="ios-search") 新增
 
 </template>
 <style lang="scss" scoped>
 .bar{
     position: relative;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    display: flex;
-    .logo {
-        background-color: rosybrown;
-        flex: 10;
+    vertical-align: left;
+    .img {
+        float: left;
+        width: 20%;
         img{
-            max-width: 64px;
+            height: 70px;
         }
     }
     .menu {
-        background-color: red;
-        flex: 100;
+        float: left;
+        width: 70%;
+        height: 70px;
     }
-    .createClass {
-        background-color: aqua;
-        flex: 25;
-        max-width: 150px;
+    .createClass{
         display: flex;
-        .Icon {
-            text-align: right;
+        justify-content: center;
+        justify-items: center;
+        // background-color: salmon;
+        float: left;
+        height: 70px;
+        width: 10%;
+        Button{
             margin: auto;
-            flex: 1;
         }
-        .content {
-            flex: 1;
-            margin: auto;
-            text-align: left;
-        }
-
     }
 }
+// .bar{
+//     position: relative;
+//     height: 70px;
+//     left:0px;
+//     display: inline-flex;
+//     .logo {
+//         // background-color: rosybrown;
+//         flex: 10;
+//         img{
+//             max-width: 64px;
+//         }
+//     }
+//     .menu {
+//         // background-color: red;
+//         flex: 70;
+//     }
+//     .createClass {
+//         background-color: aqua;
+//         max-width: 150px;
+//         flex: 20;
+//         .createBtn {
+//             margin: auto;
+//             max-width: 150px;
+//             display: flex;
+//         }
+//         .Icon {
+//             text-align: right;
+//             margin: auto;
+//             flex: 1;
+//         }
+//         .content {
+//             flex: 1;
+//             margin: auto;
+//             text-align: left;
+//         }
+
+//     }
+// }
 </style>

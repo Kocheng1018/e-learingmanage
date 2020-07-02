@@ -181,6 +181,11 @@ export default {
 
             ]
         };
+    },
+    methods: {
+        alertcode(code){
+            alert(`classCode is ${code}`);
+        }
     }
 }
 </script>
@@ -188,13 +193,14 @@ export default {
      .allclass
         .classRange(v-for="(item, index) in classList" :key=`item.classCode`)
             .card
-                ClassCard(:title='item.classTtile' :code='item.classCode' :topic='item.topicCount' :time='item.time' :progressRate='item.progressRate' :img='item.img')
+                ClassCard(:title='item.classTtile' :code='item.classCode' :topic='item.topicCount' :time='item.time' :progressRate='item.progressRate' :img='item.img' @click.native='alertcode(item.classCode)')
 
        
 </template>
 <style lang='scss' scoped>
 .allclass{
-    background-color: gray;
+    
+    background-color: rgb(250, 250, 250);
 }
     .classRange {
         display: inline-block;
