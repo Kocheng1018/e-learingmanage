@@ -28,11 +28,16 @@ const routes = [
   {
     path: '/backstage',
     component: Backstage,
+    name: `backstage`,
     redirect: `backstage/classlist`,
     children: [
       {
         path: 'classlist',
         component: ClassList
+      },
+      {
+        path: `classlist/:classID`,
+        component: () => import('../views/backstage/LessonList.vue')
       }
     ]
   }

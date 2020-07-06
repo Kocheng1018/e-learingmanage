@@ -1,4 +1,5 @@
 <script>
+import md5 from 'js-md5';
 export default {
     name: "SignIn",
     components: {
@@ -14,14 +15,14 @@ export default {
     },
     methods: {
         toSignUP() {
-            this.$router.push('signup')
+            this.$router.push('signup');
         },
         loginStage() {
-            this.$router.push(`/backstage`)
-        }
-    },
-    mounted() {
+            var hasPwd = md5(this.signIn.passwd);
+            console.log(`${this.signIn.passwd} = ${hasPwd}`);
+            this.$router.push({name: `backstage`});
 
+        }
     }
 };
 </script>
@@ -29,16 +30,14 @@ export default {
     #SingIn.signin
         Card.signinCard
             h1 登入
-            Form(:ref='signIn')
-                FormItem(label='Account' prop='account')
+            Form(ref='signIn' :model='signIn' @submit.native.prevent="loginStage")
+                FormItem(label='Account')
                     Input(type='text' placeholder='請輸入帳號' v-model='signIn.account')
-                FormItem(label='Password' prop='passwd')
+                FormItem(label='Password')
                     Input(type='password' placeholder='請輸入密碼' v-model='signIn.passwd')
                 FormItem
-                    Button(type='primary' @click='loginStage') 登入
+                    Button(type='primary' html-type='submit') 登入
                     Button(type='primary' @click='toSignUP') 註冊
-
-        
 </template>
 
 <style lang='scss' scoped>
