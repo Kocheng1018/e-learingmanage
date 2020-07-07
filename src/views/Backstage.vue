@@ -27,7 +27,7 @@ export default {
 }
 
 .view {
-    margin-top: 70px;
+    margin-top: 90px;
 }
 
 </style>

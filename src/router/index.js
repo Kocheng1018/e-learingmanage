@@ -39,6 +39,11 @@ const routes = [
         path: `classlist/:classID`,
         component: () => import('../views/backstage/LessonList.vue')
       }
+      // ,
+      // {
+      //   path: `classlist/:classID/:lessonID`,
+      //   component: () => import('')
+      // }
     ]
   }
 ];

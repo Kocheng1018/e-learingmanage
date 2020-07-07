@@ -25,7 +25,7 @@ export default {
                     topicCount: `5`,
                     time: `9`,
                     progressRate: `100`,
-                    img:`https://scontent-tpe1-1.xx.fbcdn.net/v/t1.0-9/75443063_2697560337159549_1569404781634499586_n.jpg?_nc_cat=102&_nc_sid=2d5d41&_nc_ohc=e7Q0bG_CxHsAX8lHfVI&_nc_ht=scontent-tpe1-1.xx&oh=ef475cd3371289dee3a98f80de7e08ea&oe=5F224A50`
+                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 },
                 {
                     classTtile: `數位行銷`,
@@ -41,7 +41,7 @@ export default {
                     topicCount: `5`,
                     time: `9`,
                     progressRate: `100`,
-                    img:`https://scontent-tpe1-1.xx.fbcdn.net/v/t1.0-9/75443063_2697560337159549_1569404781634499586_n.jpg?_nc_cat=102&_nc_sid=2d5d41&_nc_ohc=e7Q0bG_CxHsAX8lHfVI&_nc_ht=scontent-tpe1-1.xx&oh=ef475cd3371289dee3a98f80de7e08ea&oe=5F224A50`
+                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 },
                 {
                     classTtile: `數位行銷`,
@@ -57,7 +57,7 @@ export default {
                     topicCount: `5`,
                     time: `9`,
                     progressRate: `100`,
-                    img:`https://scontent-tpe1-1.xx.fbcdn.net/v/t1.0-9/75443063_2697560337159549_1569404781634499586_n.jpg?_nc_cat=102&_nc_sid=2d5d41&_nc_ohc=e7Q0bG_CxHsAX8lHfVI&_nc_ht=scontent-tpe1-1.xx&oh=ef475cd3371289dee3a98f80de7e08ea&oe=5F224A50`
+                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 },
                 {
                     classTtile: `數位行銷`,
@@ -73,7 +73,7 @@ export default {
                     topicCount: `5`,
                     time: `9`,
                     progressRate: `100`,
-                    img:`https://scontent-tpe1-1.xx.fbcdn.net/v/t1.0-9/75443063_2697560337159549_1569404781634499586_n.jpg?_nc_cat=102&_nc_sid=2d5d41&_nc_ohc=e7Q0bG_CxHsAX8lHfVI&_nc_ht=scontent-tpe1-1.xx&oh=ef475cd3371289dee3a98f80de7e08ea&oe=5F224A50`
+                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 },{
                     classTtile: `數位行銷`,
                     classCode: `0340`,
@@ -88,7 +88,7 @@ export default {
                     topicCount: `5`,
                     time: `9`,
                     progressRate: `100`,
-                    img:`https://scontent-tpe1-1.xx.fbcdn.net/v/t1.0-9/75443063_2697560337159549_1569404781634499586_n.jpg?_nc_cat=102&_nc_sid=2d5d41&_nc_ohc=e7Q0bG_CxHsAX8lHfVI&_nc_ht=scontent-tpe1-1.xx&oh=ef475cd3371289dee3a98f80de7e08ea&oe=5F224A50`
+                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 },
                 {
                     classTtile: `數位行銷`,
@@ -104,7 +104,7 @@ export default {
                     topicCount: `5`,
                     time: `9`,
                     progressRate: `100`,
-                    img:`https://scontent-tpe1-1.xx.fbcdn.net/v/t1.0-9/75443063_2697560337159549_1569404781634499586_n.jpg?_nc_cat=102&_nc_sid=2d5d41&_nc_ohc=e7Q0bG_CxHsAX8lHfVI&_nc_ht=scontent-tpe1-1.xx&oh=ef475cd3371289dee3a98f80de7e08ea&oe=5F224A50`
+                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 },
                 {
                     classTtile: `數位行銷`,
@@ -120,7 +120,7 @@ export default {
                     topicCount: `5`,
                     time: `9`,
                     progressRate: `100`,
-                    img:`https://scontent-tpe1-1.xx.fbcdn.net/v/t1.0-9/75443063_2697560337159549_1569404781634499586_n.jpg?_nc_cat=102&_nc_sid=2d5d41&_nc_ohc=e7Q0bG_CxHsAX8lHfVI&_nc_ht=scontent-tpe1-1.xx&oh=ef475cd3371289dee3a98f80de7e08ea&oe=5F224A50`
+                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 },
                 {
                     classTtile: `數位行銷`,
@@ -136,7 +136,7 @@ export default {
                     topicCount: `5`,
                     time: `9`,
                     progressRate: `100`,
-                    img:`https://scontent-tpe1-1.xx.fbcdn.net/v/t1.0-9/75443063_2697560337159549_1569404781634499586_n.jpg?_nc_cat=102&_nc_sid=2d5d41&_nc_ohc=e7Q0bG_CxHsAX8lHfVI&_nc_ht=scontent-tpe1-1.xx&oh=ef475cd3371289dee3a98f80de7e08ea&oe=5F224A50`
+                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 }
 
             ]
@@ -159,13 +159,12 @@ export default {
 </template>
 <style lang='scss' scoped>
 .allclass{
-    
     background-color: rgb(250, 250, 250);
 }
     .classRange {
         display: inline-block;
     }
     .card {
-            margin: 1em;
+            margin: 10px;
         }
 </style>
