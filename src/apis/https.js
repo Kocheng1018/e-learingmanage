@@ -19,10 +19,13 @@ const errorHandel = (status, msg) => {
 }
 
 var instance = axios.create({
-    baseURL: '/api/'
+    baseURL: 'http://192.168.0.220:1314'
 })
 
 instance.interceptors.request.use((config) => {
+    config.headers = { 
+        "content-type": 'application/x-www-form-urlencoded'
+      };
     return config;
 }, (error) => {
     return Promise.reject(error);
@@ -47,7 +50,7 @@ instance.interceptors.response.use((response) => {
 export default function (method, url, data=null) {
     method = method.toLowerCase();
     if (method == 'post') {
-        return instance.post(url, data);
+        return instance.post(url, JSON.stringify(data));
     }else if (method == 'get'){
         return instance.get(url, {params: data});
     }else if (method == 'delete') {

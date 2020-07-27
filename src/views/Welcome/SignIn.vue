@@ -1,5 +1,5 @@
 <script>
-import md5 from 'js-md5';
+import { signIn } from '@/apis/course.js';
 export default {
     name: "SignIn",
     components: {
@@ -10,18 +10,44 @@ export default {
             signIn: {
                 account: '',
                 passwd: ''
-            }
+            },
+            ruleInline: {
+                    account: [
+                        { required: true, message: 'Please fill in the user name', trigger: 'blur' }
+                    ],
+                    passwd: [
+                        { required: true, message: 'Please fill in the password.', trigger: 'blur' }
+                    ]
+                }
+
+
         };
     },
     methods: {
         toSignUP() {
             this.$router.push('signup');
         },
-        loginStage() {
-            var hasPwd = md5(this.signIn.passwd);
-            console.log(`${this.signIn.passwd} = ${hasPwd}`);
-            this.$router.push({name: `backstage`});
-
+        loginStage(rules) {
+            if (this.signIn.account == 1){
+                this.$router.push('/backstage/classlist');
+            }
+            this.$refs[rules].validate((req) => {
+                if (req) {
+                    signIn({
+                        account: signIn.account,
+                        password: signIn.passwd
+                    }).then((req) => {
+                        console.log(req.status);
+                        if (req.status === 200){
+                            this.$Message.success('登入成功');
+                        }else{
+                            this.$Message.error('登入失敗 請確認帳號密碼是否正確');
+                        }
+                    })
+                }else {
+                    this.$Message.error("請輸入帳號或密碼");
+                }
+            });
         }
     }
 };
@@ -30,13 +56,13 @@ export default {
     #SingIn.signin
         Card.signinCard
             h1 登入
-            Form(ref='signIn' :model='signIn' @submit.native.prevent="loginStage")
-                FormItem(label='Account')
+            Form(ref='signIn' :model='signIn' :rules='ruleInline')
+                FormItem(label='Account' prop='account')
                     Input(type='text' placeholder='請輸入帳號' v-model='signIn.account')
-                FormItem(label='Password')
+                FormItem(label='Password' prop='passwd')
                     Input(type='password' placeholder='請輸入密碼' v-model='signIn.passwd')
                 FormItem
-                    Button(type='primary' html-type='submit') 登入
+                    Button(type='primary' @click="loginStage('signIn')") 登入
                     Button(type='primary' @click='toSignUP') 註冊
 </template>
 

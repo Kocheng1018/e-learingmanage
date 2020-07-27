@@ -1,28 +1,118 @@
 <script>
 import LessonVideo from '@/components/LessonMod/LessonVideo.vue';
+import LessonQA from '@/components/LessonMod/LessonQA.vue';
 export default {
     name: 'LessonList',
     components:{
-        LessonVideo
+        LessonVideo,
+        LessonQA
     },
     data(){
         return {
             firstOpen: '1',
+            selectLesson: 2,
             lessons: [
                 {
+                    lessonID: `12454`,
                     lessonTitle: `課程標題1`,
                     lessonUrl: `ZPn7OsUZaug`,
                     question: [ ]
                 },
                 {
+                    lessonID: `124553`,
                     lessonTitle: `課程標題2`,
-                    lessonUrl: `ZPn7OsUZaug`,
+                    lessonUrl: `YzTGA_lR2AM`,
                     question: [ ]
                 },
                 {
+                    lessonID: `12059`,
                     lessonTitle: `課程標題3`,
-                    lessonUrl: `ZPn7OsUZaug`,
+                    lessonUrl: `BiDE6_GUMDI`,
                     question: [ ]
+                },
+                {
+                    lessonID: `12056`,
+                    lessonTitle: `課程標題5`,
+                    lessonUrl: `gnupOrSEikQ`,
+                    question: [
+                        {
+                            questionID: `111`,
+                            content: `問題內容`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['b'],
+                            lessonID: `12056`
+                        },
+                        {
+                            questionID: `112`,
+                            content: `問題內容`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['d'],
+                            lessonID: `12056`
+                        },
+                        {
+                            questionID: `113`,
+                            content: `問題內容`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['a'],
+                            lessonID: `12056`
+                        },
+                        {
+                            questionID: `114`,
+                            content: `問題內容`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['a'],
+                            lessonID: `12056`
+                        },
+                        {
+                            questionID: `115`,
+                            content: `問題內容5`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['c'],
+                            lessonID: `12056`
+                        }
+                    ]
+                },
+                {
+                    lessonID: `1232056`,
+                    lessonTitle: `課程標題0`,
+                    lessonUrl: `ZPn7OsUZaug`,
+                    question: [ 
+                        {
+                            questionID: `111`,
+                            content: `問題內容`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['b'],
+                            lessonID: `1232056`
+                        },
+                        {
+                            questionID: `112`,
+                            content: `問題內容6`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['d'],
+                            lessonID: `1232056`
+                        },
+                        {
+                            questionID: `113`,
+                            content: `問題內容`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['a'],
+                            lessonID: `1232056`
+                        },
+                        {
+                            questionID: `114`,
+                            content: `問題內容4`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['a'],
+                            lessonID: `1232056`
+                        },
+                        {
+                            questionID: `115`,
+                            content: `問題內容4`,
+                            select: [ 'a', 'b', 'c', 'd'],
+                            answer: ['c'],
+                            lessonID: `1232056`
+                        }
+                    ]
                 }
             ]
         }
@@ -31,36 +121,65 @@ export default {
         updateNewUrl(newUrl, index){
             console.log(newUrl);
             this.lessons[index].lessonUrl = newUrl;
-        }
+        },
+        selectTopic(index){
+            // console.log(index);
+            this.selectLesson = index;
+            console.log(this.selectLesson)
+        },
     }
 }
 </script>
 <template lang="pug">
     #lessonlist
-        .list
-            .btnCollect
-                Button(type='info') 新增
-                //- div {{ firstOpen }}
-                Select(v-model='firstOpen')
-                    Option(v-for='(lesson, index) in lessons' :value='index + 1') {{ index }} - {{ lesson.lessonTitle }}
-            Collapse(v-model='firstOpen' simple)
-                Panel(v-for='(lesson, index) in lessons' :name='String(index + 1)') {{ lesson.lessonTitle }}
-                    LessonVideo(slot='content' :url='lesson.lessonUrl' @newUrl='updateNewUrl($event, index)')
-
+        .topicList 
+            Card.cardborder(v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
+                div {{ lesson.lessonTitle }}
+        .topicScreen
+            div(v-if='this.selectLesson !== null')
+                .videoScreen 
+                    LessonVideo(:url='this.lessons[this.selectLesson].lessonUrl' @newUrl='updateNewUrl($event, this.selectLesson)')
+                .questionScreen
+                    div(v-if='lessons[selectLesson].question.length == 0')
+                        Card
+                            div 新增問題
+                    div(v-else)
+                        LessonQA.QAcard(:question='lessons[selectLesson].question')
+            div(v-else)
+                h1 請點選左邊課程進入詳細內容
 
 </template>
 <style lang="scss" scoped>
 #lessonlist{
+    background-color: rgb(250, 250, 250);
+    padding: 0px 5% 0px 5%;
     display: flex;
     justify-content: center;
-    background-color: aqua;
 }
-.list{
-    width: 80%;
-    background-color: white;
-    .btnCollect{
-        display: flex;
+.topicList{
+    flex: 2;
+    max-width: 250px;
+    border-style: solid;
+    border-color: red;
+    margin: 10px;
+    .cardborder {
+        margin: 10px;
+    }
+}
+.topicScreen{
+    display: flex;
+    flex-direction: column;
+    flex: 7;
+    .videoScreen{
+        flex: 7;
         
+    }
+    .questionScreen{
+        display: flex;
+        justify-content: center;
+        justify-items: center;
+        flex-direction: column;
+        flex: 3;
     }
 }
 

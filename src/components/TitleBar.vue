@@ -36,8 +36,6 @@ export default {
     .menu
         Menu(mode='horizontal' @on-select='change' active-name='1')
             MenuItem(name='1') 目前課程
-    .createClass
-        Button(type="primary" shape='circle' icon="ios-search") 新增
 
 </template>
 <style lang="scss" scoped>

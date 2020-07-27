@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@hapi/cryptiles": "^5.1.0",
+    "async-validator": "^3.3.0",
     "axios": "^0.18.1",
     "core-js": "^3.6.4",
     "hoek": ">=4.2.1",

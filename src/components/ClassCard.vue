@@ -43,15 +43,13 @@ export default {
             .title {{this.title}} 
             .detail
                 | 主題：{{this.topic}}
-                br
-                | 時間（小時）：{{this.time}}
 </template>
 <style lang="scss" scoped>
 .card{
     display: flex;
     justify-content: center;
     width: 200px;
-    height: 300px;
+    // height: 250px;
     .imgframe {
         height: 150px;
         width: 150px;
@@ -60,7 +58,6 @@ export default {
             max-width: 150px;
             max-width: 150px;
         }
-        
     }
     .title{
         text-align: left;
