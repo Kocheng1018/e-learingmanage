@@ -13,10 +13,10 @@ export default {
             },
             ruleInline: {
                     account: [
-                        { required: true, message: 'Please fill in the user name', trigger: 'blur' }
+                        { required: true, message: '請輸入帳號', trigger: 'blur' }
                     ],
                     passwd: [
-                        { required: true, message: 'Please fill in the password.', trigger: 'blur' }
+                        { required: true, message: '請輸入密碼', trigger: 'blur' }
                     ]
                 }
 

@@ -47,7 +47,21 @@ export default {
                     img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
                 }
             ],
-            addClass: false
+            addClass: false,
+            newClassData: {
+                title: '',
+                content: '',
+                imgUrl: ''
+            },
+            newClassRule: {
+                title: [
+                    { required: true, message: '請輸入主題名稱', tigger: 'blur' }
+                ],
+                content: [
+                    { required: true, message: '請輸入主題簡介', tigger: 'blur' }
+                ]
+
+            }
         };
     },
     methods: {
@@ -56,10 +70,25 @@ export default {
         },
         addNewClass(){
             console.log('??');
+            this.$refs.addNewClass.validate((req) => {
+                if(req) {
+                    this.$message.success("/??");
+                }
+            })
+        },
+        upload(event){
+            const file = event.target.files.item(0);
+            const reader = new FileReader();
+            reader.addEventListener('load', this.imageloader);
+            reader.readAsDataURL(file);
+        },
+        imageloader(event){
+            this.newClassData.imgUrl = event.target.result;
         },
         cancel(){
 
         }
+
     }
 }
 </script>
@@ -68,8 +97,15 @@ export default {
         .classRange
             Card(@click.native='addClass = true').addcard 新增主題
             Modal(v-model='addClass' title='新增主題' @on-ok='addNewClass' @on-cancel='cancel')
-                p ffff
-                p ggg
+                Form(ref='addNewClass' :model='newClassData' :rules='newClassRule')
+                    FormItem(prop='title' label='請輸入主題名稱')
+                        Input(v-model='newClassData.title')
+                    FormItem(prop='content' label='請輸入主題簡介')
+                        Input(v-model='newClassData.content')
+                input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='upload')
+                img(v-if='newClassData.imgUrl' :src='newClassData.imgUrl' width='300')
+
+
             .card(v-for="(item, index) in classList" :key=`item.classCode`)
                 ClassCard(:title='item.classTtile' :code='item.classCode' :topic='item.topicCount' :time='item.time' :progressRate='item.progressRate' :img='item.img' @click.native='LessonPage(item.classCode)')
 </template>
