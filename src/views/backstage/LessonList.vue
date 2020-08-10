@@ -119,11 +119,10 @@ export default {
     },
     methods: {
         updateNewUrl(newUrl, index){
-            console.log(newUrl);
             this.lessons[index].lessonUrl = newUrl;
+            console.log(this.lessons[index].lessonUrl);
         },
         selectTopic(index){
-            // console.log(index);
             this.selectLesson = index;
             console.log(this.selectLesson)
         },
@@ -136,7 +135,7 @@ export default {
             Card.cardborder(v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
                 div {{ lesson.lessonTitle }}
         .topicScreen
-            div(v-if='this.selectLesson !== null')
+            div(v-if='this.selectLesson != null')
                 .videoScreen 
                     LessonVideo(:url='this.lessons[this.selectLesson].lessonUrl' @newUrl='updateNewUrl($event, this.selectLesson)')
                 .questionScreen
@@ -151,7 +150,6 @@ export default {
 </template>
 <style lang="scss" scoped>
 #lessonlist{
-    background-color: rgb(250, 250, 250);
     padding: 0px 5% 0px 5%;
     display: flex;
     justify-content: center;

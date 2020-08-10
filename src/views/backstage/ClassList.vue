@@ -115,7 +115,6 @@ body {
 }
 .allclass{
     height: 100%;
-    background-color: rgb(250, 250, 250);
 }
 .card {
     display: inline-block;

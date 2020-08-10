@@ -43,6 +43,7 @@ export default {
                 }
                 
                 this.$emit('newUrl', this.newUrl);
+                this.url = this.newUrl;
                 this.newUrl = '';
             }
         },

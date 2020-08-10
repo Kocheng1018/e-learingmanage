@@ -24,7 +24,9 @@ var instance = axios.create({
 
 instance.interceptors.request.use((config) => {
     config.headers = { 
-        "content-type": 'application/x-www-form-urlencoded'
+        "content-type": 'application/x-www-form-urlencoded',
+        "authentication": ""
+
       };
     return config;
 }, (error) => {
