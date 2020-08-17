@@ -8,29 +8,9 @@ export default {
         };
     },
     props: {
-        title: {
-            type: String,
-            default: () => ``
-        },
-        code: {
-            type: String,
-            default: () => ``
-        },
-        topic: {
-            type: String,
-            default: () => ``
-        },
-        time: {
-            type: String,
-            default: () => ``
-        },
-        progressRate: {
-            type: String,
-            default: () => ``
-        },
-        img: {
-            type: String,
-            default: () => ``
+        classDetail: {
+            type: Object,
+            default: null
         }
     }
 }
@@ -38,11 +18,12 @@ export default {
 <template lang="pug">
     Card.card
             .imgframe
-                img(v-if='this.img != "" ' :src="this.img" )
+                img(v-if='this.classDetail.imgUrl != "" ' :src="this.classDetail.imgUrl" )
                 img(v-else :src="defaultClass") 
-            .title {{this.title}} 
+            .title {{ this.classDetail.topic }} 
             .detail
-                | 主題：{{this.topic}}
+                | 課程數：{{ this.classDetail.sectionNum }} 個
+                | {{ classDetail.createAt }}
 </template>
 <style lang="scss" scoped>
 .card{

@@ -1,91 +1,109 @@
 <script>
 import defaultClass from '@/assets/defaultClass.png';
 import ClassCard from '@/components/ClassCard.vue';
+import { addClass, getTeacherClass } from '@/apis/course.js';
 
 export default {
     name:`classList`,
     components: {
         ClassCard
     },
+    mounted(){
+        
+    },
     data() {
         return {
             defaultClass,
             classList: [
                 {
-                    classTtile: `數位行銷`,
-                    classCode: `0000`,
-                    topicCount: `10`,
-                    progressRate: `20`,
-                    img: ``
+                    classId: '111',
+                    topic: '???',
+                    imgUrl:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`,
+                    type: 0,
+                    isOpen: 0,
+                    createAt: 132434333,
+                    sectionNum: 3 
                 },
                 {
-                    classTtile: `線上開店`,
-                    classCode: `1`,
-                    topicCount: `5`,
-                    progressRate: `100`,
-                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
-                },
-                {
-                    classTtile: `數位行銷`,
-                    classCode: `3500`,
-                    topicCount: `10`,
-                    progressRate: `20`,
-                    img: ``
-                },
-                {
-                    classTtile: `線上開店`,
-                    classCode: `1201`,
-                    topicCount: `5`,
-                    progressRate: `100`,
-                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
-                },
-                {
-                    classTtile: `線上開店`,
-                    classCode: `1205`,
-                    topicCount: `5`,
-                    progressRate: `100`,
-                    img:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`
+                    classId: '14411',
+                    topic: '?df??',
+                    imgUrl:``,
+                    type: 0,
+                    isOpen: 0,
+                    createAt: 132434333,
+                    sectionNum: 3 
                 }
             ],
             addClass: false,
-            newClassData: {
-                title: '',
-                content: '',
-                imgUrl: ''
-            },
-            newClassRule: {
-                title: [
-                    { required: true, message: '請輸入主題名稱', tigger: 'blur' }
+            loading: true,
+            addClassRule: {
+                topic: [
+                    { required: true, message: "請輸入標題", trigger: "blur" }
                 ],
-                content: [
-                    { required: true, message: '請輸入主題簡介', tigger: 'blur' }
+                intro: [
+                    { required: true, message: "請輸入簡介", trigger: "blur" }
+                ],
+                type: [
+                    { required: true, message: "請選擇公開/不公開", trigger: "blur" }
                 ]
-
-            }
+                
+            },
+            addClassData: {
+                topic: '',
+                // base64
+                imgUrl: '',
+                intro: '',
+                type: 0,
+                teacherId: '' 
+            },
         };
     },
     methods: {
+        getClassList(){
+            getTeacherClass()
+                .then((res) => {
+                    console.log(res.data.data);
+                }).catch((err) => {
+                    this.$Message.error(`error: ${err}`)
+                })
+        },
         LessonPage(classID){
             this.$router.push(`classlist/${classID}`)
         },
         addNewClass(){
-            console.log('??');
-            this.$refs.addNewClass.validate((req) => {
-                if(req) {
-                    this.$message.success("/??");
+            this.$refs.addClassData.validate((valid) => {
+                if(valid){
+                    console.log(this.addClassData);
+                    addClass({
+                        topic: this.addClassData.topic,
+                        imgUrl: this.addClassData.imgUrl,
+                        intro: this.addClassData.intro,
+                        type: this.type,
+                        teacherId: localStorage.getItem('teacherId')
+                    })
+                        .then((res) => {
+                            console.log(res);
+                        })
+                    this.addClass = false;
                 }
             })
+            
         },
-        upload(event){
-            const file = event.target.files.item(0);
-            const reader = new FileReader();
-            reader.addEventListener('load', this.imageloader);
-            reader.readAsDataURL(file);
-        },
-        imageloader(event){
-            this.newClassData.imgUrl = event.target.result;
+        upload(event) {
+            var input = event.target;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = (e) => {
+                    this.addClassData.imgUrl = e.target.result;
+                    // console.log(this.addClassData.imgUrl);
+                }
+                reader.readAsDataURL(input.files[0]);
+                // console.log(String(imageBase));
+            }
         },
         cancel(){
+            this.$refs.addClassData.resetFields();
+            this.addClass = false;
 
         }
 
@@ -96,18 +114,26 @@ export default {
      .allclass
         .classRange
             Card(@click.native='addClass = true').addcard 新增主題
-            Modal(v-model='addClass' title='新增主題' @on-ok='addNewClass' @on-cancel='cancel')
-                Form(ref='addNewClass' :model='newClassData' :rules='newClassRule')
-                    FormItem(prop='title' label='請輸入主題名稱')
-                        Input(v-model='newClassData.title')
-                    FormItem(prop='content' label='請輸入主題簡介')
-                        Input(v-model='newClassData.content')
+            Modal(v-model='addClass' title='新增主題')
+                Form(ref='addClassData' :model='addClassData' :rules="addClassRule")
+                    FormItem(prop='topic' label='請輸入主題名稱')
+                        Input(v-model='addClassData.topic')
+                    FormItem(prop='intro' label='請輸入主題簡介')
+                        Input(v-model='addClassData.intro')
+                    FormItem(prop='type' label="課程是否公開")
+                        br
+                        RadioGroup(v-model='addClassData.type')
+                            Radio(label='0') 公開
+                            Radio(label='1') 非公開
                 input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='upload')
-                img(v-if='newClassData.imgUrl' :src='newClassData.imgUrl' width='300')
-
-
+                img(:src="addClassData.imgUrl" width='300')
+                div(slot='footer')
+                    Button(type='default' @click='cancel') 取消
+                    |
+                    Button(type='primary' @click='addNewClass') 建立
             .card(v-for="(item, index) in classList" :key=`item.classCode`)
-                ClassCard(:title='item.classTtile' :code='item.classCode' :topic='item.topicCount' :time='item.time' :progressRate='item.progressRate' :img='item.img' @click.native='LessonPage(item.classCode)')
+                ClassCard(:classDetail='item' @click.native='LessonPage(item.class)')
+               
 </template>
 <style lang='scss' scoped>
 body {

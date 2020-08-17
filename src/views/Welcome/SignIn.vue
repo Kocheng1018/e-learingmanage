@@ -12,15 +12,13 @@ export default {
                 passwd: ''
             },
             ruleInline: {
-                    account: [
-                        { required: true, message: '請輸入帳號', trigger: 'blur' }
-                    ],
-                    passwd: [
-                        { required: true, message: '請輸入密碼', trigger: 'blur' }
-                    ]
-                }
-
-
+                account: [
+                    { required: true, message: '請輸入帳號', trigger: 'blur' }
+                ],
+                passwd: [
+                    { required: true, message: '請輸入密碼', trigger: 'blur' }
+                ]
+            }
         };
     },
     methods: {
