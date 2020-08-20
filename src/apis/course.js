@@ -1,9 +1,5 @@
 import req from './https.js';
 
-export const postData = params => req('post', 'https://jsonplaceholder.typicode.com/posts', params);
-
-export const getDatta = () => req('get', 'https://jsonplaceholder.typicode.com/posts');
-
 /** 註冊
  * @param { string } account
  * @param { string } password
@@ -28,6 +24,7 @@ export const signIn = params => req('post', '', params);
  * @returns { String } intro
  * @returns { number } createAt
  * @returns { number } SectionNum
+ * @returns { number } type (0/1 公開/非公開)
  * }]
  */
 export const getTeacherClass = (id) => req("get", `/class/${id}/teacher`);

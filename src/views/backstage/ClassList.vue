@@ -9,7 +9,7 @@ export default {
         ClassCard
     },
     mounted(){
-        
+        this.getClassList();
     },
     data() {
         return {
@@ -17,12 +17,12 @@ export default {
             classList: [
                 {
                     classId: '111',
-                    topic: '???',
+                    topic: '?!!?',
                     imgUrl:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`,
-                    type: 0,
-                    isOpen: 0,
+                    type: 1,
+                    isOpen: 1,
                     createAt: 132434333,
-                    sectionNum: 3 
+                    sectionNum: 5
                 },
                 {
                     classId: '14411',
@@ -60,9 +60,10 @@ export default {
     },
     methods: {
         getClassList(){
-            getTeacherClass()
+            getTeacherClass(localStorage.getItem("teacherId"))
                 .then((res) => {
                     console.log(res.data.data);
+                    this.classList = res.data.data;
                 }).catch((err) => {
                     this.$Message.error(`error: ${err}`)
                 })
@@ -104,7 +105,6 @@ export default {
         cancel(){
             this.$refs.addClassData.resetFields();
             this.addClass = false;
-
         }
 
     }
@@ -132,7 +132,7 @@ export default {
                     |
                     Button(type='primary' @click='addNewClass') 建立
             .card(v-for="(item, index) in classList" :key=`item.classCode`)
-                ClassCard(:classDetail='item' @click.native='LessonPage(item.class)')
+                ClassCard(:classDetail='item' @click.native='LessonPage(item.classId)')
                
 </template>
 <style lang='scss' scoped>

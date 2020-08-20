@@ -23,7 +23,10 @@ export default {
             .title {{ this.classDetail.topic }} 
             .detail
                 | 課程數：{{ this.classDetail.sectionNum }} 個
-                | {{ classDetail.createAt }}
+                br
+                | 開放狀態： {{ this.classDetail.type == 0 ? "公開" : "非公開" }}
+                br
+                | 是否啟動： {{ this.classDetail.isOpen == 0 ? "關閉中" : "開啟中" }}
 </template>
 <style lang="scss" scoped>
 .card{

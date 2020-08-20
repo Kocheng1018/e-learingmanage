@@ -27,6 +27,8 @@ export default {
         },
         loginStage(rules) {
             if (this.signIn.account == 1){
+                localStorage.setItem("teacherId", "5f3a456d57fe44530f2d7def");
+                console.log(localStorage.getItem('teacherId'));
                 this.$router.push('/backstage/classlist');
             }
             this.$refs[rules].validate((req) => {

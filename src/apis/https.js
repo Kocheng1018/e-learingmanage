@@ -19,14 +19,18 @@ const errorHandel = (status, msg) => {
 }
 
 var instance = axios.create({
-    baseURL: 'http://192.168.0.220:1314'
+    baseURL: 'https://e4c037245c70.ngo'
 })
 
 instance.interceptors.request.use((config) => {
+    let accessToken = localStorage.getItem("accessToken");
+    if (accessToken == null){
+        accessToken = "";
+    }
     config.headers = { 
         "content-type": 'application/x-www-form-urlencoded',
-        "authentication": ""
-
+        "Access-Control-Allow-Origin": "*",
+        "authentication": accessToken
       };
     return config;
 }, (error) => {
