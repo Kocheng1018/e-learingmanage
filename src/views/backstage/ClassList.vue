@@ -15,21 +15,21 @@ export default {
         return {
             defaultClass,
             classList: [
-                {
-                    classId: '111',
-                    topic: '?!!?',
-                    imgUrl:`https://cdn01.dcfever.com/articles/news/2020/04/200410_sparrow_02.jpg`,
-                    type: 1,
-                    isOpen: 1,
-                    createAt: 132434333,
-                    sectionNum: 5
-                },
+				{
+					classId: "8745",
+					topic: "fgfd",
+					imgUrl: ``,
+					type: 0,
+					isOpen: 0,
+					createAt: 1546254,
+					sectionNum: 5
+				},
                 {
                     classId: '14411',
                     topic: '?df??',
                     imgUrl:``,
                     type: 0,
-                    isOpen: 0,
+                    sOpen: 0,
                     createAt: 132434333,
                     sectionNum: 3 
                 }

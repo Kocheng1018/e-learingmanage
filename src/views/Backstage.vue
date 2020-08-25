@@ -1,22 +1,25 @@
-<script>
-import TitleBar from '../components/TitleBar.vue'
-export default {
-    name: 'Backstage',
-    components: {
-        TitleBar
-    }
-}
-</script>
 <template lang="pug">
 .backstage
     .topbar
         TitleBar
     .view        
         router-view
-    
 </template>
-<style lang='scss' scoped>
-
+<script>
+import TitleBar from '../components/TitleBar.vue'
+export default {
+    name: 'Backstage',
+    components: {
+        TitleBar
+    },
+	data(){
+		return {
+			data1: "ssdf"
+		}
+	}
+}
+</script>
+<style lang="scss" scoped>
 .topbar{
     position: fixed;
     top: 0px;
@@ -24,9 +27,7 @@ export default {
     left: 0px;
     z-index: 10;
 }
-
 .view {
     margin-top: 90px;
 }
-
 </style>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 // import router from '../router/index.js';
-import { tip } from './utils.js';
+import { tip } from './utils.js'
 
 const errorHandel = (status, msg) => {
     switch(status) {
