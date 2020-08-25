@@ -6,6 +6,8 @@ import SignUp from '../views/Welcome/SignUp.vue';
 import Welcome from "../views/Welcome.vue"
 import Backstage from '../views/Backstage.vue';
 import ClassList from '../views/backstage/ClassList.vue';
+import LessonList from '../views/backstage/LessonList.vue';
+// import { component } from "vue/types/umd";
 
 Vue.use(VueRouter);
 
@@ -37,13 +39,8 @@ const routes = [
       },
       {
         path: `classlist/:classID`,
-        component: () => import('../views/backstage/LessonList.vue')
-      }
-      // ,
-      // {
-      //   path: `classlist/:classID/:lessonID`,
-      //   component: () => import('')
-      // }
+        component: LessonList,
+      },
     ]
   }
 ];
