@@ -6,13 +6,13 @@ import req from './https.js';
  * @param { string } department
  * @param { string } name
  */
-export const signUp = params => req('post', '/adduser', params);
+export const signUp = params => req('post', '/management/signup', params);
 
 /**  登入
  * @param { string } account
  * @param { string } password
  */ 
-export const signIn = params => req('post', '', params);
+export const signIn = params => req('post', '/management/login', params);
 
 /** 取得老師class資料
  * @returns { ObjectArray } [{
