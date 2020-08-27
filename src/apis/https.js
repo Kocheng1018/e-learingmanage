@@ -28,16 +28,6 @@ let instance = axios.create({
 })
 
 instance.interceptors.request.use((config) => {
-//	let accessToken = localStorage.getItem("accessToken");
-//    if (accessToken == null){
-//        accessToken = "";
-//    }
-//    config.headers = { 
-//        "Access-Control-Allow-Origin": "*",
-//        "Authorization": accessToken,
-//		"Access-Control-Allow-Headers": "Content-Type, X-Access-Token",
-//		"Access-Control-Allow-Credentials": 'true'
-//      };
     return config;
 }, (error) => {
     return Promise.reject(error);

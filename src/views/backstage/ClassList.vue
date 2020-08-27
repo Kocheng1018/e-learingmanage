@@ -14,26 +14,7 @@ export default {
     data() {
         return {
             defaultClass,
-            classList: [
-				{
-					classId: "8745",
-					topic: "fgfd",
-					imgUrl: ``,
-					type: 0,
-					isOpen: 0,
-					createAt: 1546254,
-					sectionNum: 5
-				},
-                {
-                    classId: '14411',
-                    topic: '?df??',
-                    imgUrl:``,
-                    type: 0,
-                    sOpen: 0,
-                    createAt: 132434333,
-                    sectionNum: 3 
-                }
-            ],
+            classList: [],
             addClass: false,
             loading: true,
             addClassRule: {
@@ -46,7 +27,6 @@ export default {
                 type: [
                     { required: true, message: "請選擇公開/不公開", trigger: "blur" }
                 ]
-                
             },
             addClassData: {
                 topic: '',
@@ -79,10 +59,14 @@ export default {
                         topic: this.addClassData.topic,
                         imgUrl: this.addClassData.imgUrl,
                         intro: this.addClassData.intro,
-                        type: this.type,
+                        isPublic: parseInt(this.addClassData.type),
                         teacherId: localStorage.getItem('teacherId')
                     })
                         .then((res) => {
+                            if(res.data.status.code == 0){
+                                this.getClassList();
+                                this.$Message.success("新增成功");
+                            }
                             console.log(res);
                         })
                     this.addClass = false;
@@ -96,17 +80,14 @@ export default {
                 var reader = new FileReader();
                 reader.onload = (e) => {
                     this.addClassData.imgUrl = e.target.result;
-                    // console.log(this.addClassData.imgUrl);
                 }
                 reader.readAsDataURL(input.files[0]);
-                // console.log(String(imageBase));
             }
         },
         cancel(){
             this.$refs.addClassData.resetFields();
             this.addClass = false;
         }
-
     }
 }
 </script>

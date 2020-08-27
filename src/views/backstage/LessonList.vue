@@ -2,11 +2,11 @@
     #lessonlist
         Modal(title="新增章節" v-model="modalStatus.addsection" class-name="verCenterModel")
             .setps
-                Steps(:current="addStep")
+                Steps(:current="modalStatus.addstep")
                     step(title="設定新的章節資料")
                     step(title="新增問題")
                     step(title="確認資料")
-            .step1(v-if="modalStatus.addstep == 0")
+            .step1(v-if="this.modalStatus.addstep == 0")
                 Form(ref="addsection" :model="addsectionData")
                     FormItem(prop="title" label="章節標題")
                         Input(v-model="addsectionData.title")
@@ -25,69 +25,79 @@
                             Radio(label="-2") 其他
                         Select(v-if="addsectionData.index == -2" v-model="addsectionData.selectNum")
                             Option(v-for="(item, index) in lessons" :value="index" :key="index") {{ item.lessonTitle }} 之後
+            .step2(v-else-if="this.modalStatus.addstep == 1")
+                .addQuestionArea
+                    h1 問題數：{{ addsectionData.questionData.length }}/5
+                    Button(type='primary' icon="md-add" @click="addNewQuestion") 新增問題
+                .questionList
+                    QuestionCard(v-for="(item, index) in addsectionData.questionData" :index="index")
+            .step3(v-else-if="this.modalStatus.addstep == 2")
+                h1 step2
             div(slot="footer")
-                Button(type="info" @click="previous") 上一步
+                Button(type="default" @click="previous") 上一步
+                |
                 Button(type="primary" @click='next') 下一步
         .topicList 
             Card(@click.native="modalStatus.addsection = true").addLesson.cardborder 新增主題
             Card.cardborder(v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
                 div {{ lesson.lessonTitle }}
         .topicScreen
-            div(v-if='this.selectLesson != null')
-                .videoScreen 
-                    LessonVideo(:url='this.lessons[this.selectLesson].lessonUrl' @newUrl='updateNewUrl($event, this.selectLesson)')
-                .questionScreen
-                    Card.addLessonBtn(v-if="lessons[selectLesson].question.length < 5") 新增章節
-                    .lessonQA
-                        LessonQA.itemQA(v-for='(item, index) in lessons[selectLesson].question' :key='index' :question='item')
+            div(v-if='lessons.length != 0')
+                    .videoScreen 
+                        LessonVideo(:url='this.lessons[this.selectLesson].lessonUrl' @newUrl='updateNewUrl($event, this.selectLesson)')
+                    .questionScreen
+                        .lessonQA
+                            Card(v-for="(item, index) in lessons[selectLesson].question" :key="index") {{ item.content }}
+                        Card.addLessonBtn(v-if="lessons[selectLesson].question.length < 5") 編輯問題
             div(v-else)
                 h1 請點選左邊課程進入詳細內容
-
+                h1 或點選新增主題
 </template>
 <script>
 import LessonVideo from '@/components/LessonMod/LessonVideo.vue';
-import LessonQA from '@/components/LessonMod/LessonQA.vue';
+import QuestionCard from '@/components/LessonMod/QuestionCard.vue';
+
 export default {
     name: 'LessonList',
     components:{
         LessonVideo,
-        LessonQA
+        QuestionCard
     },
     data(){
         return {
             modalStatus: {
                 addsection: true,
-                addstep: 0
+                addstep: 1
             },
             addsectionData: {
                 title: "",
                 url: "",
                 type: "0",
                 index: "0",
-                selectNum: "0"
+                selectNum: "0",
+                questionData: [
+                    {
+                        content: "範例",
+                        answer: ["問題一"],
+                        selsct: ["問題一", "問題二", "問題三", "問題四"],
+                        type: 0,
+                        sort: 0
+                    }
+                ]
             },
             firstOpen: '1',
             selectLesson: 0,
             lessons: [
                 {
-                    lessonID: `12454`,
-                    lessonTitle: `課程標題1`,
-                    lessonUrl: `ZPn7OsUZaug`,
-                    question: []
-                },
-                {
                     lessonID: `124553`,
                     lessonTitle: `課程標題2`,
                     lessonUrl: `YzTGA_lR2AM`,
-                    question: []
+                    question: [{content: "???"}, {content: '!!!'}]
                 }
             ]
         }
     },
     methods: {
-        addNewLesson(){
-            alert('addNewLesson');
-        },
         updateNewUrl(newUrl, index){
             this.lessons[index].lessonUrl = newUrl;
             console.log(this.lessons[index].lessonUrl);
@@ -96,11 +106,14 @@ export default {
             this.selectLesson = index;
             console.log(this.selectLesson)
         },
+        addNewQuestion(){
+            alert("addNewQA!!");
+        },
         next(){
             this.modalStatus.addstep == 2 ? alert("send data") : this.modalStatus.addstep += 1;
         },
-            previous(){
-                this.modalStatus.addstep == 0 ? this.modalStatus.addstep == 0 :this.modalStatus.addStep -= 1;
+        previous(){
+            this.modalStatus.addstep == 0 ? this.modalStatus.addstep = 0 : this.modalStatus.addstep -= 1;
         },
     }
 }
@@ -114,11 +127,27 @@ export default {
 .steps{
     margin: 10px;
 }
+.step2{
+    display: grid;
+    grid-template-columns: 30% 40% 30%;
+    grid-template-rows: auto auto;
+    grid-auto-flow: column;
+    .addQuestionArea{
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        flex-direction: row;
+        grid-column: 1/4;
+        grid-row: 1/2;
+    }
+    .questionList{
+        grid-column: 1/4;
+        grid-row: 2/3;
+    }
+}
 .topicList{
     flex: 2;
     max-width: 250px;
-    border-style: solid;
-    border-color: red;
     margin: 10px;
     .cardborder {
         margin: 10px;

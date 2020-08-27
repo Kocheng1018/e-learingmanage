@@ -28,18 +28,20 @@ export default {
         loginStage(rules) {
             if (this.signIn.account == 1){
                 localStorage.setItem("teacherId", "5f3a456d57fe44530f2d7def");
-                console.log(localStorage.getItem('teacherId'));
                 this.$router.push('/backstage/classlist');
             }
             this.$refs[rules].validate((req) => {
                 if (req) {
                     signIn({
-                        account: signIn.account,
-                        password: signIn.passwd
+                        account: this.signIn.account,
+                        password: this.signIn.passwd
                     }).then((req) => {
-                        console.log(req.status);
-                        if (req.status === 200){
+                        if (req.data.status.code == 0){
+                            localStorage.setItem("teacherId", req.data.data.id);
+                            localStorage.setItem("accessToken", req.data.data.accessToken);
+                            localStorage.setItem("teacherName", req.data.data.name);
                             this.$Message.success('登入成功');
+                            this.$router.push('/backstage');
                         }else{
                             this.$Message.error('登入失敗 請確認帳號密碼是否正確');
                         }

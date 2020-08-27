@@ -20,11 +20,13 @@ export default {
             .imgframe
                 img(v-if='this.classDetail.imgUrl != "" ' :src="this.classDetail.imgUrl" )
                 img(v-else :src="defaultClass") 
-            .title {{ this.classDetail.topic }} 
+            .title {{ this.classDetail.topic }}
             .detail
+                | 簡介： {{ this.classDetail.intro }}
+                br
                 | 課程數：{{ this.classDetail.sectionNum }} 個
                 br
-                | 開放狀態： {{ this.classDetail.type == 0 ? "公開" : "非公開" }}
+                | 開放狀態： {{ this.classDetail.isPublic == 0 ? "公開" : "非公開" }}
                 br
                 | 是否啟動： {{ this.classDetail.isOpen == 0 ? "關閉中" : "開啟中" }}
 </template>
@@ -33,7 +35,6 @@ export default {
     display: flex;
     justify-content: center;
     width: 200px;
-    // height: 250px;
     .imgframe {
         height: 150px;
         width: 150px;
