@@ -30,7 +30,7 @@
                     h1 問題數：{{ addsectionData.questionData.length }}/5
                     Button(type='primary' icon="md-add" @click="addNewQuestion") 新增問題
                 .questionList
-                    QuestionCard(v-for="(item, index) in addsectionData.questionData" :index="index")
+                    QuestionCard(v-for="(item, index) in addsectionData.questionData" :index="index" @saveQA="saveQA" @deleteQA="deleteQA")
             .step3(v-else-if="this.modalStatus.addstep == 2")
                 h1 step2
             div(slot="footer")
@@ -79,7 +79,7 @@ export default {
                     {
                         content: "範例",
                         answer: ["問題一"],
-                        selsct: ["問題一", "問題二", "問題三", "問題四"],
+                        select: ["問題一", "問題二", "問題三", "問題四"],
                         type: 0,
                         sort: 0
                     }
@@ -107,7 +107,18 @@ export default {
             console.log(this.selectLesson)
         },
         addNewQuestion(){
-            alert("addNewQA!!");
+            let sort = this.addsectionData.questionData.length + 1;
+            if(sort <= 5){
+                this.addsectionData.questionData.push({
+                    content:"",
+                    answer:[],
+                    select:[],
+                    type: 0,
+                    sort: sort
+                })
+            }else{
+                this.$Message.error("題目最多五個！");
+            }
         },
         next(){
             this.modalStatus.addstep == 2 ? alert("send data") : this.modalStatus.addstep += 1;
@@ -115,6 +126,13 @@ export default {
         previous(){
             this.modalStatus.addstep == 0 ? this.modalStatus.addstep = 0 : this.modalStatus.addstep -= 1;
         },
+        saveQA(questionData){
+            alert(questionData);
+        },
+        deleteQA(sort){
+            this.addsectionData.questionData.splice(sort, 1)
+            alert(sort);
+        }
     }
 }
 </script>
@@ -143,6 +161,7 @@ export default {
     .questionList{
         grid-column: 1/4;
         grid-row: 2/3;
+        padding: 10px 0px 10px 0px;
     }
 }
 .topicList{

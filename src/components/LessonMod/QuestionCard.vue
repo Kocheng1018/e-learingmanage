@@ -28,6 +28,10 @@
                         Checkbox(v-for="(item, index) in questionData.select" :key="index" :label="item" border) {{ item }} 
                             Button(size="small" type="error" icon="md-close" shape="circle" @click="removeSelect(index)")
                 .fillIn(v-if="questionData == 2")
+                Divider
+                .footer
+                    Button(type="error" @click="deleteQA") 刪除
+                    Button(type="primary" @click="saveQA") 儲存
 </template>
 <script>
 export default {
@@ -44,12 +48,12 @@ export default {
             questionData:{
                 content: "",
                 answer: [],
-                select: ["ggg","Gfgh","Ghsdfg","gf","j","jyujyuj"],
+                select: ["j","jyujyuj"],
                 type: "1",
                 sort: this.index
             },
-            ansText: "ghj",
-            radioAns: "j",
+            ansText: "",
+            radioAns: "",
             checkboxAns: []
        }
     },
@@ -64,6 +68,12 @@ export default {
         },
         removeSelect(index){
             this.questionData.select.splice(index, 1);
+        },
+        saveQA(){
+            this.$emit("saveQA", this.questionData.type);
+        },
+        deleteQA(){
+            this.$emit("deleteQA", this.questionData.sort);
         }
     }
 }
@@ -73,9 +83,17 @@ export default {
     border-style: solid;
     border-color: red;
     padding: 5px;
+    margin: 10px 0px;
     .insertText{
         display: flex;
         flex-direction: row;
+    }
+    .footer {
+        display: flex;
+        justify-content: flex-end;
+        Button{
+            margin: 0px 5px;
+        }
     }
 }
 </style>
