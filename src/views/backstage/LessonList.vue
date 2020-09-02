@@ -1,38 +1,47 @@
 <template lang="pug">
     #lessonlist
-        Modal(title="新增章節" v-model="modalStatus.addsection" class-name="verCenterModel")
-            .setps
-                Steps(:current="modalStatus.addstep")
-                    step(title="設定新的章節資料")
-                    step(title="新增問題")
-                    step(title="確認資料")
-            .step1(v-if="this.modalStatus.addstep == 0")
-                Form(ref="addsection" :model="addsectionData")
-                    FormItem(prop="title" label="章節標題")
-                        Input(v-model="addsectionData.title")
-                    FormItem(prop="type" label="請選擇內容：")
-                        RadioGroup(v-model="addsectionData.type")
-                            Radio(label="0") 文章
-                            Radio(label="1") 影片
-                    FormItem(v-if="addsectionData.type == 0" prop="url" label="請輸入內容")
-                        Input(v-model="addsectionData.url" type="textarea")
-                    FormItem(v-else prop="url" label="請輸入網址")
-                        Input(v-model="addsectionData.url")
-                    FormItem(prop="index" label="請選擇章節位置")
-                        RadioGroup(v-model="addsectionData.index")
-                            Radio(label="0") 第一個
-                            Radio(label="-1") 最後一個
-                            Radio(label="-2") 其他
-                        Select(v-if="addsectionData.index == -2" v-model="addsectionData.selectNum")
-                            Option(v-for="(item, index) in lessons" :value="index" :key="index") {{ item.lessonTitle }} 之後
-            .step2(v-else-if="this.modalStatus.addstep == 1")
-                .addQuestionArea
-                    h1 問題數：{{ addsectionData.questionData.length }}/5
-                    Button(type='primary' icon="md-add" @click="addNewQuestion") 新增問題
-                .questionList
-                    QuestionCard(v-for="(item, index) in addsectionData.questionData" :index="index" @saveQA="saveQA" @deleteQA="deleteQA")
-            .step3(v-else-if="this.modalStatus.addstep == 2")
-                h1 step2
+        Modal(title="新增章節" v-model="modalStatus.addsection" class-name="verCenterModel" width="70%")
+            .stepFrank
+                .setps
+                    Steps(:current="modalStatus.addstep")
+                        step(title="設定新的章節資料")
+                        step(title="新增問題")
+                        step(title="確認資料")
+                .step1(v-if="this.modalStatus.addstep == 0")
+                    Form(ref="addsection" :model="addsectionData")
+                        FormItem(prop="title" label="章節標題")
+                            Input(v-model="addsectionData.title")
+                        FormItem(prop="type" label="請選擇內容：")
+                            RadioGroup(v-model="addsectionData.type")
+                                Radio(label="0") 文章
+                                Radio(label="1") 影片
+                        FormItem(v-if="addsectionData.type == 0" prop="url" label="請輸入內容")
+                            Input(v-model="addsectionData.url" type="textarea")
+                        FormItem(v-else prop="url" label="請輸入網址")
+                            Input(v-model="addsectionData.url")
+                        FormItem(prop="index" label="請選擇章節位置")
+                            RadioGroup(v-model="addsectionData.index")
+                                Radio(label="0") 第一個
+                                Radio(label="-1") 最後一個
+                                Radio(label="-2") 其他
+                            Select(v-if="addsectionData.index == -2" v-model="addsectionData.selectNum")
+                                Option(v-for="(item, index) in lessons" :value="index" :key="index") {{ item.lessonTitle }} 之後
+                .step2(v-else-if="this.modalStatus.addstep == 1")
+                    .addQuestionArea
+                        h1 問題數：{{ addsectionData.questionData.length }}/5
+                        Button(type='primary' icon="md-add" @click="addNewQuestion") 新增問題
+                    .questionList
+                        QuestionCard(v-for="(item, index) in addsectionData.questionData" :key="index" :QAinside="item" @save="saveQA" @delete="deleteQA")
+                .step3(v-else-if="this.modalStatus.addstep == 2")
+                    .addSectionList
+                        h1 標題: {{ addsectionData.title }}
+                        h1(v-if="addsectionData.type === '0'") 網址: {{ addsectionData.url }}
+                        h1(v-else) 文章: {{ addsectionData.url }}
+                        h1(v-if="addsectionData.index === '0'") 位置: 第一個
+                        h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
+                        h1(v-else) 位置: 在 {{ lessons[addsectionData.selectNum].lessonTitle }} 之後
+                    .addQuestionList
+                        QuestionListCard(v-for="(item, index) in addsectionData.questionData" :key="index" :question="item")
             div(slot="footer")
                 Button(type="default" @click="previous") 上一步
                 |
@@ -56,31 +65,54 @@
 <script>
 import LessonVideo from '@/components/LessonMod/LessonVideo.vue';
 import QuestionCard from '@/components/LessonMod/QuestionCard.vue';
+import QuestionListCard from "@/components/LessonMod/QuestionListCard";
 
 export default {
     name: 'LessonList',
     components:{
         LessonVideo,
-        QuestionCard
+        QuestionCard,
+        QuestionListCard
     },
     data(){
         return {
             modalStatus: {
                 addsection: true,
-                addstep: 1
+                addstep: 2
             },
             addsectionData: {
-                title: "",
-                url: "",
+                title: "title",
+                url: "url",
                 type: "0",
-                index: "0",
+                index: "-2",
                 selectNum: "0",
                 questionData: [
                     {
                         content: "範例",
                         answer: ["問題一"],
                         select: ["問題一", "問題二", "問題三", "問題四"],
-                        type: 0,
+                        type: "0",
+                        sort: 0
+                    },
+                    {
+                        content: "範例",
+                        answer: ["問題一"],
+                        select: ["問題一", "問題二", "問題三", "問題四"],
+                        type: "0",
+                        sort: 0
+                    },
+                    {
+                        content: "範例",
+                        answer: ["問題一"],
+                        select: ["問題一", "問題二", "問題三", "問題四"],
+                        type: "0",
+                        sort: 0
+                    },
+                    {
+                        content: "範例",
+                        answer: ["問題一"],
+                        select: ["問題一", "問題二", "問題三", "問題四"],
+                        type: "0",
                         sort: 0
                     }
                 ]
@@ -98,26 +130,36 @@ export default {
         }
     },
     methods: {
+        messageControl(type, msg){
+            switch (type){
+                case 0:
+                    this.$Message.error(msg);
+                    break;
+                case 1:
+                    this.$Message.success(msg);
+                    break;
+            } 
+        },
         updateNewUrl(newUrl, index){
             this.lessons[index].lessonUrl = newUrl;
-            console.log(this.lessons[index].lessonUrl);
         },
         selectTopic(index){
             this.selectLesson = index;
-            console.log(this.selectLesson)
         },
         addNewQuestion(){
-            let sort = this.addsectionData.questionData.length + 1;
-            if(sort <= 5){
+            let sort = this.addsectionData.questionData.length;
+            if(sort < 5){
+                let timeStamp = new Date().getTime();
+                console.log(timeStamp);
                 this.addsectionData.questionData.push({
-                    content:"",
-                    answer:[],
-                    select:[],
-                    type: 0,
-                    sort: sort
+                    content: "",
+                    answer: [],
+                    select: [],
+                    type: "0",
+                    sort: timeStamp
                 })
             }else{
-                this.$Message.error("題目最多五個！");
+                this.messageControl(0, "問題最多五個");
             }
         },
         next(){
@@ -127,11 +169,15 @@ export default {
             this.modalStatus.addstep == 0 ? this.modalStatus.addstep = 0 : this.modalStatus.addstep -= 1;
         },
         saveQA(questionData){
-            alert(questionData);
+            const rule = (el) => el.sort === questionData.sort;
+            this.addsectionData.questionData.splice(this.addsectionData.questionData.findIndex(rule), 1, questionData);
+            this.messageControl(1, "儲存成功");
         },
         deleteQA(sort){
-            this.addsectionData.questionData.splice(sort, 1)
-            alert(sort);
+            const rule = (el) => el.sort === sort;
+            // let index = this.addsectionData.questionData.findIndex(rule);
+            this.addsectionData.questionData.splice(this.addsectionData.questionData.findIndex(rule), 1);
+            this.messageControl(1, "刪除成功");
         }
     }
 }
@@ -142,26 +188,39 @@ export default {
     display: flex;
     justify-content: center;
 }
-.steps{
-    margin: 10px;
-}
-.step2{
-    display: grid;
-    grid-template-columns: 30% 40% 30%;
-    grid-template-rows: auto auto;
-    grid-auto-flow: column;
-    .addQuestionArea{
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        flex-direction: row;
-        grid-column: 1/4;
-        grid-row: 1/2;
+.stepFrank{
+    margin: 20px;
+    .step2{
+        display: grid;
+        grid-template-columns: 30% 40% 30%;
+        grid-template-rows: auto auto;
+        grid-auto-flow: column;
+        .addQuestionArea{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-direction: row;
+            grid-column: 1/4;
+            grid-row: 1/2;
+        }
+        .questionList{
+            grid-column: 1/4;
+            grid-row: 2/3;
+            padding: 10px 0px 10px 0px;
+        }
     }
-    .questionList{
-        grid-column: 1/4;
-        grid-row: 2/3;
-        padding: 10px 0px 10px 0px;
+    .step3 {
+        display: flex;
+        flex-direction: row;
+        .addSectionList{
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            flex: 1;
+        }
+        .addQuestionList{
+            flex: 2;
+        }
     }
 }
 .topicList{

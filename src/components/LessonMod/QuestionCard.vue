@@ -1,33 +1,33 @@
 <template lang="pug">
     #QA 
         .qa
-            Form(ref="qacard" :model="questionData")
+            Form(ref="qacard" :model="QAinside")
                 FormItem(prop="type" label="問題類型")
-                    RadioGroup(v-model="questionData.type")
+                    RadioGroup(v-model="QAinside.type")
                         Radio(label="0") 單選
                         Radio(label="1") 多選
                         Radio(label="2") 填空
                 FormItem(prop="content" label="請輸入問題")
-                    Input(v-model="questionData.content" type="textarea")
-                .oneAns(v-if="questionData.type == 0")
+                    Input(v-model="QAinside.content" type="textarea")
+                .oneAns(v-if="QAinside.type == '0'")
                     FormItem(prop="select" label="輸入問題選項：")
                         .insertText
                             Input(v-model="ansText")
                             Button(type="default" @click="addChoose") 新增
                     FormItem(prop="radio" label="選項（已選擇的是正確答案！）")
                     RadioGroup(v-model="radioAns")
-                        Radio(v-for="(item, index) in questionData.select" :key="index" :label="item" border) {{ item }}
+                        Radio.select(v-for="(item, index) in QAinside.select" :key="index" :label="item" border) {{ item }}
                             Button(size="small" type="error" icon="md-close" shape="circle" @click="removeSelect(index)")
-                .multAns(v-if="questionData.type == 1")
+                .multAns(v-if="QAinside.type == '1'")
                     FormItem(prop="select" label="輸入問題選項：")
                         .insertText
                             Input(v-model="ansText")
                             Button(type="default" @click="addChoose") 新增
                     FormItem(prop="checkbox" label="選項（已選擇的是正確答案！）")
-                    CheckboxGroup(v-model="checkboxAns")
-                        Checkbox(v-for="(item, index) in questionData.select" :key="index" :label="item" border) {{ item }} 
+                    CheckboxGroup(v-model="QAinside.answer")
+                        Checkbox.select(v-for="(item, index) in QAinside.select" :key="index" :label="item" border) {{ item }} 
                             Button(size="small" type="error" icon="md-close" shape="circle" @click="removeSelect(index)")
-                .fillIn(v-if="questionData == 2")
+                .fillIn(v-if="QAinside == 2")
                 Divider
                 .footer
                     Button(type="error" @click="deleteQA") 刪除
@@ -37,24 +37,23 @@
 export default {
     name: `QuestionCard`,
     props: {
-        index: {
-            type: Number,
-            default: null
+        QAinside: {
+            type: Object,
+            default: () => {
+                return{
+                    content: "",
+                    answer: [],
+                    select: [],
+                    type: "1",
+                    sort: 0
+                }
+            }
         }
     },
     data(){
         return {
-            isEdit: false,
-            questionData:{
-                content: "",
-                answer: [],
-                select: ["j","jyujyuj"],
-                type: "1",
-                sort: this.index
-            },
             ansText: "",
             radioAns: "",
-            checkboxAns: []
        }
     },
     methods:{
@@ -62,18 +61,23 @@ export default {
             if(this.ansText == ""){
                 this.$Message.error("請輸入選項文字");
             }else{
-                this.questionData.select.push(this.ansText);
+                this.QAinside.select.push(this.ansText);
                 this.ansText = "";
             }
         },
         removeSelect(index){
-            this.questionData.select.splice(index, 1);
+            this.QAinside.select.splice(index, 1);
         },
         saveQA(){
-            this.$emit("saveQA", this.questionData.type);
+            if(this.QAinside.type === "0") {
+                this.QAinside.answer = [];
+                this.QAinside.answer.push(this.radioAns);
+            }
+            this.$emit("save", this.QAinside);
+            // console.log(this.QAinside);
         },
         deleteQA(){
-            this.$emit("deleteQA", this.questionData.sort);
+            this.$emit("delete", this.QAinside.sort);
         }
     }
 }
@@ -81,9 +85,16 @@ export default {
 <style lang="scss" scoped>
 #QA{
     border-style: solid;
-    border-color: red;
-    padding: 5px;
+    border-color: rgb(200, 220, 220);
+    border-radius: 2rem;
+    padding: 25px 20px;
     margin: 10px 0px;
+    background-color: azure;
+    .select {
+        background-color: white;
+        margin-bottom: 10px;
+        min-height: 30px;
+    }
     .insertText{
         display: flex;
         flex-direction: row;
