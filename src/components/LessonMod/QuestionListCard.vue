@@ -1,13 +1,13 @@
 <template lang="pug">
 #QuestionListCard
-  h1(v-if="question.type === '0'") 問題類型: 單選
-  h1(v-else-if="question.type === '1'") 問題類型: 多選
-  h1(v-else) 問題類型: 填空
-  h1 問題內容 {{ question.content }}
-  h2 選項:  
+  h2(v-if="question.type === '0'") 問題類型: 單選
+  h2(v-else-if="question.type === '1'") 問題類型: 多選
+  h2(v-else) 問題類型: 填空
+  h2 問題內容: {{ question.content }}
+  h3 選項:  
   .selects
     .select(v-for="(item, index) in question.select") {{ index + 1 }}. {{ item }}
-  h2 答案:
+  h3 答案:
   .answers 
     .answer(v-for="(item, index) in question.answer") {{ item }} 
 </template>
@@ -45,16 +45,17 @@ export default {
     flex-direction: row;
     .select{
       font-size: 16px;
-      margin: 2px;
-      padding: 3px;
+      margin: 2px 5px;
+      padding: 3px 10px;
       border-style: solid;
       border-radius: 10px;
       border-color: orange;
+      background-color: white;
     }
   }
   .answers{
     .answer{
-      font-size: 16px;
+      font-size: 20px;
       margin: 2px;
       padding: 3px;
       color: red;

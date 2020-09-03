@@ -13,20 +13,20 @@
                     FormItem(prop="select" label="輸入問題選項：")
                         .insertText
                             Input(v-model="ansText")
-                            Button(type="default" @click="addChoose") 新增
+                            Button.addText(type="default" @click="addChoose") 新增
                     FormItem(prop="radio" label="選項（已選擇的是正確答案！）")
                     RadioGroup(v-model="radioAns")
                         Radio.select(v-for="(item, index) in QAinside.select" :key="index" :label="item" border) {{ item }}
-                            Button(size="small" type="error" icon="md-close" shape="circle" @click="removeSelect(index)")
+                            Button.delStyle(size="small" type="text" icon="md-close" shape="circle" alt="刪除" @click="removeSelect(index)")
                 .multAns(v-if="QAinside.type == '1'")
                     FormItem(prop="select" label="輸入問題選項：")
                         .insertText
                             Input(v-model="ansText")
-                            Button(type="default" @click="addChoose") 新增
+                            Button.addText(type="default" @click="addChoose") 新增
                     FormItem(prop="checkbox" label="選項（已選擇的是正確答案！）")
                     CheckboxGroup(v-model="QAinside.answer")
                         Checkbox.select(v-for="(item, index) in QAinside.select" :key="index" :label="item" border) {{ item }} 
-                            Button(size="small" type="error" icon="md-close" shape="circle" @click="removeSelect(index)")
+                            Button(size="small" type="text" icon="md-close" shape="circle" @click="removeSelect(index)")
                 .fillIn(v-if="QAinside == 2")
                 Divider
                 .footer
@@ -94,6 +94,10 @@ export default {
         background-color: white;
         margin-bottom: 10px;
         min-height: 30px;
+        padding-right: 0px;
+        .delStyle{
+            color: red;
+        }
     }
     .insertText{
         display: flex;
@@ -105,6 +109,9 @@ export default {
         Button{
             margin: 0px 5px;
         }
+    }
+    .addText{
+        margin-left: 5px;
     }
 }
 </style>

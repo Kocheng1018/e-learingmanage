@@ -37,3 +37,19 @@ export const getTeacherClass = (id) => req("get", `/class/${id}/teacher`);
  * @param { string } teacherId 教師Id  
  */
 export const addClass = param => req("post", `/class`, param);
+
+/** 新增section
+ * @param { object } section 
+ *    @param { String } title
+ *    @param { String } url
+ *    @param { Number } type
+ * @param { ObjectArray } question
+ *    @param { String } content
+ *    @param { Array } answer
+ *    @param { Array } select
+ *    @param { Number } type
+ *    @param { Number } sort
+ * @param { number } isSort
+ * @param { String } classId
+ */
+export const addSection = param => req("post", `/section`, param);
