@@ -74,7 +74,6 @@ export default {
                 this.QAinside.answer.push(this.radioAns);
             }
             this.$emit("save", this.QAinside);
-            // console.log(this.QAinside);
         },
         deleteQA(){
             this.$emit("delete", this.QAinside.sort);

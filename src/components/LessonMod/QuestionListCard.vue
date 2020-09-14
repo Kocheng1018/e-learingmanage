@@ -35,8 +35,9 @@ export default {
   border-style: solid;
   border-color: rgb(200, 220, 220);
   border-radius: 2rem;
-  padding: 25px 20px;
-  margin: 10px 0px;
+  padding: 25px 30px;
+  margin: 10px;
+  min-width: 200px;
   background-color: azure;
   display: flex;
   flex-direction: column;

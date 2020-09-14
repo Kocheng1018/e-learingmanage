@@ -41,7 +41,6 @@ export default {
                         this.newUrl = this.newUrl.slice(start + 2, last);
                     }
                 }
-                
                 this.$emit('newUrl', this.newUrl);
                 this.url = this.newUrl;
                 this.newUrl = '';
@@ -59,7 +58,7 @@ export default {
         Input(placeholder="更新Youtube網址" v-model='newUrl')
         Button(type=`success` @click='updateUrl') 測試
     iframe( :src="setUrl(this.url)" frameborder="0" allowfullscreen)
-    Button(type='error' @click='alert') 刪除
+    //- Button(type='error' @click='alert') 刪除
 </template>
 <style lang="scss" scoped>
 .LessonVideo{
@@ -67,6 +66,7 @@ export default {
     align-items: center;
     flex-direction: column;
     justify-items: center;
+    margin-bottom: 10px;
     iframe {
         width: 60%;
         min-height: 400px;
