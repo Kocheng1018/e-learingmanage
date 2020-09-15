@@ -1,7 +1,7 @@
 <script>
 import defaultClass from '@/assets/defaultClass.png';
 import ClassCard from '@/components/ClassCard.vue';
-import { addClass, getTeacherClass } from '@/apis/course.js';
+import { addClass, getTeacherClass, delClass } from '@/apis/course.js';
 
 export default {
     name:`classList`,
@@ -72,7 +72,6 @@ export default {
                     this.addClass = false;
                 }
             })
-            
         },
         upload(event) {
             var input = event.target;
@@ -87,6 +86,14 @@ export default {
         cancel(){
             this.$refs.addClassData.resetFields();
             this.addClass = false;
+        },
+        delClass(classId){
+            delClass(classId)
+                .then(req => {
+                    if (req.data.status.code === 0){
+                        this.$Message.success("刪除成功");
+                    }
+                })
         }
     }
 }
@@ -113,7 +120,7 @@ export default {
                     |
                     Button(type='primary' @click='addNewClass') 建立
             .card(v-for="(item, index) in classList" :key=`item.classCode`)
-                ClassCard(:classDetail='item' @click.native='LessonPage(item.classId)')
+                ClassCard(:classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass")
                
 </template>
 <style lang='scss' scoped>

@@ -29,6 +29,9 @@ export const signIn = params => req('post', '/management/login', params);
  */
 export const getTeacherClass = (id) => req("get", `/class/${id}/teacher`);
 
+// 取得section資料
+export const getSection = classId => req("get", `/section/${classId}`);
+
 /** 新增class
  * @param { string } topic 主題名稱
  * @param { string } imgUrl base64
@@ -53,3 +56,9 @@ export const addClass = param => req("post", `/class`, param);
  * @param { String } classId
  */
 export const addSection = param => req("post", `/section`, param);
+
+// 刪除class 
+export const delClass = classId => req("delete", `/class/${classId}`);
+
+// 刪除section
+export const delSection = sectionId => req("delete", `/section/${sectionId}`);

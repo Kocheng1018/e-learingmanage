@@ -1,3 +1,22 @@
+<template lang="pug">
+    Card.card
+            .delBtn
+                Icon(type="ios-close" size="30" @click="delClass")
+            .imgframe
+                img(v-if='this.classDetail.imgUrl != "" ' :src="this.classDetail.imgUrl" )
+                img(v-else :src="defaultClass") 
+            .title {{ this.classDetail.topic }}
+            .detail
+                | 簡介： {{ this.classDetail.intro }}
+                br
+                | 課程數：{{ this.classDetail.sectionNum }} 個
+                br
+                | 開放狀態： {{ this.classDetail.isPublic == 0 ? "公開" : "非公開" }}
+                br
+                | 是否啟動： {{ this.classDetail.isOpen == 0 ? "關閉中" : "開啟中" }}
+            .enter
+                Button(type="info" @click="enterClass") 進入課程
+</template>
 <script>
 import defaultClass from '@/assets/defaultClass.png';
 export default {
@@ -12,32 +31,30 @@ export default {
             type: Object,
             default: null
         }
+    },
+    methods: {
+        enterClass(){
+            this.$emit("enterClass");
+        },
+        delClass(){
+            this.$emit("deleClass", this.classDetail.classId);
+            console.log("??")
+        }
     }
 }
 </script>
-<template lang="pug">
-    Card.card
-            .imgframe
-                img(v-if='this.classDetail.imgUrl != "" ' :src="this.classDetail.imgUrl" )
-                img(v-else :src="defaultClass") 
-            .title {{ this.classDetail.topic }}
-            .detail
-                | 簡介： {{ this.classDetail.intro }}
-                br
-                | 課程數：{{ this.classDetail.sectionNum }} 個
-                br
-                | 開放狀態： {{ this.classDetail.isPublic == 0 ? "公開" : "非公開" }}
-                br
-                | 是否啟動： {{ this.classDetail.isOpen == 0 ? "關閉中" : "開啟中" }}
-</template>
 <style lang="scss" scoped>
 .card{
     display: flex;
     justify-content: center;
-    width: 200px;
+    width: 225px;
+    .delBtn{
+        text-align: right;       
+    }
     .imgframe {
-        height: 150px;
+        min-height: 150px;
         width: 150px;
+        margin: auto;
         img{
             float: right;
             max-width: 150px;
@@ -50,6 +67,9 @@ export default {
     }
     .detail{
         text-align: left;
+    }
+    .enter{
+        margin-top: 10px;
     }
 }
 </style>

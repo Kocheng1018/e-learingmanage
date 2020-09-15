@@ -39,9 +39,9 @@
 					h1(v-else) 文章: {{ addsectionData.url }}
 					h1(v-if="addsectionData.index === '0'") 位置: 第一個
 					h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
-					h1(v-else) 位置: 在 {{ lessons[addsectionData.selectNum].lessonTitle }} 
-			Divider
-				.addQuestionList
+					h1(v-else) 位置: 在 {{ lessons[addsectionData.selectNum].title }} 
+				Divider
+					.addQuestionList
 				QuestionListCard(v-for="(item, index) in addsectionData.questionData" :key="index" :question="item")
 		div(slot="footer")
 			Button(type="default" @click="previous") 上一步
@@ -50,14 +50,14 @@
 	.topicList 
 		Card(@click.native="modalStatus.addsection = true").addLesson.cardborder 新增主題
 		Card.cardborder(v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
-			div {{ lesson.lessonTitle }}
+			div {{ lesson.title }}
 	.topicScreen
 		div(v-if='lessons.length != 0')
 			.videoScreen 
-				LessonVideo(:url='this.lessons[this.selectLesson].lessonUrl' @newUrl='updateNewUrl($event, this.selectLesson)')
+				LessonVideo(:url='this.lessons[this.selectLesson].url' @newUrl='updateNewUrl($event, this.selectLesson)')
 			.questionScreen
 				.btnList
-					Button.delLessonBtn(type="error") 刪除整個課程
+					Button.delLessonBtn(type="error" @click="delSection") 刪除整個課程
 					Button.addLessonBtn(type="primary") 編輯問題
 				.lessonQA
 					QuestionListCard.item(v-for="(item, index) in lessons[selectLesson].question" :key="index" :question="item")
@@ -69,7 +69,7 @@
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
 import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
 import QuestionListCard from "@/components/LessonMod/QuestionListCard";
-import { addSection } from "@/apis/course.js";
+import { addSection, delSection, getSection } from "@/apis/course.js";
 
 export default {
   name: "LessonList",
@@ -94,17 +94,32 @@ export default {
       },
       firstOpen: "1",
       selectLesson: 0,
-      lessons: [
-        {
-          lessonID: `124553`,
-          lessonTitle: `課程標題2`,
-          lessonUrl: `YzTGA_lR2AM`,
-          question: [{content: "111"}, {content: "kmhhjkl; \n ftgrrehfdsjfgttrsgefdd"}, {content: "fgag"}, {content: "ytfrds"} ]
-        }
-      ]
+      lessons: []
     };
   },
+  mounted(){
+    this.getSection();
+  },
   methods: {
+    getSection(){
+      let classId = this.$route.params.classID;
+      getSection(classId)
+        .then((req) => {
+          if (req.data.status.code === 0){
+            this.lessons = req.data.data;
+          }
+        })
+    },
+    delSection(){
+			delSection( this.lessons[this.selectLesson].sectionId )
+				.then((req) => {
+					if (req.data.status.code === 0) {
+						this.messageControl(1, "刪除成功");
+						this.selectLesson = 0;
+						this.getSection();
+					}
+				})
+    },
     addSection() {
       let classId = this.$route.params.classID;
       let sectionIndex = () => {
@@ -128,12 +143,10 @@ export default {
         el.type = parseInt(el.type);
       });
       addSection(addSectionParam)
-        .then(res => {
-          console.log(res);
+        .then(() => {
           this.messageControl(1, "儲存成功");
         })
-        .catch(err => {
-          console.log(err);
+        .catch(() => {
           this.messageControl(0, "儲存失敗");
         });
     },
@@ -182,7 +195,6 @@ export default {
           break;
 
         case 2:
-          alert("send data");
           this.addSection();
           break;
       }

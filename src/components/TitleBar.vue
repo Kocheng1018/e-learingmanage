@@ -43,6 +43,7 @@ export default {
     position: relative;
     vertical-align: left;
     .img {
+        background-color: white;
         float: left;
         width: 20%;
         img{
