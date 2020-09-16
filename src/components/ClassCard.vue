@@ -1,7 +1,8 @@
 <template lang="pug">
     Card.card
             .delBtn
-                Icon(type="ios-close" size="30" @click="delClass")
+                Poptip.poptext(confirm placement="top-start" title="提醒" content="確定要刪除此課程嗎？" ok-text="確定" cancel-text="取消" @on-ok="delClass" @on-cancel="")
+                    Icon(type="ios-close" size="30")
             .imgframe
                 img(v-if='this.classDetail.imgUrl != "" ' :src="this.classDetail.imgUrl" )
                 img(v-else :src="defaultClass") 
@@ -49,7 +50,10 @@ export default {
     justify-content: center;
     width: 225px;
     .delBtn{
-        text-align: right;       
+        text-align: right;
+        .poptext{
+            text-align: justify;
+        }
     }
     .imgframe {
         min-height: 150px;

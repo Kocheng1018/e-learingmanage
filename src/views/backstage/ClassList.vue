@@ -1,3 +1,28 @@
+<template lang="pug">
+     .allclass
+        .classRange
+            Card(@click.native='addClass = true').addcard 新增主題
+            Modal(v-model='addClass' title='新增主題')
+                Form(ref='addClassData' :model='addClassData' :rules="addClassRule")
+                    FormItem(prop='topic' label='請輸入主題名稱')
+                        Input(v-model='addClassData.topic')
+                    FormItem(prop='intro' label='請輸入主題簡介')
+                        Input(v-model='addClassData.intro')
+                    FormItem(prop='type' label="課程是否公開")
+                        br
+                        RadioGroup(v-model='addClassData.type')
+                            Radio(label='0') 公開
+                            Radio(label='1') 非公開
+                input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='upload')
+                img(:src="addClassData.imgUrl" width='300')
+                div(slot='footer')
+                    Button(type='default' @click='cancel') 取消
+                    |
+                    Button(type='primary' @click='addNewClass') 建立
+            .card(v-for="(item, index) in classList" :key=`item.classCode`)
+                ClassCard(:classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass")
+
+</template>
 <script>
 import defaultClass from '@/assets/defaultClass.png';
 import ClassCard from '@/components/ClassCard.vue';
@@ -34,7 +59,7 @@ export default {
                 imgUrl: '',
                 intro: '',
                 type: 0,
-                teacherId: '' 
+                teacherId: ''
             },
         };
     },
@@ -91,38 +116,14 @@ export default {
             delClass(classId)
                 .then(req => {
                     if (req.data.status.code === 0){
-                        this.$Message.success("刪除成功");
+						this.$Message.success("刪除成功");
+						this.getClassList();
                     }
                 })
         }
     }
 }
 </script>
-<template lang="pug">
-     .allclass
-        .classRange
-            Card(@click.native='addClass = true').addcard 新增主題
-            Modal(v-model='addClass' title='新增主題')
-                Form(ref='addClassData' :model='addClassData' :rules="addClassRule")
-                    FormItem(prop='topic' label='請輸入主題名稱')
-                        Input(v-model='addClassData.topic')
-                    FormItem(prop='intro' label='請輸入主題簡介')
-                        Input(v-model='addClassData.intro')
-                    FormItem(prop='type' label="課程是否公開")
-                        br
-                        RadioGroup(v-model='addClassData.type')
-                            Radio(label='0') 公開
-                            Radio(label='1') 非公開
-                input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='upload')
-                img(:src="addClassData.imgUrl" width='300')
-                div(slot='footer')
-                    Button(type='default' @click='cancel') 取消
-                    |
-                    Button(type='primary' @click='addNewClass') 建立
-            .card(v-for="(item, index) in classList" :key=`item.classCode`)
-                ClassCard(:classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass")
-               
-</template>
 <style lang='scss' scoped>
 body {
     height: 100%;

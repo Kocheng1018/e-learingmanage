@@ -6,10 +6,7 @@ export default {
     },
     props: {
         url: {
-            type: String,
-            default: () => {
-                console.log('url not found');
-            }
+            type: String
         }
     },
     data(){

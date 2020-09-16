@@ -9,7 +9,7 @@
                         Radio(label="2") 填空
                 FormItem(prop="content" label="請輸入問題")
                     Input(v-model="QAinside.content" type="textarea")
-                .oneAns(v-if="QAinside.type == '0'")
+                .oneAns(v-if="QAinside.type == `0` ")
                     FormItem(prop="select" label="輸入問題選項：")
                         .insertText
                             Input(v-model="ansText")
@@ -56,6 +56,9 @@ export default {
             radioAns: "",
        }
     },
+    mounted(){
+        this.QAinside.type = this.QAinside.type.toString();
+    },
     methods:{
         addChoose(){
             if(this.ansText == ""){
@@ -73,6 +76,7 @@ export default {
                 this.QAinside.answer = [];
                 this.QAinside.answer.push(this.radioAns);
             }
+            this.QAinside.type = parseInt(this.QAinside.type);
             this.$emit("save", this.QAinside);
         },
         deleteQA(){

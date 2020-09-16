@@ -57,6 +57,18 @@ export const addClass = param => req("post", `/class`, param);
  */
 export const addSection = param => req("post", `/section`, param);
 
+/** 更新question
+ * @param { String } sectionId
+ * @param { String } classId
+ * @param { ObjectArray } question
+ *    @param { String } content
+ *    @param { Array } answer
+ *    @param { Array } select
+ *    @param { Number } type
+ *    @param { Number } sort
+ */
+export const updQuestion = param => req("put", `/question`, param);
+
 // 刪除class 
 export const delClass = classId => req("delete", `/class/${classId}`);
 
