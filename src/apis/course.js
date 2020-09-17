@@ -1,3 +1,4 @@
+// import { construct } from 'core-js/fn/reflect';
 import req from './https.js';
 
 /** 註冊
@@ -29,6 +30,13 @@ export const signIn = params => req('post', '/management/login', params);
  */
 export const getTeacherClass = (id) => req("get", `/class/${id}/teacher`);
 
+/** 更改class資料
+ * @param { String } topic
+ * @param { String } imgUrl
+ * @param { String } intro 
+ */
+export const updClass = (classId, param) => req("put", `/class/info/${classId}`, param);
+
 // 取得section資料
 export const getSection = classId => req("get", `/section/${classId}`);
 
@@ -56,6 +64,13 @@ export const addClass = param => req("post", `/class`, param);
  * @param { String } classId
  */
 export const addSection = param => req("post", `/section`, param);
+
+/** 更新section資訊
+ * @param { String } title
+ * @param { String } url
+ * @param { Number } type
+ */
+export const updSection = (sectionId, param) => req("put", `/section/${sectionId}`, param)
 
 /** 更新question
  * @param { String } sectionId

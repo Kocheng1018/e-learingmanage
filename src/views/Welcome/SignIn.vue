@@ -58,7 +58,7 @@ export default {
     #SingIn.signin
         Card.signinCard
             h1 登入
-            Form(ref='signIn' :model='signIn' :rules='ruleInline')
+            Form(ref='signIn' :model='signIn' :rules='ruleInline' @keyup.enter.native="loginStage('signIn')")
                 FormItem(label='Account' prop='account')
                     Input(type='text' placeholder='請輸入帳號' v-model='signIn.account')
                 FormItem(label='Password' prop='passwd')

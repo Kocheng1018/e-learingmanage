@@ -22,6 +22,8 @@ export default {
 <style lang="scss" scoped>
 .topbar{
     position: fixed;
+    width: 100%;
+    background-color: white;
     top: 0px;
     right: 0px;
     left: 0px;

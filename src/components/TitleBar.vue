@@ -20,7 +20,6 @@ export default {
                     this.topath();
                     break;
                 default:
-                    console.log(`error name is ${name}`);
             }
         },
         topath(path){

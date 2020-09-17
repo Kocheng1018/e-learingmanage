@@ -63,8 +63,8 @@
 			div {{ lesson.title }}
 	.topicScreen
 		div(v-if='lessons.length != 0')
-			.videoScreen 
-				LessonVideo(:url='this.lessons[this.selectLesson].url' @newUrl='updateNewUrl($event, this.selectLesson)')
+			.videoScreen
+				LessonVideo(:sectionData="lessons[this.selectLesson]" @updSection='updSection')
 			.questionScreen
 				.btnList
 					Poptip(confirm title="提醒" content="確定要刪除這個章節嗎？" ok-text="確定" cancel-text="取消" @on-ok="delSection" @on-cancel="")
@@ -80,7 +80,7 @@
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
 import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
 import QuestionListCard from "@/components/LessonMod/QuestionListCard";
-import { addSection, delSection, getSection, updQuestion } from "@/apis/course.js";
+import { addSection, delSection, getSection, updQuestion, updSection } from "@/apis/course.js";
 
 export default {
   name: "LessonList",
@@ -125,7 +125,6 @@ export default {
 				classId: this.$route.params.classID,
 				question: this.lessons[this.selectLesson].question
 			}
-			console.log(updQA);
 			updQuestion(updQA)
 				.then(req => {
 					if (req.data.status.code === 0){
@@ -217,8 +216,21 @@ export default {
           break;
       }
     },
-    updateNewUrl(newUrl, index) {
-      this.lessons[index].lessonUrl = newUrl;
+    updSection(sectionData) {
+      updSection(
+        sectionData.sectionId, {
+        title: sectionData.title,
+        url: sectionData.url,
+        type: sectionData.type
+      })
+        .then(req => {
+          if (req.data.status.code === 0){
+            this.messageControl(1, "儲存成功");
+          }
+        })
+        .catch(err => {
+          this.messageControl(0, `err: ${err}`);
+        })
     },
     selectTopic(index) {
       this.selectLesson = index;
