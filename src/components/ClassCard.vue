@@ -14,7 +14,7 @@ Card.card
 		br
 		| 教師名稱： {{ this.classDetail.teacherName }}
 		br
-		| 開放狀態： {{ this.classDetail.isPublic == 0 ? "開放" : "鎖定" }}
+		| 開放狀態： {{ this.classDetail.isPublic == 0 ? "私密" : "開啟" }}
 		br
 		| 是否啟動： {{ this.classDetail.isOpen == 0 ? "關閉中" : "開啟中" }}
 	.enter
