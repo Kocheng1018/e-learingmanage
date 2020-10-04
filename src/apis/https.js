@@ -17,17 +17,19 @@ const errorHandel = (status, msg) => {
             break;
     }
 }
+
 let instance = axios.create({
     baseURL: "/api",
 	headers: { 
         "Access-Control-Allow-Origin": "*",
-        "Authorization": localStorage.getItem("accessToken"),
+        "Authorization": "",
 		"Access-Control-Allow-Headers": "*",
 		"Access-Control-Allow-Credentials": 'true'
 	}
 })
 
 instance.interceptors.request.use((config) => {
+    config.headers.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
     return config;
 }, (error) => {
     return Promise.reject(error);

@@ -1,33 +1,32 @@
 <script>
-import logo from '@/assets/logo.png';
+import logo from "@/assets/logo.png";
+import mainIcon from "@/assets/elearningIcon.png";
 export default {
-    name: 'Welcome',
-    components: {
-
-    },
-    data() {
-        return{
-            logo
-        }
-    }
-}
+  name: "Welcome",
+  components: {},
+  data() {
+    return {
+			logo,
+			mainIcon
+    };
+  }
+};
 </script>
 
 <template lang="pug">
-    #Welcome.Welcome
-        .aa
-            //- img(:src='logo')
-            h1 管理後台
-            router-view
+#Welcome.Welcome
+	h1 學海無涯-管理後台
+	img.icon(:src="mainIcon")
+	router-view
 </template>
 
 <style lang='scss' scoped>
-    .Welcome {
-        display: flex;
-        align-content: center;
-        justify-content: center;
-        flex-direction: column;
-        min-height: 550px;
-    }
-    
+.Welcome {
+	.icon{
+		max-height: 250px;
+		margin: 0px auto;
+	}
+  height: 100%;
+	background-color: rgba(252, 237, 220, 0.979);
+}
 </style>

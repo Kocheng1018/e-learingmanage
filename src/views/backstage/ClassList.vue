@@ -23,8 +23,8 @@
 				FormItem(prop='type' label="課程是否公開")
 					br
 					RadioGroup(v-model='addClassData.type')
-						Radio(label='0') 公開
-						Radio(label='1') 非公開
+						Radio(label='1') 公開
+						Radio(label='0') 非公開
 			input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='upload')
 			img(:src="addClassData.imgUrl" width='300')
 			div(slot='footer')
@@ -79,9 +79,19 @@ export default {
   },
   methods: {
     getClassList() {
-      getTeacherClass(localStorage.getItem("teacherId"))
+      getTeacherClass()
         .then(res => {
-          this.classList = res.data.data;
+          if(res.data.status.code === 0){
+            if (res.data.data.length === 0) {
+              this.$Message.success("您目前沒有課程喔 請新增課程");
+            }
+            this.classList = res.data.data;
+          }else{
+            if(res.data.status.code === 21201){
+              this.$Message.error("認證錯誤 請重新登入");
+              this.$router.push("/signin");
+            }
+          }
         })
         .catch(err => {
           this.$Message.error(`error: ${err}`);
@@ -100,8 +110,12 @@ export default {
             isPublic: parseInt(this.addClassData.type),
             teacherId: localStorage.getItem("teacherId")
           }).then(res => {
-            if (res.data.status.code == 0) {
+            if (res.data.status.code === 0) {
               this.getClassList();
+              this.addClassData.topic = "";
+              this.addClassData.imgUrl = "";
+              this.addClassData.intro = "";
+              this.addClassData.type = 0;
               this.$Message.success("新增成功");
             }
           });
@@ -132,6 +146,7 @@ export default {
     cancel() {
       this.$refs.addClassData.resetFields();
       this.addClass = false;
+      this.editClass = false;
 		},
 		editClassModal(d){
 			this.editClassData.classId = d.classId;
@@ -161,6 +176,9 @@ export default {
       delClass(classId).then(req => {
         if (req.data.status.code === 0) {
           this.$Message.success("刪除成功");
+          this.getClassList();
+        } else{
+          this.$Message.error("刪除失敗 請重新再試");
           this.getClassList();
         }
       });

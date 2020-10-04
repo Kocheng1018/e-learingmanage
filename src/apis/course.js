@@ -28,7 +28,7 @@ export const signIn = params => req('post', '/management/login', params);
  * @returns { number } type (0/1 公開/非公開)
  * }]
  */
-export const getTeacherClass = (id) => req("get", `/class/${id}/teacher`);
+export const getTeacherClass = () => req("get", `/class/teacher`);
 
 /** 更改class資料
  * @param { String } topic

@@ -1,6 +1,6 @@
 <template lang="pug">
 #lessonlist
-	Modal(title="編輯問題" v-model="modalStatus.editQuestion" class-name="verCenterModel" width="60%")
+	Modal(v-if="lessons.length !== 0" title="編輯問題" v-model="modalStatus.editQuestion" class-name="verCenterModel" width="60%")
 		.editQuestionArea
 			h1 問題數：{{ lessons[selectLesson].question.length }}/5
 			Button(type='primary' icon="md-add" @click="editAddQuestion") 新增問題
@@ -59,10 +59,10 @@
 			Button(v-if="" type="primary" @click='next') 下一步
 	.topicList 
 		Card(@click.native="modalStatus.addsection = true").addLesson.cardborder 新增章節
-		Card.cardborder(v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
+		Card.cardborder( v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
 			div {{ lesson.title }}
 	.topicScreen
-		div(v-if='lessons.length != 0')
+		div(v-if='lessons.length !== 0')
 			.videoScreen
 				LessonVideo(:sectionData="lessons[this.selectLesson]" @updSection='updSection')
 			.questionScreen
@@ -73,8 +73,8 @@
 				.lessonQA
 					QuestionListCard.item(v-for="(item, index) in lessons[selectLesson].question" :key="index" :question="item")
 		div(v-else)
-			h1 請點選左邊章節進入詳細內容
-			h1 或點選新增章節
+			//- h1 請點選左邊章節進入詳細內容
+			h1 點選右邊新增章節
 </template>
 <script>
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
@@ -106,13 +106,14 @@ export default {
       },
       firstOpen: "1",
       selectLesson: 0,
-			lessons: [{
-				sectionId: "",
-				title: "",
-				type: 0,
-				url: "",
-				question: []
-			}]
+      lessons: []
+			// lessons: [{
+				// sectionId: "",
+				// title: "請新增章節",
+				// type: 0,
+				// url: "",
+				// question: []
+			// }]
     };
   },
   mounted(){
@@ -142,6 +143,9 @@ export default {
       getSection(classId)
         .then((req) => {
           if (req.data.status.code === 0){
+            if (req.data.data.length === 0){
+              this.messageControl(0, "目前沒有章節資料喔")
+            }
             this.lessons = req.data.data;
           }
         })
