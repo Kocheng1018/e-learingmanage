@@ -4,7 +4,7 @@
 	.title
 		h1 標題:
 		Input(placeholder="請輸入標題" v-model="sectionData.title" size="large")
-	.video(v-if="sectionData.type === 0")
+	.video(v-if="sectionData.type === 1")
 		.urlset
 			Input(clearable @on-change="updateUrl" placeholder="更新Youtube網址" v-model='newUrl')
 			//- Button(type=`success` @click='updateUrl') 測試
