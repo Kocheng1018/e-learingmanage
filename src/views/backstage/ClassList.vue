@@ -1,38 +1,37 @@
 <template lang="pug">
 .allclass
-	.classRange
-		Card(@click.native='addClass = true').addcard 新增主題
-		Modal(v-model="editClass" title="修改課程內容")
-			Form(ref='editClassData' :model='editClassData')
-				FormItem(prop='topic' label='主題名稱')
-					Input(v-model='editClassData.topic')
-				FormItem(prop='intro' label='主題簡介')
-					Input(v-model='editClassData.intro' type="textarea")
-			input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='editImage')
-			img(:src="editClassData.imgUrl" width='300')
-			div(slot='footer')
-				Button(type='default' @click='cancel') 取消
-				|
-				Button(type='primary' @click='updClassData') 更新
-		Modal(v-model='addClass' title='新增主題')
-			Form(ref='addClassData' :model='addClassData' :rules="addClassRule")
-				FormItem(prop='topic' label='請輸入主題名稱')
-					Input(v-model='addClassData.topic')
-				FormItem(prop='intro' label='請輸入主題簡介')
-					Input(v-model='addClassData.intro' type="textarea")
-				FormItem(prop='type' label="課程是否公開")
-					br
-					RadioGroup(v-model='addClassData.type')
-						Radio(label='1') 公開
-						Radio(label='0') 非公開
-			input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='upload')
-			img(:src="addClassData.imgUrl" width='300')
-			div(slot='footer')
-				Button(type='default' @click='cancel') 取消
-				|
-				Button(type='primary' @click='addNewClass') 建立
-		.card(v-for="(item, index) in classList" :key=`item.classCode`)
-			ClassCard(:classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass" @editClass="editClassModal")
+  Card(@click.native='addClass = true').addcard 新增主題
+  Modal(v-model="editClass" title="修改課程內容")
+    Form(ref='editClassData' :model='editClassData')
+      FormItem(prop='topic' label='主題名稱')
+        Input(v-model='editClassData.topic')
+      FormItem(prop='intro' label='主題簡介')
+        Input(v-model='editClassData.intro' type="textarea")
+    input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='editImage')
+    img(:src="editClassData.imgUrl" width='300')
+    div(slot='footer')
+      Button(type='default' @click='cancel') 取消
+      |
+      Button(type='primary' @click='updClassData') 更新
+  Modal(v-model='addClass' title='新增主題')
+    Form(ref='addClassData' :model='addClassData' :rules="addClassRule")
+      FormItem(prop='topic' label='請輸入主題名稱')
+        Input(v-model='addClassData.topic')
+      FormItem(prop='intro' label='請輸入主題簡介')
+        Input(v-model='addClassData.intro' type="textarea")
+      FormItem(prop='type' label="課程是否公開")
+        br
+        RadioGroup(v-model='addClassData.type')
+          Radio(label='1') 公開
+          Radio(label='0') 非公開
+    input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='upload')
+    img(:src="addClassData.imgUrl" width='300')
+    div(slot='footer')
+      Button(type='default' @click='cancel') 取消
+      |
+      Button(type='primary' @click='addNewClass') 建立
+  .card(v-for="(item, index) in classList" :key=`item.classCode`)
+    ClassCard(:classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass" @editClass="editClassModal")
 </template>
 <script>
 import defaultClass from "@/assets/defaultClass.png";

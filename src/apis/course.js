@@ -37,6 +37,13 @@ export const getTeacherClass = () => req("get", `/class/teacher`);
  */
 export const updClass = (classId, param) => req("put", `/class/info/${classId}`, param);
 
+/** 取得課程邀請碼
+ * 
+ * @param { String } Id
+ * @returns { String } invite
+ */
+export const getInviteCode = id => req("get", `/class/invite/${ id }`);
+
 // 取得section資料
 export const getSection = classId => req("get", `/section/${classId}`);
 

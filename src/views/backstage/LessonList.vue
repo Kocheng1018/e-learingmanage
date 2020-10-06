@@ -57,7 +57,13 @@
 			Button(type="default" @click="previous") 上一步
 			|
 			Button(v-if="" type="primary" @click='next') 下一步
-	.topicList 
+	.topicList
+		.classSetBtn
+			|邀請碼：{{ classInvite }}
+			br
+			|發布狀態：
+			br
+			|公開 / 私密：
 		Card(@click.native="modalStatus.addsection = true").addLesson.cardborder 新增章節
 		Card.cardborder( v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
 			div {{ lesson.title }}
@@ -80,321 +86,348 @@
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
 import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
 import QuestionListCard from "@/components/LessonMod/QuestionListCard";
-import { addSection, delSection, getSection, updQuestion, updSection } from "@/apis/course.js";
+import {
+	addSection,
+	delSection,
+	getSection,
+	updQuestion,
+	updSection,
+	getInviteCode
+} from "@/apis/course.js";
 
 export default {
-  name: "LessonList",
-  components: {
-    LessonVideo,
-    QuestionCard,
-    QuestionListCard
-  },
-  data() {
-    return {
-      modalStatus: {
+	name: "LessonList",
+	components: {
+		LessonVideo,
+		QuestionCard,
+		QuestionListCard
+	},
+	data() {
+		return {
+			modalStatus: {
 				editQuestion: false,
-        addsection: false,
-        addstep: 0
-      },
-      addsectionData: {
-        title: "",
-        url: "",
-        type: "0",
-        index: "-1",
-        selectNum: "0",
-        questionData: []
-      },
-      firstOpen: "1",
-      selectLesson: 0,
-      lessons: []
+				addsection: false,
+				addstep: 0
+			},
+			addsectionData: {
+				title: "",
+				url: "",
+				type: "0",
+				index: "-1",
+				selectNum: "0",
+				questionData: []
+			},
+			classInvite: "",
+			firstOpen: "1",
+			selectLesson: 0,
+			lessons: []
 			// lessons: [{
-				// sectionId: "",
-				// title: "請新增章節",
-				// type: 0,
-				// url: "",
-				// question: []
+			// sectionId: "",
+			// title: "請新增章節",
+			// type: 0,
+			// url: "",
+			// question: []
 			// }]
-    };
-  },
-  mounted(){
-    this.getSection();
-  },
-  methods: {
-		updateQuestion(){
+		};
+	},
+	mounted() {
+		this.getSection();
+		getInviteCode(this.$route.params.classID)
+			.then(res => {
+				if(res.data.status.code === 0){
+					// console.log(res.data.data.invite);
+					this.classInvite = res.data.data.invite
+				}else{
+					throw "code not 0";
+				}
+			})
+			.catch(err => {
+				console.log(err);
+			})
+	},
+	methods: {
+		updateQuestion() {
 			const updQA = {
 				sectionId: this.lessons[this.selectLesson].sectionId,
 				classId: this.$route.params.classID,
 				question: this.lessons[this.selectLesson].question
-			}
+			};
 			updQuestion(updQA)
 				.then(req => {
-					if (req.data.status.code === 0){
+					if (req.data.status.code === 0) {
 						this.messageControl(1, "編輯成功");
-					}else{
+					} else {
 						this.messageControl(0, "編輯失敗 請稍後再試");
 					}
 				})
 				.catch(err => {
 					this.messageControl(0, `err: ${err}`);
-				})
+				});
 		},
-    getSection(){
-      let classId = this.$route.params.classID;
-      getSection(classId)
-        .then((req) => {
-          if (req.data.status.code === 0){
-            if (req.data.data.length === 0){
-              this.messageControl(0, "目前沒有章節資料喔")
-            }
-            this.lessons = req.data.data;
-          }
-        })
-    },
-    delSection(){
-			delSection( this.lessons[this.selectLesson].sectionId )
-				.then((req) => {
-					if (req.data.status.code === 0) {
-						this.messageControl(1, "刪除成功");
-						this.selectLesson = 0;
-						this.getSection();
+		getSection() {
+			let classId = this.$route.params.classID;
+			getSection(classId).then(req => {
+				if (req.data.status.code === 0) {
+					if (req.data.data.length === 0) {
+						this.messageControl(0, "目前沒有章節資料喔");
 					}
-				})
+					this.lessons = req.data.data;
+				}
+			});
 		},
-		editAddQuestion(){
+		delSection() {
+			delSection(this.lessons[this.selectLesson].sectionId).then(req => {
+				if (req.data.status.code === 0) {
+					this.messageControl(1, "刪除成功");
+					this.selectLesson = 0;
+					this.getSection();
+				}
+			});
+		},
+		editAddQuestion() {
 			let sort = this.lessons[this.selectLesson].question.length;
-      if (sort < 5) {
-        let timeStamp = new Date().getTime();
-        this.lessons[this.selectLesson].question.push({
-          content: "",
-          answer: [],
-          select: [],
-          type: "0",
-          sort: timeStamp
-        });
-      } else {
-        this.messageControl(0, "問題最多五個");
-      }
+			if (sort < 5) {
+				let timeStamp = new Date().getTime();
+				this.lessons[this.selectLesson].question.push({
+					content: "",
+					answer: [],
+					select: [],
+					type: "0",
+					sort: timeStamp
+				});
+			} else {
+				this.messageControl(0, "問題最多五個");
+			}
 		},
-    addSection() {
-      let classId = this.$route.params.classID;
-      let sectionIndex = () => {
-        if (this.addsectionData.index === "-2") {
-          return parseInt(this.addsectionData.selectNum) + 1;
-        } else {
-          return parseInt(this.addsectionData.index);
-        }
-      };
-      let addSectionParam = {
-        classId: classId,
-        isSort: sectionIndex(),
-        section: {
-          title: this.addsectionData.title,
-          url: this.addsectionData.url,
-          type: parseInt(this.addsectionData.type)
-        },
-        question: this.addsectionData.questionData
-      };
-      addSectionParam.question.forEach(el => {
-        el.type = parseInt(el.type);
-      });
-      addSection(addSectionParam)
-        .then(() => {
+		addSection() {
+			let classId = this.$route.params.classID;
+			let sectionIndex = () => {
+				if (this.addsectionData.index === "-2") {
+					return parseInt(this.addsectionData.selectNum) + 1;
+				} else {
+					return parseInt(this.addsectionData.index);
+				}
+			};
+			let addSectionParam = {
+				classId: classId,
+				isSort: sectionIndex(),
+				section: {
+					title: this.addsectionData.title,
+					url: this.addsectionData.url,
+					type: parseInt(this.addsectionData.type)
+				},
+				question: this.addsectionData.questionData
+			};
+			addSectionParam.question.forEach(el => {
+				el.type = parseInt(el.type);
+			});
+			addSection(addSectionParam)
+				.then(() => {
 					this.messageControl(1, "儲存成功");
 					this.modalStatus.addsection = false;
 					this.addsectionData.title = "";
 					this.addsectionData.url = "";
 					this.modalStatus.addstep = 0;
 					this.getSection();
-        })
-        .catch(() => {
-          this.messageControl(0, "儲存失敗");
-        });
-    },
-    messageControl(type, msg) {
-      switch (type) {
-        case 0:
-          this.$Message.error(msg);
-          break;
-        case 1:
-          this.$Message.success(msg);
-          break;
-      }
-    },
-    updSection(sectionData) {
-      updSection(
-        sectionData.sectionId, {
-        title: sectionData.title,
-        url: sectionData.url,
-        type: sectionData.type
-      })
-        .then(req => {
-          if (req.data.status.code === 0){
-            this.messageControl(1, "儲存成功");
-          }
-        })
-        .catch(err => {
-          this.messageControl(0, `err: ${err}`);
-        })
-    },
-    selectTopic(index) {
-      this.selectLesson = index;
-    },
-    addNewQuestion() {
-      let sort = this.addsectionData.questionData.length;
-      if (sort < 5) {
-        let timeStamp = new Date().getTime();
-        this.addsectionData.questionData.push({
-          content: "",
-          answer: [],
-          select: [],
-          type: "0",
-          sort: timeStamp
-        });
-      } else {
-        this.messageControl(0, "問題最多五個");
-      }
-    },
-    next() {
-      switch (this.modalStatus.addstep) {
-        case 0:
-          this.modalStatus.addstep += 1;
-          break;
-        case 1:
-          this.addsectionData.questionData.length < 1 ? this.messageControl(0, "最少需要一個問題") : (this.modalStatus.addstep += 1);
-          break;
-        case 2:
-          this.addSection();
-          break;
-      }
-    },
-    previous() {
-      this.modalStatus.addstep == 0 ? (this.modalStatus.addstep = 0) : (this.modalStatus.addstep -= 1);
+				})
+				.catch(() => {
+					this.messageControl(0, "儲存失敗");
+				});
 		},
-		saveEditQA(questionData){
+		messageControl(type, msg) {
+			switch (type) {
+				case 0:
+					this.$Message.error(msg);
+					break;
+				case 1:
+					this.$Message.success(msg);
+					break;
+			}
+		},
+		updSection(sectionData) {
+			updSection(sectionData.sectionId, {
+				title: sectionData.title,
+				url: sectionData.url,
+				type: sectionData.type
+			})
+				.then(req => {
+					if (req.data.status.code === 0) {
+						this.messageControl(1, "儲存成功");
+					}
+				})
+				.catch(err => {
+					this.messageControl(0, `err: ${err}`);
+				});
+		},
+		selectTopic(index) {
+			this.selectLesson = index;
+		},
+		addNewQuestion() {
+			let sort = this.addsectionData.questionData.length;
+			if (sort < 5) {
+				let timeStamp = new Date().getTime();
+				this.addsectionData.questionData.push({
+					content: "",
+					answer: [],
+					select: [],
+					type: "0",
+					sort: timeStamp
+				});
+			} else {
+				this.messageControl(0, "問題最多五個");
+			}
+		},
+		next() {
+			switch (this.modalStatus.addstep) {
+				case 0:
+					this.modalStatus.addstep += 1;
+					break;
+				case 1:
+					this.addsectionData.questionData.length < 1
+						? this.messageControl(0, "最少需要一個問題")
+						: (this.modalStatus.addstep += 1);
+					break;
+				case 2:
+					this.addSection();
+					break;
+			}
+		},
+		previous() {
+			this.modalStatus.addstep == 0
+				? (this.modalStatus.addstep = 0)
+				: (this.modalStatus.addstep -= 1);
+		},
+		saveEditQA(questionData) {
 			const rule = el => el.sort === questionData.sort;
 			this.lessons[this.selectLesson].question.splice(
-				this.lessons[this.selectLesson].question.findIndex(rule), 1, questionData
+				this.lessons[this.selectLesson].question.findIndex(rule),
+				1,
+				questionData
 			);
 			this.messageControl(1, "儲存成功");
 		},
-		deleteEditQA(sort){
+		deleteEditQA(sort) {
 			const rule = el => el.sort === sort;
 			this.lessons[this.selectLesson].question.splice(
-				this.lessons[this.selectLesson].question.findIndex(rule), 1
+				this.lessons[this.selectLesson].question.findIndex(rule),
+				1
 			);
 			this.messageControl(1, "刪除成功");
 		},
-    saveQA(questionData) {
-      const rule = el => el.sort === questionData.sort;
-      this.addsectionData.questionData.splice(
-        this.addsectionData.questionData.findIndex(rule), 1, questionData
-      );
-      this.messageControl(1, "儲存成功");
-    },
-    deleteQA(sort) {
-      const rule = el => el.sort === sort;
-      this.addsectionData.questionData.splice(
-        this.addsectionData.questionData.findIndex(rule), 1
-      );
-      this.messageControl(1, "刪除成功");
-    }
-  }
+		saveQA(questionData) {
+			const rule = el => el.sort === questionData.sort;
+			this.addsectionData.questionData.splice(
+				this.addsectionData.questionData.findIndex(rule),
+				1,
+				questionData
+			);
+			this.messageControl(1, "儲存成功");
+		},
+		deleteQA(sort) {
+			const rule = el => el.sort === sort;
+			this.addsectionData.questionData.splice(
+				this.addsectionData.questionData.findIndex(rule),
+				1
+			);
+			this.messageControl(1, "刪除成功");
+		}
+	}
 };
 </script>
 <style lang="scss" scoped>
 #lessonlist {
-  padding: 0px 5% 0px 5%;
-  display: flex;
-  justify-content: center;
+	padding: 0px 5% 0px 5%;
+	display: flex;
+	justify-content: center;
 }
-.editQuestionArea{
+.editQuestionArea {
 	display: flex;
 	justify-content: space-between;
 }
 .stepFrank {
-  margin: 20px;
-  .step2 {
-    display: grid;
-    grid-template-columns: 30% 40% 30%;
-    grid-template-rows: auto auto;
-    grid-auto-flow: column;
-    .addQuestionArea {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-direction: row;
-      grid-column: 1/4;
-      grid-row: 1/2;
-    }
-    .questionList {
-      grid-column: 1/4;
-      grid-row: 2/3;
-      padding: 10px 0px 10px 0px;
-    }
-  }
-  .step3 {
-    display: flex;
-    flex-direction: column;
-    .addSectionList {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      flex: 1;
-    }
-    .addQuestionList {
-      flex: 2;
-    }
-  }
+	margin: 20px;
+	.step2 {
+		display: grid;
+		grid-template-columns: 30% 40% 30%;
+		grid-template-rows: auto auto;
+		grid-auto-flow: column;
+		.addQuestionArea {
+			display: flex;
+			justify-content: space-around;
+			align-items: center;
+			flex-direction: row;
+			grid-column: 1/4;
+			grid-row: 1/2;
+		}
+		.questionList {
+			grid-column: 1/4;
+			grid-row: 2/3;
+			padding: 10px 0px 10px 0px;
+		}
+	}
+	.step3 {
+		display: flex;
+		flex-direction: column;
+		.addSectionList {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-start;
+			flex: 1;
+		}
+		.addQuestionList {
+			flex: 2;
+		}
+	}
 }
 .topicList {
-  flex: 2;
-  max-width: 250px;
-  margin: 10px;
-  .cardborder {
-    margin: 10px;
-  }
-  .addLesson {
-    color: white;
-    background-color: brown;
-  }
+	flex: 2;
+	max-width: 250px;
+	margin: 10px;
+	.cardborder {
+		margin: 10px;
+	}
+	.addLesson {
+		color: white;
+		background-color: brown;
+	}
 }
 .topicScreen {
-  display: flex;
-  flex-direction: column;
-  flex: 7;
-  .videoScreen {
-    flex: 7;
-  }
-  .questionScreen {
-    .btnList {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      .addLessonBtn {
-        max-width: 200px;
-        min-width: 100px;
-      }
-      .delLessonBtn {
-        max-width: 200px;
-        min-width: 100px;
-      }
-    }
-    .lessonQA {
+	display: flex;
+	flex-direction: column;
+	flex: 7;
+	.videoScreen {
+		flex: 7;
+	}
+	.questionScreen {
+		.btnList {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			.addLessonBtn {
+				max-width: 200px;
+				min-width: 100px;
+			}
+			.delLessonBtn {
+				max-width: 200px;
+				min-width: 100px;
+			}
+		}
+		.lessonQA {
 			max-width: 500px;
-      display: flex;
+			display: flex;
 			flex-wrap: wrap;
-      flex-direction: row;
-      justify-content: space-around;
-    }
-    display: flex;
-    margin: 0px 200px;
-    flex-direction: column;
-    flex: 3;
-  }
+			flex-direction: row;
+			justify-content: space-around;
+		}
+		display: flex;
+		margin: 0px 200px;
+		flex-direction: column;
+		flex: 3;
+	}
 }
 .verCenterModel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 </style>
