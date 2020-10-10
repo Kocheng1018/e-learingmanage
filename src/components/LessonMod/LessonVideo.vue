@@ -44,7 +44,22 @@ export default {
 			this.$emit("updSection", section);
 		},
 		setUrl(videoCode) {
-			return `https://www.youtube.com/embed/${videoCode}`;
+			let video = videoCode.trim();
+			let start = video.indexOf("v=");
+			let last = video.indexOf("&");
+			if (start === -1) {
+					this.$Message["error"]({
+						background: true,
+						content: "找不到影片！請確認網址是否正確"
+					});
+				} else {
+					if (last === -1) {
+						video = video.slice(start + 2);
+					} else {
+						video = video.slice(start + 2, last);
+					}
+				}
+			return `https://www.youtube.com/embed/${video}`;
 		},
 		updateUrl() {
 			if (this.newUrl === "") {

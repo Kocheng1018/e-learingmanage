@@ -1,5 +1,34 @@
 <template lang="pug">
 #lessonlist
+	.topicList
+		.classSetBtn
+			p 邀請碼：{{ classInvite }}
+			p 發佈狀態：
+			p 公開 / 私密：
+			p line綁定狀態 
+			Button(type="info" @click="modalStatus.lineConnect = true") 開始line綁定
+		Card(@click.native="modalStatus.addsection = true").addLesson.cardborder 新增章節
+		Card.cardborder( v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
+			div {{ lesson.title }}
+	.topicScreen
+		div(v-if='lessons.length !== 0')
+			.videoScreen
+				LessonVideo(:sectionData="lessons[this.selectLesson]" @updSection='updSection')
+			.questionScreen
+				.btnList
+					Poptip(confirm title="提醒" content="確定要刪除這個章節嗎？" ok-text="確定" cancel-text="取消" @on-ok="delSection" @on-cancel="")
+						Button.delLessonBtn(type="error") 刪除整個章節
+					Button.addLessonBtn(type="primary" @click="modalStatus.editQuestion = true") 編輯問題
+				.lessonQA
+					QuestionListCard.item(v-for="(item, index) in lessons[selectLesson].question" :key="index" :question="item")
+		div(v-else)
+			h1 點選右邊新增章節
+
+	//-===========================================line 綁定modal==================================================================== 
+	Modal(title="line綁定" v-model="modalStatus.lineConnect" width="40%")
+
+
+	//-==========================================編輯問題modal============================================================= 
 	Modal(v-if="lessons.length !== 0" title="編輯問題" v-model="modalStatus.editQuestion" class-name="verCenterModel" width="60%")
 		.editQuestionArea
 			h1 問題數：{{ lessons[selectLesson].question.length }}/5
@@ -10,6 +39,7 @@
 			Button(type="default" @click="modalStatus.editQuestion = false") 取消
 			|
 			Button(type="primary" @click="updateQuestion") 更新
+	//- ======================================新增章節內容Modal================================================================== 
 	Modal(title="新增章節" v-model="modalStatus.addsection" class-name="verCenterModel" width="60%")
 		.stepFrank
 			.setps
@@ -57,35 +87,12 @@
 			Button(type="default" @click="previous") 上一步
 			|
 			Button(v-if="" type="primary" @click='next') 下一步
-	.topicList
-		.classSetBtn
-			|邀請碼：{{ classInvite }}
-			br
-			|發布狀態：
-			br
-			|公開 / 私密：
-		Card(@click.native="modalStatus.addsection = true").addLesson.cardborder 新增章節
-		Card.cardborder( v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
-			div {{ lesson.title }}
-	.topicScreen
-		div(v-if='lessons.length !== 0')
-			.videoScreen
-				LessonVideo(:sectionData="lessons[this.selectLesson]" @updSection='updSection')
-			.questionScreen
-				.btnList
-					Poptip(confirm title="提醒" content="確定要刪除這個章節嗎？" ok-text="確定" cancel-text="取消" @on-ok="delSection" @on-cancel="")
-						Button.delLessonBtn(type="error") 刪除整個章節
-					Button.addLessonBtn(type="primary" @click="modalStatus.editQuestion = true") 編輯問題
-				.lessonQA
-					QuestionListCard.item(v-for="(item, index) in lessons[selectLesson].question" :key="index" :question="item")
-		div(v-else)
-			//- h1 請點選左邊章節進入詳細內容
-			h1 點選右邊新增章節
 </template>
 <script>
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
 import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
 import QuestionListCard from "@/components/LessonMod/QuestionListCard";
+import LineIcon from "@/assets/LINE_APP.png";
 import {
 	addSection,
 	delSection,
@@ -104,7 +111,9 @@ export default {
 	},
 	data() {
 		return {
+			LineIcon,
 			modalStatus: {
+				lineConnect: false,
 				editQuestion: false,
 				addsection: false,
 				addstep: 0
@@ -132,20 +141,33 @@ export default {
 	},
 	mounted() {
 		this.getSection();
-		getInviteCode(this.$route.params.classID)
-			.then(res => {
-				if(res.data.status.code === 0){
-					// console.log(res.data.data.invite);
-					this.classInvite = res.data.data.invite
-				}else{
-					throw "code not 0";
-				}
-			})
-			.catch(err => {
-				console.log(err);
-			})
+		this.getClassInviteData();
+		// getInviteCode(this.$route.params.classID)
+		// 	.then(res => {
+		// 		if(res.data.status.code === 0){
+		// 			this.classInvite = res.data.data.invite
+		// 		}else{
+		// 			throw "code not 0";
+		// 		}
+		// 	})
+		// 	.catch(err => {
+		// 		console.log(err);
+		// 	})
 	},
 	methods: {
+		getClassInviteData() {
+			getInviteCode(this.$route.params.classID)
+				.then(res => {
+					if(res.data.status.code === 0){
+						this.classInvite = res.data.data.invite
+					}else{
+						throw "code not 0";
+					}
+				})
+				.catch(err => {
+					console.log(err);
+				})
+		},
 		updateQuestion() {
 			const updQA = {
 				sectionId: this.lessons[this.selectLesson].sectionId,
