@@ -2,7 +2,7 @@
 #lessonlist
 	.topicList
 		.classSetBtn
-			p 邀請碼：{{ classInvite }}
+			p 邀請碼：{{ classInfo.invite }}
 			p 發佈狀態：
 			p 公開 / 私密：
 			p line綁定狀態 
@@ -23,12 +23,43 @@
 					QuestionListCard.item(v-for="(item, index) in lessons[selectLesson].question" :key="index" :question="item")
 		div(v-else)
 			h1 點選右邊新增章節
-
 	//-===========================================line 綁定modal==================================================================== 
-	Modal(title="line綁定" v-model="modalStatus.lineConnect" width="40%")
-
-
-	//-==========================================編輯問題modal============================================================= 
+	Modal(title="line綁定" v-model="modalStatus.lineConnect" width="50%")
+		.stepFrank
+			.steps
+				Steps(:current="modalStatus.bindLineStep")
+					Step(title="找尋你的Line群組")
+					Step(title="請輸入Line機器人給你的確認碼")
+					Step(title="完成")
+			.step1(v-if="modalStatus.bindLineStep === 0")
+				Form
+					FormItem(label="請輸入你的群組名稱")
+						Input(placeholder="群組名稱" v-model="line.search" @on-change="searchLineGroup")
+					Divider() {{ line.searchResult.length !== 0 ? "群組列表" : "查無LINE群組" }}
+					List(size="large")
+						ListItem(v-for="(item, index) in line.searchResult" :key="index")
+							ListItemMeta(:avatar="item.pictureUrl" :title="item.groupName")
+							template(slot="action")
+								Button(type="success" @click="groupSelect(item)") 選擇
+					div(v-if='line.imgUrl !== "" ')
+						Divider 已選擇的群組
+						h3 群組： {{ line.name }}
+						img(:src="line.imgUrl" width="20%")
+			.stepVercode(v-if="modalStatus.bindLineStep === 1")
+				h3 請輸入驗證碼
+				Input(placeholder="請輸入驗證碼" style="max-width: 240px")
+				Button.resendVer(type="error") 重發驗證碼
+				.lineInfo
+					Avatar(shape="square" :src="line.imgUrl" size="large")
+					//- p {{ line.groupName }}
+					p dfghjkl
+			.stepImg(v-if="modalStatus.bindLineStep === 2")
+				img(:src="Success")
+		div(slot="footer")
+			Button(type="default" @click="modalStatus.lineConnect = false") 取消
+			|
+			Button(type="primary" @click="lineGroupStep") 下一步
+	//- ==========================================編輯問題modal============================================================= 
 	Modal(v-if="lessons.length !== 0" title="編輯問題" v-model="modalStatus.editQuestion" class-name="verCenterModel" width="60%")
 		.editQuestionArea
 			h1 問題數：{{ lessons[selectLesson].question.length }}/5
@@ -86,20 +117,23 @@
 		div(slot="footer")
 			Button(type="default" @click="previous") 上一步
 			|
-			Button(v-if="" type="primary" @click='next') 下一步
+			Button(type="primary" @click='next') 下一步
 </template>
 <script>
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
 import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
 import QuestionListCard from "@/components/LessonMod/QuestionListCard";
-import LineIcon from "@/assets/LINE_APP.png";
+import Success from "@/assets/success.gif";
 import {
 	addSection,
 	delSection,
 	getSection,
 	updQuestion,
 	updSection,
-	getInviteCode
+	getInviteCode,
+	getLineInfo,
+	sendLineId,
+	bindCheck
 } from "@/apis/course.js";
 
 export default {
@@ -111,12 +145,13 @@ export default {
 	},
 	data() {
 		return {
-			LineIcon,
+			Success,
 			modalStatus: {
-				lineConnect: false,
+				lineConnect: true,
 				editQuestion: false,
 				addsection: false,
-				addstep: 0
+				addstep: 0,
+				bindLineStep: 1
 			},
 			addsectionData: {
 				title: "",
@@ -126,7 +161,20 @@ export default {
 				selectNum: "0",
 				questionData: []
 			},
-			classInvite: "",
+			classInfo: {
+				classInvite: "",
+				isOpen: "",
+				isPublic: "",
+				isBind: "",
+			},
+			line: {
+				groupId: "",
+				name: "",
+				imgUrl:"",
+				search: "",
+				code: "",
+				searchResult: []
+			},
 			firstOpen: "1",
 			selectLesson: 0,
 			lessons: []
@@ -142,24 +190,73 @@ export default {
 	mounted() {
 		this.getSection();
 		this.getClassInviteData();
-		// getInviteCode(this.$route.params.classID)
-		// 	.then(res => {
-		// 		if(res.data.status.code === 0){
-		// 			this.classInvite = res.data.data.invite
-		// 		}else{
-		// 			throw "code not 0";
-		// 		}
-		// 	})
-		// 	.catch(err => {
-		// 		console.log(err);
-		// 	})
 	},
 	methods: {
+// ==========================LINE=======================
+		searchLineGroup(){
+			this.line.searchResult = [];
+			this.line.groupId = "";
+			this.line.name = "";
+			this.line.imgUrl = "";
+			if (this.line.search === "") return
+			getLineInfo(this.line.search)
+				.then(res => {
+					if (res.data.status.code === 0){
+						this.line.searchResult = res.data.data;
+					} else {
+						this.messageControl(0, "backend Line step1 error");
+					}
+				})
+		},
+		groupSelect(group){
+			this.line.groupId = group.groupId;
+			this.line.name = group.groupName;
+			this.line.imgUrl = group.pictureUrl;
+		},
+		lineGroupStep(){
+			switch (this.modalStatus.bindLineStep){
+				case 0:
+					if(this.line.groupId === ""){
+						sendLineId(this.line.groupId)
+							.then(res => {
+								if (res.data.status.code === 0){
+									this.modalStatus.bindLineStep += 1;
+								}else{
+									this.messageControl(0, "line step2 error");
+								}
+							})
+							.catch(err => {
+								this.messageControl(0, `err: ${err}`)
+							})
+					}
+					break;
+				case 1:
+					if (this.line.code === ""){
+						this.messageControl(0, "")
+					}else {
+						bindCheck()
+							.then(res => {
+								if (res.data.status.code === 0){
+									this.modalStatus.bindLineStep += 1;
+								}else{
+									this.messageControl(0, `code: ${res.data.status.code}`);
+								}
+							})
+							.catch(err => {
+								this.messageControl(0, `err: ${err}`)
+							})
+					}
+					break;
+				case 2:
+					break;
+			}
+		},
+// =====================================================
 		getClassInviteData() {
 			getInviteCode(this.$route.params.classID)
 				.then(res => {
 					if(res.data.status.code === 0){
-						this.classInvite = res.data.data.invite
+						this.classInfo.invite = res.data.data.invite
 					}else{
 						throw "code not 0";
 					}
@@ -399,6 +496,22 @@ export default {
 		.addQuestionList {
 			flex: 2;
 		}
+	}
+	.stepVercode{
+		margin: auto;
+		margin-top: 10px;
+		max-width: 240px;
+		.resendVer{
+			margin: 5px;
+		}
+		.lineInfo{
+			display: flex;
+			justify-content: space-around;
+			
+		}
+	}
+	.stepImg{
+		margin: auto;
 	}
 }
 .topicList {

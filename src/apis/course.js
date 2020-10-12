@@ -42,7 +42,7 @@ export const updClass = (classId, param) => req("put", `/class/info/${classId}`,
  * @param { String } Id
  * @returns { String } invite
  */
-export const getInviteCode = id => req("get", `/class/invite/${ id }`);
+export const getInviteCode = id => req("get", `/class/status/${ id }`);
 
 // 取得section資料
 export const getSection = classId => req("get", `/section/${classId}`);
@@ -96,3 +96,19 @@ export const delClass = classId => req("delete", `/class/${classId}`);
 
 // 刪除section
 export const delSection = sectionId => req("delete", `/section/${sectionId}`);
+
+// ===========================Line綁定===================================
+
+// step1 抓取LINE 查詢的群組資料
+export const getLineInfo = name => req("get", `/group/search/${name}`);
+
+// step2 給LINE id 做綁定確認
+export const sendLineId = id => req("post", `/group/bind/${id}`);
+
+// step3 輸入確認碼確認綁定
+/**
+ * @param { String } code
+ * @param { String } classId  
+ */
+export const bindCheck = params => req("post", `/group/checkbind`, params);
+
