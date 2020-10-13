@@ -65,7 +65,7 @@ export default {
               await localStorage.setItem("accessToken", req.data.data.accessToken);
               await localStorage.setItem("teacherName", req.data.data.name);
 							this.$Message.success("登入成功");
-							this.$router.push("/backstage");
+							this.$router.push("/class");
             } else {
 							this.$Message.error("登入失敗 請確認帳號密碼是否正確");
 							throw "11";

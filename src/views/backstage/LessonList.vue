@@ -1,12 +1,15 @@
 <template lang="pug">
 #lessonlist
 	.topicList
-		.classSetBtn
+		.classInfoArea(v-if="classInfo.isOpen !== -1 && classInfo !== -1 && classInfo.isBind !== -1")
 			p 邀請碼：{{ classInfo.invite }}
-			p 發佈狀態：
-			p 公開 / 私密：
-			p line綁定狀態 
-			Button(type="info" @click="modalStatus.lineConnect = true") 開始line綁定
+			p 發佈狀態：{{ classInfo.isOpen === 1 ? "已發佈" : "尚未發佈" }}
+			p 公開 / 私密：	{{ classInfo.isPublic === 1 ? "公開" : "私密" }}
+			p line綁定狀態： {{ classInfo.isBind === 1 ? "已綁定" : "尚未綁定" }}
+			.classInfoBtn
+				Button(v-if="classInfo.isOpen === 0" type="info" @click="openClass") 發布課程
+				Button(v-if="classInfo.isOpen === 0" type="info" @click="changePublic") 更改成{{ classInfo.isPublic === 1 ? "私密" : "公開" }}狀態
+				Button(v-if="classInfo.isBind === 0" type="info" @click="modalStatus.lineConnect = true") 開始line綁定
 		Card(@click.native="modalStatus.addsection = true").addLesson.cardborder 新增章節
 		Card.cardborder( v-for='(lesson, index) in lessons' :key='lesson.lessonID' @click.native='selectTopic(index)') 
 			div {{ lesson.title }}
@@ -29,10 +32,12 @@
 			.steps
 				Steps(:current="modalStatus.bindLineStep")
 					Step(title="找尋你的Line群組")
-					Step(title="請輸入Line機器人給你的確認碼")
+					Step(title="請輸入綁定碼")
 					Step(title="完成")
 			.step1(v-if="modalStatus.bindLineStep === 0")
 				Form
+					h3 請將機器人加入到您的群組（QRcode）
+					img(:src="LineQRcode" width="200px")
 					FormItem(label="請輸入你的群組名稱")
 						Input(placeholder="群組名稱" v-model="line.search" @on-change="searchLineGroup")
 					Divider() {{ line.searchResult.length !== 0 ? "群組列表" : "查無LINE群組" }}
@@ -46,17 +51,17 @@
 						h3 群組： {{ line.name }}
 						img(:src="line.imgUrl" width="20%")
 			.stepVercode(v-if="modalStatus.bindLineStep === 1")
-				h3 請輸入驗證碼
-				Input(placeholder="請輸入驗證碼" style="max-width: 240px")
-				Button.resendVer(type="error") 重發驗證碼
+				h3 機器人已經將綁定碼傳到群組 請在下面輸入綁定碼
 				.lineInfo
-					Avatar(shape="square" :src="line.imgUrl" size="large")
-					//- p {{ line.groupName }}
-					p dfghjkl
+					.info
+						Avatar(shape="square" :src="line.imgUrl" size="large")
+						p {{ line.name }}
+					Input(placeholder="請輸入驗證碼" style="max-width: 240px" v-model="line.code")
+				Button.resendVer(type="error" @click="resendCode") 重發綁定碼
 			.stepImg(v-if="modalStatus.bindLineStep === 2")
 				img(:src="Success")
 		div(slot="footer")
-			Button(type="default" @click="modalStatus.lineConnect = false") 取消
+			Button(type="default" @click="lineCancel") 取消
 			|
 			Button(type="primary" @click="lineGroupStep") 下一步
 	//- ==========================================編輯問題modal============================================================= 
@@ -124,6 +129,7 @@ import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
 import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
 import QuestionListCard from "@/components/LessonMod/QuestionListCard";
 import Success from "@/assets/success.gif";
+import LineQRcode from "@/assets/LineQRcode.png";
 import {
 	addSection,
 	delSection,
@@ -133,7 +139,9 @@ import {
 	getInviteCode,
 	getLineInfo,
 	sendLineId,
-	bindCheck
+	bindCheck,
+	changePublic,
+	changeOpen
 } from "@/apis/course.js";
 
 export default {
@@ -145,13 +153,14 @@ export default {
 	},
 	data() {
 		return {
+			LineQRcode,
 			Success,
 			modalStatus: {
-				lineConnect: true,
+				lineConnect: false,
 				editQuestion: false,
 				addsection: false,
 				addstep: 0,
-				bindLineStep: 1
+				bindLineStep: 0
 			},
 			addsectionData: {
 				title: "",
@@ -162,10 +171,10 @@ export default {
 				questionData: []
 			},
 			classInfo: {
-				classInvite: "",
-				isOpen: "",
-				isPublic: "",
-				isBind: "",
+				invite: "",
+				isOpen: -1,
+				isPublic: -1,
+				isBind: -1,
 			},
 			line: {
 				groupId: "",
@@ -193,6 +202,19 @@ export default {
 	},
 	methods: {
 // ==========================LINE=======================
+		resendCode(){
+			sendLineId(this.line.groupId)
+				.then(res => {
+					if (res.data.status.code === 0){
+						this.messageControl(1, "發送成功 請查看line並輸入綁定碼");
+					}else{
+						this.messageControl(0, "line step2 error");
+					}
+				})
+				.catch(err => {
+					this.messageControl(0, `err: ${err}`)
+				})
+		},
 		searchLineGroup(){
 			this.line.searchResult = [];
 			this.line.groupId = "";
@@ -216,7 +238,7 @@ export default {
 		lineGroupStep(){
 			switch (this.modalStatus.bindLineStep){
 				case 0:
-					if(this.line.groupId === ""){
+					if(this.line.groupId !== ""){
 						sendLineId(this.line.groupId)
 							.then(res => {
 								if (res.data.status.code === 0){
@@ -228,13 +250,16 @@ export default {
 							.catch(err => {
 								this.messageControl(0, `err: ${err}`)
 							})
+					}else{
+						this.messageControl(0, "請選擇群組")
 					}
 					break;
 				case 1:
-					if (this.line.code === ""){
-						this.messageControl(0, "")
-					}else {
-						bindCheck()
+					if (this.line.code !== "" && this.line.code.length === 6){
+						bindCheck({
+							code: this.line.code,
+							classId: this.$route.params.classID
+						})
 							.then(res => {
 								if (res.data.status.code === 0){
 									this.modalStatus.bindLineStep += 1;
@@ -245,18 +270,37 @@ export default {
 							.catch(err => {
 								this.messageControl(0, `err: ${err}`)
 							})
+					}else {
+						this.messageControl(0, "認證碼錯誤！！ 請重新輸入或重發驗證碼後輸入");
 					}
 					break;
 				case 2:
+						this.lineCancel();
 					break;
 			}
 		},
+		lineCancel(){
+			this.modalStatus.lineConnect = false;
+			this.modalStatus.bindLineStep = 0;
+			this.line = {
+				groupId: "",
+				name: "",
+				imgUrl:"",
+				search: "",
+				code: "",
+				searchResult: []
+			}
+		},
 // =====================================================
+// ==========================課程狀態====================
 		getClassInviteData() {
 			getInviteCode(this.$route.params.classID)
 				.then(res => {
 					if(res.data.status.code === 0){
-						this.classInfo.invite = res.data.data.invite
+						this.classInfo.invite = res.data.data.invite;
+						this.classInfo.isOpen = res.data.data.isOpen;
+						this.classInfo.isBind = res.data.data.isBind;
+						this.classInfo.isPublic = res.data.data.isPublic;
 					}else{
 						throw "code not 0";
 					}
@@ -265,6 +309,46 @@ export default {
 					console.log(err);
 				})
 		},
+		changePublic(){
+			changePublic(this.$route.params.classID, {
+				isPublic: this.classInfo.isPublic === 1 ? 0 : 1
+				})
+				.then(res => {
+					if(res.data.status.code === 0){
+						this.messageControl(1, "更改成功");
+					}else{
+						this.messageControl(0, `更改失敗 ${res.data.status.code}`);
+					}
+					this.getClassInviteData();
+				})
+				.catch(err => {
+					console.log(err);
+					this.messageControl(0, `error: ${err}`);
+				})
+		},
+		openClass(){
+			this.$Modal.confirm({
+				title: "確定要發佈課程？",
+				content: "<p>發佈後將不能刪除章節及問題</p><p>且發佈後不能取消發佈</p><p>確定要發佈嗎？？</p>",
+				cancelText: "取消",
+				okText: "確定",
+				onCancel: () => {},
+				onOk: () => {
+					console.log("???");
+					changeOpen(this.$route.params.classID)
+						.then(res => {
+							if(res.data.status.code !== 0){
+								this.messageControl(0, "發佈失敗 請稍後再試");
+							}
+						}).catch(err => {
+							this.messageControl(0, `error: ${err}`);
+							console.log(err);
+						})
+						this.getClassInviteData();
+				}
+			})
+		},
+// =====================================================
 		updateQuestion() {
 			const updQA = {
 				sectionId: this.lessons[this.selectLesson].sectionId,
@@ -500,14 +584,18 @@ export default {
 	.stepVercode{
 		margin: auto;
 		margin-top: 10px;
-		max-width: 240px;
+		.lineInfo{
+			margin-top: 10px;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			.Info {
+				margin: 5px;
+			}
+		}
 		.resendVer{
 			margin: 5px;
-		}
-		.lineInfo{
-			display: flex;
-			justify-content: space-around;
-			
 		}
 	}
 	.stepImg{
@@ -518,6 +606,17 @@ export default {
 	flex: 2;
 	max-width: 250px;
 	margin: 10px;
+	.classInfoArea {
+		.classInfoBtn {
+			Button {
+				margin: 2px;
+			}
+			display: flex;
+			justify-content: center;
+			flex-direction: column;
+		}
+		text-align: left;
+	}
 	.cardborder {
 		margin: 10px;
 	}

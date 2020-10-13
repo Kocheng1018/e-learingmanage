@@ -5,9 +5,10 @@ import SignIn from "../views/Welcome/SignIn.vue";
 import SignUp from '../views/Welcome/SignUp.vue';
 import Welcome from "../views/Welcome.vue"
 import Backstage from '../views/Backstage.vue';
-import ClassList from '../views/backstage/ClassList.vue';
+import ClassList from '../views/Class/ClassList.vue';
 import LessonList from '../views/backstage/LessonList.vue';
-// import { component } from "vue/types/umd";
+import Class from "../views/Class.vue";
+import LessonRecord from "../views/backstage/LessonRecord.vue"
 
 Vue.use(VueRouter);
 
@@ -28,17 +29,28 @@ const routes = [
     ]
   },
   {
+    path: "/class",
+    component: Class,
+    redirect: "class/classlist",
+    children: [
+      {
+        path: "classlist",
+        component: ClassList
+      }
+    ]
+  },
+  {
     path: '/backstage',
     component: Backstage,
     name: `backstage`,
-    redirect: `backstage/classlist`,
     children: [
       {
-        path: 'classlist',
-        component: ClassList
+        path: 'classrecord/:classID',
+        component: LessonRecord
       },
       {
         path: `classlist/:classID`,
+        name: "classContent",
         component: LessonList,
       },
     ]

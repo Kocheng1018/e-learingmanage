@@ -97,7 +97,9 @@ export default {
         });
     },
     LessonPage(classID) {
-      this.$router.push(`classlist/${classID}`);
+      localStorage.setItem("nowClassID", "");
+      localStorage.setItem("nowClassID", classID);
+      this.$router.push(`/backstage/classlist/${classID}`);
     },
     addNewClass() {
       this.$refs.addClassData.validate(valid => {

@@ -37,7 +37,7 @@ export const getTeacherClass = () => req("get", `/class/teacher`);
  */
 export const updClass = (classId, param) => req("put", `/class/info/${classId}`, param);
 
-/** 取得課程邀請碼
+/** 取得課程邀請碼 開放狀態 開啟狀態 綁定狀態
  * 
  * @param { String } Id
  * @returns { String } invite
@@ -96,6 +96,12 @@ export const delClass = classId => req("delete", `/class/${classId}`);
 
 // 刪除section
 export const delSection = sectionId => req("delete", `/section/${sectionId}`);
+
+//===============更改課程狀態==============
+export const changePublic = (id, params) => req("put", `/class/change/${id}`, params);
+
+export const changeOpen = id => req("put", `/class/open/${id}`);
+
 
 // ===========================Line綁定===================================
 
