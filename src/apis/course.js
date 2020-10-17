@@ -103,6 +103,16 @@ export const changePublic = (id, params) => req("put", `/class/change/${id}`, pa
 export const changeOpen = id => req("put", `/class/open/${id}`);
 
 
+// ===========================紀錄==============================
+// 取的課程所有課程
+export const getSectionList = classId => req("get", `/section/${classId}/titlelist`);
+
+// 取得章節所有問題
+export const getAllQuestion = sectionId => req("get", `/question/all/${sectionId}`);
+
+// 取得所有學生在問題中的考試答案
+export const getUserRecords = qid => req("get", `/record/username/${qid}`);
+
 // ===========================Line綁定===================================
 
 // step1 抓取LINE 查詢的群組資料

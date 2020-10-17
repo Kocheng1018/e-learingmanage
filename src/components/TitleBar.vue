@@ -3,7 +3,7 @@
 	.img
 		img(:src="logo")
 	.menu
-		Menu(mode="horizontal", @on-select="change", active-name="1")
+		Menu(mode="horizontal", @on-select="change", active-name="2")
 			MenuItem(name="1") 返回至全部課程
 			MenuItem(name="2") 當前課程
 			MenuItem(name="3") 課程紀錄
