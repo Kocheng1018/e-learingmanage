@@ -48,7 +48,7 @@
             Button.delLessonBtn(type="error") 刪除整個章節
           Button.addLessonBtn(
             type="primary",
-            @click="modalStatus.editQuestion = true"
+            @click="openEditQa"
           ) 編輯問題
         .lessonQA
           QuestionListCard.item(
@@ -105,33 +105,33 @@
       |
       Button(type="primary", @click="lineGroupStep") 下一步
   //- ==========================================編輯問題modal============================================================= 
-  Modal(
+  Modal.verCenterModel(
     v-if="lessons.length !== 0",
     title="編輯問題",
     v-model="modalStatus.editQuestion",
-    class-name="verCenterModel",
     width="60%"
   )
-    .editQuestionArea
-      h1 問題數：{{ lessons[selectLesson].question.length }}/5
-      Button(type="primary", icon="md-add", @click="editAddQuestion") 新增問題
-    .questionList
-      QuestionCard(
-        v-for="(item, index) in lessons[selectLesson].question",
-        :key="index",
-        :QAinside="item",
-        @save="saveEditQA",
-        @delete="deleteEditQA"
-      )
+    QuestionCard(ref="editQuestion")
+    //-  :questions="lessons[selectLesson].question"
+    //- .editQuestionArea
+    //-   h1 問題數：{{ lessons[selectLesson].question.length }}/5
+    //-   Button(type="primary", icon="md-add", @click="editAddQuestion") 新增問題
+    //- .questionList
+    //-   QuestionCard(
+    //-     v-for="(item, index) in lessons[selectLesson].question",
+    //-     :key="index",
+    //-     :QAinside="item",
+    //-     @save="saveEditQA",
+    //-     @delete="deleteEditQA"
+    //-   )
     div(slot="footer")
       Button(type="default", @click="cancelDrawer") 取消
       |
       Button(type="primary", @click="updateQuestion") 更新
   //- ======================================新增章節內容Modal================================================================== 
-  Modal(
+  Modal.verCenterModel(
     title="新增章節",
     v-model="modalStatus.addsection",
-    class-name="verCenterModel",
     width="60%"
   )
     .stepFrank
@@ -235,7 +235,7 @@ export default {
       Success,
       modalStatus: {
         lineConnect: false,
-        editQuestion: false,
+        editQuestion: true,
         addsection: false,
         addstep: 0,
         bindLineStep: 0
@@ -279,6 +279,10 @@ export default {
     this.getClassInviteData();
   },
   methods: {
+    openEditQa(){
+      this.$refs.editQuestion.refInitData(this.lessons[this.selectLesson].question)
+      this.modalStatus.editQuestion = true
+    },
     // ==========================LINE=======================
     resendCode() {
       sendLineId(this.line.groupId)
@@ -432,11 +436,13 @@ export default {
     },
     // =====================================================
     updateQuestion() {
+      let a = this.$refs.editQuestion.refReturnData();
       const updQA = {
         sectionId: this.lessons[this.selectLesson].sectionId,
         classId: this.$route.params.classID,
-        question: this.lessons[this.selectLesson].question
+        question: a
       };
+      console.log(updQA);
       updQA.question.forEach(item => {
         item.type = parseInt(item.type);
       });
@@ -444,9 +450,10 @@ export default {
         .then(req => {
           if (req.data.status.code === 0) {
             this.modalStatus.editQuestion = false;
-            this.messageControl(1, "編輯成功");
+            // this.messageControl(1, "編輯成功");
+            this.$Message.success("編輯成功");
           } else {
-            this.messageControl(0, "編輯失敗 請稍後再試");
+            this.$Message.error("編輯失敗 請稍後再試");
           }
         })
         .catch(err => {
@@ -473,21 +480,21 @@ export default {
         }
       });
     },
-    editAddQuestion() {
-      let sort = this.lessons[this.selectLesson].question.length;
-      if (sort < 5) {
-        let timeStamp = new Date().getTime();
-        this.lessons[this.selectLesson].question.push({
-          content: "",
-          answer: [],
-          select: [],
-          type: "0",
-          sort: timeStamp
-        });
-      } else {
-        this.messageControl(0, "問題最多五個");
-      }
-    },
+    // editAddQuestion() {
+    //   let sort = this.lessons[this.selectLesson].question.length;
+    //   if (sort < 5) {
+    //     let timeStamp = new Date().getTime();
+    //     this.lessons[this.selectLesson].question.push({
+    //       content: "",
+    //       answer: [],
+    //       select: [],
+    //       type: "0",
+    //       sort: timeStamp
+    //     });
+    //   } else {
+    //     this.messageControl(0, "問題最多五個");
+    //   }
+    // },
     addSection() {
       let classId = this.$route.params.classID;
       let sectionIndex = () => {
@@ -526,10 +533,12 @@ export default {
     messageControl(type, msg) {
       switch (type) {
         case 0:
-          this.$Message.error(msg);
+          // this.$Message.error(msg);
+          this.messageControl(0, msg)
           break;
         case 1:
-          this.$Message.success(msg);
+          // this.$Message.success(msg);
+          this.messageControl(1, msg)
           break;
       }
     },
@@ -612,14 +621,14 @@ export default {
       );
       this.messageControl(1, "儲存成功");
     },
-    deleteQA(sort) {
-      const rule = el => el.sort === sort;
-      this.addsectionData.questionData.splice(
-        this.addsectionData.questionData.findIndex(rule),
-        1
-      );
-      this.messageControl(1, "刪除成功");
-    },
+    // deleteQA(sort) {
+    //   const rule = el => el.sort === sort;
+    //   this.addsectionData.questionData.splice(
+    //     this.addsectionData.questionData.findIndex(rule),
+    //     1
+    //   );
+    //   this.messageControl(1, "刪除成功");
+    // },
     cancelDrawer() {
       this.modalStatus.editQuestion = false;
       this.getSection();
@@ -633,10 +642,7 @@ export default {
   display: flex;
   justify-content: center;
 }
-.editQuestionArea {
-  display: flex;
-  justify-content: space-between;
-}
+
 .stepFrank {
   margin: 20px;
   .step2 {
@@ -737,14 +743,14 @@ export default {
       }
     }
     .lessonQA {
-      max-width: 500px;
+      width: 100%;
       display: flex;
       flex-wrap: wrap;
       flex-direction: row;
-      justify-content: space-around;
+      justify-content: flex-start;
     }
     display: flex;
-    margin: 0px 200px;
+    margin: 0px 10%;
     flex-direction: column;
     flex: 3;
   }

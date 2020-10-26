@@ -1,15 +1,18 @@
 <template lang="pug">
 #QuestionListCard
-  h2(v-if="question.type === '0'") 問題類型: 單選
-  h2(v-else-if="question.type === '1'") 問題類型: 多選
-  h2(v-else) 問題類型: 填空
-  h2 問題內容: {{ question.content }}
-  h3 選項:  
-  .selects
-    .select(v-for="(item, index) in question.select") {{ index + 1 }}. {{ item }}
-  h3 答案:
-  .answers 
-    .answer(v-for="(item, index) in question.answer") {{ item }} 
+  Form
+    FormItem(label="問題類型: ")
+      p.content(v-if="question.type === '0'") 單選
+      p.content(v-else-if="question.type === '1'") 多選
+      p.content(v-else) 填空
+    FormItem(label="問題內容: ")
+      p.content {{ question.content }}
+    FormItem(label="選項: ")
+      .selects
+        .select(v-for="(item, index) in question.select") {{ item }}
+    FormItem(label="答案: ")
+      .answers  
+        .answer(v-for="(item, index) in question.answer") {{ item }}
 </template>
 <script>
 export default {
@@ -31,35 +34,44 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.content{
+  text-align: left;
+  font-size: 18px;
+}
 #QuestionListCard{
+  width: 100%;
   border-style: solid;
   border-color: rgb(200, 220, 220);
   border-radius: 2rem;
-  padding: 25px 30px;
+  padding: 20px 20px;
   margin: 10px;
-  min-width: 200px;
   background-color: azure;
   display: flex;
   flex-direction: column;
   .selects{
     display: flex;
-    flex-direction: row;
     .select{
+      min-width: 80px;
       font-size: 16px;
       margin: 2px 5px;
       padding: 3px 10px;
       border-style: solid;
       border-radius: 10px;
-      border-color: orange;
+      border-color: gray;
       background-color: white;
     }
   }
   .answers{
+    display: flex;
     .answer{
-      font-size: 20px;
-      margin: 2px;
-      padding: 3px;
-      color: red;
+      min-width: 80px;
+      font-size: 16px;
+      margin: 2px 5px;
+      padding: 3px 10px;
+      border-style: solid;
+      border-radius: 10px;
+      border-color: green;
+      background-color: white;
     }
   }
 }

@@ -4,11 +4,11 @@
     Button(@click.native="goback" type="text" icon="md-arrow-round-back" size="large") 返回
   p(v-if="records.length <= 0") 目前尚無學生作答
   List(v-else size="large")
-    ListItem.studentItem(v-for="(item, index) in records") 
+    ListItem.studentItem(v-for="(item, index) in records" :key="index") 
       Icon(v-if="item.records.isTrue === 1" type="md-checkmark" color="green" size="30")
       Icon(v-else type="md-close" color="red" size="30")
       .name {{ item.userName }}
-      .ans {{ changeAns(item.records.selects) }}
+      .ans {{ changeAns(itecm.records.selects) }}
       //- .ans dfhgjhgfrrtyjfhgfdtyjhyfgfdfghgfdrghbvcfgvcfgvcfgvgfdfhgfdfghgfdfghjhgfdrfghjhytrrtyhgfdertgvcdghvcdvb
       .timestamp
         .date {{ changeDate(item.examAt) }}

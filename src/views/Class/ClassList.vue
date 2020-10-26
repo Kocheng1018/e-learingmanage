@@ -30,8 +30,8 @@
       Button(type='default' @click='cancel') 取消
       |
       Button(type='primary' @click='addNewClass') 建立
-  .card(v-for="(item, index) in classList" :key=`item.classCode`)
-    ClassCard(:classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass" @editClass="editClassModal")
+  .cardList
+    ClassCard(v-for="(item, index) in classList" :key=`item.classCode` :classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass" @editClass="editClassModal")
 </template>
 <script>
 import defaultClass from "@/assets/defaultClass.png";
@@ -194,9 +194,9 @@ body {
 .allclass {
   height: 100%;
 }
-.card {
-  display: inline-block;
-  margin: 10px;
+.cardList {
+  display: flex;
+  justify-content: center;
 }
 .addcard {
   background-color: brown;
