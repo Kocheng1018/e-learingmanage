@@ -2,17 +2,17 @@
 #QuestionListCard
   Form
     FormItem(label="問題類型: ")
-      p.content(v-if="question.type === '0'") 單選
-      p.content(v-else-if="question.type === '1'") 多選
+      p.content(v-if="question.type === 0") 單選
+      p.content(v-else-if="question.type === 1") 多選
       p.content(v-else) 填空
     FormItem(label="問題內容: ")
       p.content {{ question.content }}
-    FormItem(label="選項: ")
+    FormItem(label="選項: " v-if="question.type !== 2")
       .selects
-        .select(v-for="(item, index) in question.select") {{ item }}
-    FormItem(label="答案: ")
+        .select(v-for="(item, index) in question.select" :key="index") {{ item }}
+    FormItem(label="答案: " v-if="question.type !== 2")
       .answers  
-        .answer(v-for="(item, index) in question.answer") {{ item }}
+        .answer(v-for="(item, index) in question.answer" :key="index") {{ recover(index) }}
 </template>
 <script>
 export default {
@@ -23,14 +23,24 @@ export default {
 			default: () => {
 				return {
 					content: "範例",
-					answer: ["問題一"],
+					answer: ["1"],
 					select: ["問題一", "問題二", "問題三", "問題四"],
-					type: "0",
+					type: 0,
 					sort: 0,
 				};
 			}
-		},
-	}
+    },
+  },
+  data(){
+    return {
+    }
+  },
+  methods: {
+    recover(i){
+      let a = parseInt(this.question.answer[i]);
+      return this.question.select[a];
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>

@@ -18,6 +18,39 @@ const errorHandel = (status, msg) => {
     }
 }
 
+let file = axios.create({
+    baseURL: "/api",
+	headers: { 
+        "Access-Control-Allow-Origin": "*",
+        "Authorization": "",
+		"Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Credentials": 'true',
+        "Content-type" :"multipart/form-data"
+	}
+});
+file.interceptors.request.use((config) => {
+    config.headers.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
+file.interceptors.response.use((response) => {
+    return response;
+}, (error) => {
+    const { response } = error;
+    if (response) {
+        errorHandel(response.status, response.data.error);
+        return Promise.reject(error);
+    } else {
+        if (!window.navigator.onLine) {
+            tip('網路問題 請重新連線');
+        } else {
+            return Promise.reject(error);
+        }
+    }
+});
+
 let instance = axios.create({
     baseURL: "/api",
 	headers: { 
@@ -61,6 +94,8 @@ export default function (method, url, data=null) {
         return instance.delete(url, {params: data});
     }else if (method == 'put') {
         return instance.put(url, data);
+    }else if(method == 'uploadimg'){
+        return file.post(url, data);
     }else {
         console.error('未知method' + method);
         return false;

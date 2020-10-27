@@ -82,44 +82,32 @@
 // ];
 export default {
   name: `QuestionCard`,
-  props: {
-    questions: {
-      type: Array,
-      default: () => {
-        let a = [
-          {
-            questionId: "",
-            classId: "",
-            sectionId: "",
-            content: "",
-            answer: ["", "", ""],
-            select: ["", "", ""],
-            type: "1",
-            sort: "1"
-          }
-        ];
-        return a
-      }
-    }
-  },
+  // props: {
+  //   value: {
+  //     type: Array,
+  //     default: () => {
+  //       let a = [
+  //         {
+  //           questionId: "",
+  //           classId: "",
+  //           sectionId: "",
+  //           content: "",
+  //           answer: [],
+  //           select: [],
+  //           type: "1",
+  //           sort: "1"
+  //         }
+  //       ];
+  //       return a
+  //     } 
+  //   },
+  // },
   data() {
     return {
-      allQuestions: this.questions,
+      allQuestions: [],
       ansText: [null, null, null, null, null],
     };
   },
-  // watch:{
-  //   questions: () => {
-  //     console.log("?")
-  //     this.allQuestions.forEach(el => {
-  //       el.type = el.type.toString();
-  //       el.answer.forEach((item) => {
-  //         let num = parseInt(item);
-  //         item = el.select[num];
-  //       })
-  //     });
-  //   }
-  // },
   mounted() {
     this.allQuestions.forEach(el => {
       el.type = el.type.toString();
@@ -134,11 +122,12 @@ export default {
       this.allQuestions = d;
       this.allQuestions.forEach(el => {
         el.type = el.type.toString();
-        el.answer.forEach((item) => {
+        el.answer.forEach((item, index) => {
           let num = parseInt(item);
-          item = el.select[num];
+          el.answer[index] = el.select[num];
         })
       });
+      // window.reload()
     },
     // 回傳資料
     refReturnData() {
@@ -154,7 +143,6 @@ export default {
             }
           }
         }
-        // qa.answer = ans;
         qa.answer = Object.assign([], ans);
       })
       return this.allQuestions;

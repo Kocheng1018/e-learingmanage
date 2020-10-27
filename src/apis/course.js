@@ -1,4 +1,3 @@
-// import { construct } from 'core-js/fn/reflect';
 import req from './https.js';
 
 /** 註冊
@@ -13,7 +12,7 @@ export const signUp = params => req('post', '/management/signup', params);
  * @param { string } account
  * @param { string } password
  */ 
-export const signIn = params => req('post', '/management/login', params);
+export const signIn = params => req('post', '/auth/management/signin', params);
 
 /** 取得老師class資料
  * @returns { ObjectArray } [{
@@ -119,7 +118,7 @@ export const getUserRecords = qid => req("get", `/record/username/${qid}`);
 export const getLineInfo = name => req("get", `/group/search/${name}`);
 
 // step2 給LINE id 做綁定確認
-export const sendLineId = id => req("post", `/group/bind/${id}`);
+export const sendLineId = id => req("post", `/group/bindcode/${id}`);
 
 // step3 輸入確認碼確認綁定
 /**
@@ -128,3 +127,5 @@ export const sendLineId = id => req("post", `/group/bind/${id}`);
  */
 export const bindCheck = params => req("post", `/group/checkbind`, params);
 
+// =================================圖片上傳=============================
+export const uploadImg = formdata => req("uploadimg", `/stroage/upload`, formdata);

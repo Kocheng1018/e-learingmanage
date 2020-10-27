@@ -112,18 +112,6 @@
     width="60%"
   )
     QuestionCard(ref="editQuestion")
-    //-  :questions="lessons[selectLesson].question"
-    //- .editQuestionArea
-    //-   h1 問題數：{{ lessons[selectLesson].question.length }}/5
-    //-   Button(type="primary", icon="md-add", @click="editAddQuestion") 新增問題
-    //- .questionList
-    //-   QuestionCard(
-    //-     v-for="(item, index) in lessons[selectLesson].question",
-    //-     :key="index",
-    //-     :QAinside="item",
-    //-     @save="saveEditQA",
-    //-     @delete="deleteEditQA"
-    //-   )
     div(slot="footer")
       Button(type="default", @click="cancelDrawer") 取消
       |
@@ -140,7 +128,7 @@
           step(title="設定新的章節資料")
           step(title="新增問題")
           step(title="確認資料")
-      .step1(v-if="this.modalStatus.addstep == 0")
+      .step1(v-show="this.modalStatus.addstep == 0")
         Form(ref="addsection", :model="addsectionData")
           FormItem(prop="title", label="章節標題")
             Input(v-model="addsectionData.title")
@@ -170,19 +158,9 @@
                   :value="index",
                   :key="index"
                 ) {{ item.lessonTitle }} 之後
-      .step2(v-else-if="this.modalStatus.addstep == 1")
-        .addQuestionArea
-          h1 問題數：{{ addsectionData.questionData.length }}/5
-          Button(type="primary", icon="md-add", @click="addNewQuestion") 新增問題
-        .questionList
-          QuestionCard(
-            v-for="(item, index) in addsectionData.questionData",
-            :key="index",
-            :QAinside="item",
-            @save="saveQA",
-            @delete="deleteQA"
-          )
-      .step3(v-else-if="this.modalStatus.addstep == 2")
+      .step2(v-show="this.modalStatus.addstep == 1")
+        QuestionCard(ref="addQestionCard")
+      .step3(v-show="this.modalStatus.addstep == 2")
         .addSectionList
           h1 標題: {{ addsectionData.title }}
           h1(v-if="addsectionData.type === '0'") 網址: {{ addsectionData.url }}
@@ -191,7 +169,7 @@
           h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
           h1(v-else) 位置: 在 {{ lessons[addsectionData.selectNum].title }}
         Divider
-          .addQuestionList
+      .addQuestionList
         QuestionListCard(
           v-for="(item, index) in addsectionData.questionData",
           :key="index",
@@ -235,7 +213,7 @@ export default {
       Success,
       modalStatus: {
         lineConnect: false,
-        editQuestion: true,
+        editQuestion: false,
         addsection: false,
         addstep: 0,
         bindLineStep: 0
@@ -281,7 +259,7 @@ export default {
   methods: {
     openEditQa(){
       this.$refs.editQuestion.refInitData(this.lessons[this.selectLesson].question)
-      this.modalStatus.editQuestion = true
+      this.modalStatus.editQuestion = true;
     },
     // ==========================LINE=======================
     resendCode() {
@@ -375,7 +353,6 @@ export default {
         searchResult: []
       };
     },
-    // =====================================================
     // ==========================課程狀態====================
     getClassInviteData() {
       getInviteCode(this.$route.params.classID)
@@ -450,7 +427,6 @@ export default {
         .then(req => {
           if (req.data.status.code === 0) {
             this.modalStatus.editQuestion = false;
-            // this.messageControl(1, "編輯成功");
             this.$Message.success("編輯成功");
           } else {
             this.$Message.error("編輯失敗 請稍後再試");
@@ -480,21 +456,6 @@ export default {
         }
       });
     },
-    // editAddQuestion() {
-    //   let sort = this.lessons[this.selectLesson].question.length;
-    //   if (sort < 5) {
-    //     let timeStamp = new Date().getTime();
-    //     this.lessons[this.selectLesson].question.push({
-    //       content: "",
-    //       answer: [],
-    //       select: [],
-    //       type: "0",
-    //       sort: timeStamp
-    //     });
-    //   } else {
-    //     this.messageControl(0, "問題最多五個");
-    //   }
-    // },
     addSection() {
       let classId = this.$route.params.classID;
       let sectionIndex = () => {
@@ -533,12 +494,12 @@ export default {
     messageControl(type, msg) {
       switch (type) {
         case 0:
-          // this.$Message.error(msg);
-          this.messageControl(0, msg)
+          this.$Message.error(msg);
+          // this.messageControl(0, msg)
           break;
         case 1:
-          // this.$Message.success(msg);
-          this.messageControl(1, msg)
+          this.$Message.success(msg);
+          // this.messageControl(1, msg)
           break;
       }
     },
@@ -581,9 +542,10 @@ export default {
           this.modalStatus.addstep += 1;
           break;
         case 1:
+          this.addsectionData.questionData = Object.assign([], this.$refs.addQestionCard.refReturnData());
           this.addsectionData.questionData.length < 1
-            ? this.messageControl(0, "最少需要一個問題")
-            : (this.modalStatus.addstep += 1);
+            ? this.$Message.error("最少需要一個問題")
+            : this.modalStatus.addstep += 1;
           break;
         case 2:
           this.addSection();
@@ -591,9 +553,18 @@ export default {
       }
     },
     previous() {
-      this.modalStatus.addstep == 0
-        ? (this.modalStatus.addstep = 0)
-        : (this.modalStatus.addstep -= 1);
+      switch (this.modalStatus.addstep) {
+        case 0:
+          this.modalStatus.addstep = 0;
+          break;
+        case 1:
+          this.modalStatus.addstep -= 1;
+          break;
+        case 2:
+          this.$refs.addQestionCard.refInitData(this.addsectionData.questionData);
+          this.modalStatus.addstep -= 1;
+          break;
+      }
     },
     saveEditQA(questionData) {
       const rule = el => el.sort === questionData.sort;
@@ -621,14 +592,6 @@ export default {
       );
       this.messageControl(1, "儲存成功");
     },
-    // deleteQA(sort) {
-    //   const rule = el => el.sort === sort;
-    //   this.addsectionData.questionData.splice(
-    //     this.addsectionData.questionData.findIndex(rule),
-    //     1
-    //   );
-    //   this.messageControl(1, "刪除成功");
-    // },
     cancelDrawer() {
       this.modalStatus.editQuestion = false;
       this.getSection();
@@ -646,23 +609,7 @@ export default {
 .stepFrank {
   margin: 20px;
   .step2 {
-    display: grid;
-    grid-template-columns: 30% 40% 30%;
-    grid-template-rows: auto auto;
-    grid-auto-flow: column;
-    .addQuestionArea {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-direction: row;
-      grid-column: 1/4;
-      grid-row: 1/2;
-    }
-    .questionList {
-      grid-column: 1/4;
-      grid-row: 2/3;
-      padding: 10px 0px 10px 0px;
-    }
+    margin-top: 10px;
   }
   .step3 {
     display: flex;
@@ -714,6 +661,7 @@ export default {
     text-align: left;
   }
   .cardborder {
+    width: 180px;
     margin: 10px;
   }
   .addLesson {

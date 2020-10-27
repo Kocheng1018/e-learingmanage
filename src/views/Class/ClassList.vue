@@ -1,18 +1,5 @@
 <template lang="pug">
 .allclass
-  Card(@click.native='addClass = true').addcard 新增主題
-  Modal(v-model="editClass" title="修改課程內容")
-    Form(ref='editClassData' :model='editClassData')
-      FormItem(prop='topic' label='主題名稱')
-        Input(v-model='editClassData.topic')
-      FormItem(prop='intro' label='主題簡介')
-        Input(v-model='editClassData.intro' type="textarea")
-    input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='editImage')
-    img(:src="editClassData.imgUrl" width='300')
-    div(slot='footer')
-      Button(type='default' @click='cancel') 取消
-      |
-      Button(type='primary' @click='updClassData') 更新
   Modal(v-model='addClass' title='新增主題')
     Form(ref='addClassData' :model='addClassData' :rules="addClassRule")
       FormItem(prop='topic' label='請輸入主題名稱')
@@ -24,19 +11,33 @@
         RadioGroup(v-model='addClassData.type')
           Radio(label='1') 公開
           Radio(label='0') 非公開
-    input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change='upload')
-    img(:src="addClassData.imgUrl" width='300')
+    input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change="addImage")
+    img(:src="imgData.add" width='300')
     div(slot='footer')
       Button(type='default' @click='cancel') 取消
       |
       Button(type='primary' @click='addNewClass') 建立
+  Modal(v-model="editClass" title="修改課程內容")
+    Form(ref='editClassData' :model='editClassData')
+      FormItem(prop='topic' label='主題名稱')
+        Input(v-model='editClassData.topic')
+      FormItem(prop='intro' label='主題簡介')
+        Input(v-model='editClassData.intro' type="textarea")
+    input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change="editImage")
+    img(:src="editClassData.imgUrl" width='300')
+    div(slot='footer')
+      Button(type='default' @click='cancel') 取消
+      |
+      Button(type='primary' @click='updClassData') 更新
+  
+  Card(@click.native='addClass = true').addcard 新增主題
   .cardList
     ClassCard(v-for="(item, index) in classList" :key=`item.classCode` :classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass" @editClass="editClassModal")
 </template>
 <script>
 import defaultClass from "@/assets/defaultClass.png";
 import ClassCard from "@/components/ClassCard.vue";
-import { addClass, getTeacherClass, delClass, updClass } from "@/apis/course.js";
+import { addClass, getTeacherClass, delClass, updClass, uploadImg } from "@/apis/course.js";
 
 export default {
   name: `classList`,
@@ -59,6 +60,10 @@ export default {
         type: [
           { required: true, message: "請選擇公開/不公開", trigger: "blur" }
         ]
+      },
+      imgData: {
+        add: new FormData(),
+        edit: new FormData()
       },
       addClassData: {
         topic: "",
@@ -102,46 +107,62 @@ export default {
       this.$router.push(`/backstage/classlist/${classID}`);
     },
     addNewClass() {
-      this.$refs.addClassData.validate(valid => {
+      this.$refs.addClassData.validate( async valid => {
         if (valid) {
-          addClass({
-            topic: this.addClassData.topic,
-            imgUrl: this.addClassData.imgUrl,
-            intro: this.addClassData.intro,
-            isPublic: parseInt(this.addClassData.type),
-            teacherId: localStorage.getItem("teacherId")
-          }).then(res => {
-            if (res.data.status.code === 0) {
-              this.getClassList();
-              this.addClassData.topic = "";
-              this.addClassData.imgUrl = "";
-              this.addClassData.intro = "";
-              this.addClassData.type = 0;
-              this.$Message.success("新增成功");
+          let url = "";
+          if(this.imgData.add.has("file")){
+            let res = await uploadImg(this.imgData.add)
+            if(res.data.status.code === 0){
+              url = res.data.data.url;
             }
-          });
+            await this.ApiAddClass(url);
+          }else{
+            this.ApiAddClass("");
+          }
+
+        //   if(this.imgData.add.has("file")){
+        //     uploadImg(this.imgData.add).then(res => {
+        //       if(res.data.status.code === 0){
+        //         url = res.data.data.url;
+        //       }
+        //     }).then(this.ApiAddClass(url))
+        //   }else{
+        //     this.ApiAddClass("");
+        //   }
           this.addClass = false;
         }
       });
     },
-    upload(event) {
+    ApiAddClass(url){
+      addClass({
+        topic: this.addClassData.topic,
+        imgUrl: url,
+        intro: this.addClassData.intro,
+        isPublic: parseInt(this.addClassData.type),
+        teacherId: localStorage.getItem("teacherId")
+      }).then(res => {
+        if (res.data.status.code === 0) {
+          this.getClassList();
+          this.addClassData.topic = "";
+          this.addClassData.imgUrl = "";
+          this.addClassData.intro = "";
+          this.addClassData.type = 0;
+          this.$Message.success("新增成功");
+        }
+      }).then(
+        this.imgData.add.delete("file")
+      );
+    },
+    addImage(event) {
       let input = event.target;
       if (input.files && input.files[0]) {
-        let reader = new FileReader();
-        reader.onload = e => {
-          this.addClassData.imgUrl = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
+        this.imgData.add.append("file" ,event.target.files[0]);
       }
     },
     editImage(event) {
       let input = event.target;
       if (input.files && input.files[0]) {
-        let reader = new FileReader();
-        reader.onload = e => {
-          this.editClassData.imgUrl = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
+        this.imgData.edit.append("file", event.target.files[0]);
       }
     },
     cancel() {
@@ -197,6 +218,7 @@ body {
 .cardList {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .addcard {
   background-color: brown;

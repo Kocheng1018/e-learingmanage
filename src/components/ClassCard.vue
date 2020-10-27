@@ -25,7 +25,7 @@ Card.cardInfo
 	justify-content: space-between;
 	width: 300px;
 	height: 470px;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	margin: 5px 10px;
 	.delBtn{
 		text-align: right;
