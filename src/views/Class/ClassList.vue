@@ -206,6 +206,8 @@ export default {
         if (req.data.status.code === 0) {
           this.$Message.success("刪除成功");
           this.getClassList();
+        }else if(req.data.status.code === 21406){
+          this.$Message.error("開啟的課程不可以刪除喔！！");
         } else{
           this.$Message.error("刪除失敗 請重新再試");
           this.getClassList();

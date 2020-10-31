@@ -22,9 +22,11 @@
         ) 開始line綁定
     Card.addLesson.cardborder(@click.native="modalStatus.addsection = true") 新增章節
     Card.cardborder(
+      dis-hover=true
       v-for="(lesson, index) in lessons",
       :key="lesson.lessonID",
       @click.native="selectTopic(index)"
+      :class="{ selected : selectLesson === index }"
     ) 
       div {{ lesson.title }}
   .topicScreen
@@ -32,22 +34,12 @@
       .videoScreen
         LessonVideo(
           :sectionData="lessons[this.selectLesson]",
-          @updSection="updSection"
+          @updSection="updSection" @delSection="delSection" :index="selectLesson"
         )
       .questionScreen
         .btnList
-          Poptip(
-            confirm,
-            title="提醒",
-            content="確定要刪除這個章節嗎？",
-            ok-text="確定",
-            cancel-text="取消",
-            @on-ok="delSection",
-            @on-cancel=""
-          )
-            Button.delLessonBtn(type="error") 刪除整個章節
-          Button.addLessonBtn(
-            type="primary",
+          Button(
+            icon="md-create"
             @click="openEditQa"
           ) 編輯問題
         .lessonQA
@@ -59,51 +51,7 @@
     div(v-else)
       h1 點選右邊新增章節
   //-===========================================line 綁定modal==================================================================== 
-  Modal(title="line綁定", v-model="modalStatus.lineConnect", width="50%")
-    .stepFrank
-      .steps
-        Steps(:current="modalStatus.bindLineStep")
-          Step(title="找尋你的Line群組")
-          Step(title="請輸入綁定碼")
-          Step(title="完成")
-      .step1(v-if="modalStatus.bindLineStep === 0")
-        Form
-          h3 請將機器人加入到您的群組（QRcode）
-          img(:src="LineQRcode", width="200px")
-          FormItem(label="請輸入你的群組名稱")
-            Input(
-              placeholder="群組名稱",
-              v-model="line.search",
-              @on-change="searchLineGroup"
-            )
-          Divider {{ line.searchResult.length !== 0 ? '群組列表' : '查無LINE群組' }}
-          List(size="large")
-            ListItem(v-for="(item, index) in line.searchResult", :key="index")
-              ListItemMeta(:avatar="item.pictureUrl", :title="item.groupName")
-              template(slot="action")
-                Button(type="success", @click="groupSelect(item)") 選擇
-          div(v-if="line.imgUrl !== ''")
-            Divider 已選擇的群組
-            h3 群組： {{ line.name }}
-            img(:src="line.imgUrl", width="20%")
-      .stepVercode(v-if="modalStatus.bindLineStep === 1")
-        h3 機器人已經將綁定碼傳到群組 請在下面輸入綁定碼
-        .lineInfo
-          .info
-            Avatar(shape="square", :src="line.imgUrl", size="large")
-            p {{ line.name }}
-          Input(
-            placeholder="請輸入驗證碼",
-            style="max-width: 240px",
-            v-model="line.code"
-          )
-        Button.resendVer(type="error", @click="resendCode") 重發綁定碼
-      .stepImg(v-if="modalStatus.bindLineStep === 2")
-        img(:src="Success")
-    div(slot="footer")
-      Button(type="default", @click="lineCancel") 取消
-      |
-      Button(type="primary", @click="lineGroupStep") 下一步
+  BindLineModal(v-model="modalStatus.lineConnect" @reload="getClassInviteData")
   //- ==========================================編輯問題modal============================================================= 
   Modal.verCenterModel(
     v-if="lessons.length !== 0",
@@ -124,17 +72,13 @@ import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
 import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
 import QuestionListCard from "@/components/LessonMod/QuestionListCard";
 import AddSectionModal from "@/components/LessonMod/AddSectionModal";
-import Success from "@/assets/success.gif";
-import LineQRcode from "@/assets/LineQRcode.png";
+import BindLineModal from "@/components/LessonMod/Line/BindLineModal";
 import {
   delSection,
   getSection,
   updQuestion,
   updSection,
   getInviteCode,
-  getLineInfo,
-  sendLineId,
-  bindCheck,
   changePublic,
   changeOpen
 } from "@/apis/course.js";
@@ -145,32 +89,21 @@ export default {
     LessonVideo,
     QuestionCard,
     QuestionListCard,
-    AddSectionModal
+    AddSectionModal,
+    BindLineModal
   },
   data() {
     return {
-      LineQRcode,
-      Success,
       modalStatus: {
         lineConnect: false,
         editQuestion: false,
         addsection: false,
-        addstep: 0,
-        bindLineStep: 0
       },
       classInfo: {
         invite: "",
         isOpen: -1,
         isPublic: -1,
         isBind: -1
-      },
-      line: {
-        groupId: "",
-        name: "",
-        imgUrl: "",
-        search: "",
-        code: "",
-        searchResult: []
       },
       firstOpen: "1",
       selectLesson: 0,
@@ -192,98 +125,6 @@ export default {
     openEditQa(){
       this.$refs.editQuestion.refInitData(this.lessons[this.selectLesson].question)
       this.modalStatus.editQuestion = true;
-    },
-    // ==========================LINE=======================
-    resendCode() {
-      sendLineId(this.line.groupId)
-        .then(res => {
-          if (res.data.status.code === 0) {
-            this.messageControl(1, "發送成功 請查看line並輸入綁定碼");
-          } else {
-            this.messageControl(0, "line step2 error");
-          }
-        })
-        .catch(err => {
-          this.messageControl(0, `err: ${err}`);
-        });
-    },
-    searchLineGroup() {
-      this.line.searchResult = [];
-      this.line.groupId = "";
-      this.line.name = "";
-      this.line.imgUrl = "";
-      if (this.line.search === "") return;
-      getLineInfo(this.line.search).then(res => {
-        if (res.data.status.code === 0) {
-          this.line.searchResult = res.data.data;
-        } else {
-          this.messageControl(0, "backend Line step1 error");
-        }
-      });
-    },
-    groupSelect(group) {
-      this.line.groupId = group.groupId;
-      this.line.name = group.groupName;
-      this.line.imgUrl = group.pictureUrl;
-    },
-    lineGroupStep() {
-      switch (this.modalStatus.bindLineStep) {
-        case 0:
-          if (this.line.groupId !== "") {
-            sendLineId(this.line.groupId)
-              .then(res => {
-                if (res.data.status.code === 0) {
-                  this.modalStatus.bindLineStep += 1;
-                } else {
-                  this.messageControl(0, "line step2 error");
-                }
-              })
-              .catch(err => {
-                this.messageControl(0, `err: ${err}`);
-              });
-          } else {
-            this.messageControl(0, "請選擇群組");
-          }
-          break;
-        case 1:
-          if (this.line.code !== "" && this.line.code.length === 6) {
-            bindCheck({
-              code: this.line.code,
-              classId: this.$route.params.classID
-            })
-              .then(res => {
-                if (res.data.status.code === 0) {
-                  this.modalStatus.bindLineStep += 1;
-                } else {
-                  this.messageControl(0, `code: ${res.data.status.code}`);
-                }
-              })
-              .catch(err => {
-                this.messageControl(0, `err: ${err}`);
-              });
-          } else {
-            this.messageControl(
-              0,
-              "認證碼錯誤！！ 請重新輸入或重發驗證碼後輸入"
-            );
-          }
-          break;
-        case 2:
-          this.lineCancel();
-          break;
-      }
-    },
-    lineCancel() {
-      this.modalStatus.lineConnect = false;
-      this.modalStatus.bindLineStep = 0;
-      this.line = {
-        groupId: "",
-        name: "",
-        imgUrl: "",
-        search: "",
-        code: "",
-        searchResult: []
-      };
     },
     // ==========================課程狀態====================
     getClassInviteData() {
@@ -392,11 +233,9 @@ export default {
       switch (type) {
         case 0:
           this.$Message.error(msg);
-          // this.messageControl(0, msg)
           break;
         case 1:
           this.$Message.success(msg);
-          // this.messageControl(1, msg)
           break;
       }
     },
@@ -448,45 +287,12 @@ export default {
   display: flex;
   justify-content: center;
 }
-
-.stepFrank {
-  margin: 20px;
-  .step2 {
-    margin-top: 10px;
-  }
-  .step3 {
-    display: flex;
-    flex-direction: column;
-    .addSectionList {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      flex: 1;
-    }
-    .addQuestionList {
-      flex: 2;
-    }
-  }
-  .stepVercode {
-    margin: auto;
-    margin-top: 10px;
-    .lineInfo {
-      margin-top: 10px;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      .Info {
-        margin: 5px;
-      }
-    }
-    .resendVer {
-      margin: 5px;
-    }
-  }
-  .stepImg {
-    margin: auto;
-  }
+.selected{
+  border: 2px;
+  border-style: solid;
+  border-color: black;
+  background-color: #2d8cf0;
+  color: white;
 }
 .topicList {
   flex: 2;
@@ -504,7 +310,7 @@ export default {
     text-align: left;
   }
   .cardborder {
-    width: 180px;
+    width: 200px;
     margin: 10px;
   }
   .addLesson {
@@ -521,17 +327,8 @@ export default {
   }
   .questionScreen {
     .btnList {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      .addLessonBtn {
-        max-width: 200px;
-        min-width: 100px;
-      }
-      .delLessonBtn {
-        max-width: 200px;
-        min-width: 100px;
-      }
+      width: 100%;
+      text-align: right;  
     }
     .lessonQA {
       width: 100%;

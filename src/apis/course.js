@@ -127,5 +127,14 @@ export const sendLineId = id => req("post", `/group/bindcode/${id}`);
  */
 export const bindCheck = params => req("post", `/group/checkbind`, params);
 
+//課程章節提醒
+/**
+ * 
+ * @param {String} cid 
+ * @param {String} step 
+ * @param {Object} params time(number) isNow(number)
+ */
+export const remind = (cid, step, params) =>req("post", `/remind/exam/${cid}/${step}`, params);
+
 // =================================圖片上傳=============================
 export const uploadImg = formdata => req("uploadimg", `/stroage/upload`, formdata);

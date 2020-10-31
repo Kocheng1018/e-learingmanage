@@ -134,6 +134,7 @@ export default {
       }
     },
     addSection() {
+      let uri = "";
       let classId = this.$route.params.classID;
       let sectionIndex = () => {
         if (this.addsectionData.index === "-2") {
@@ -142,12 +143,17 @@ export default {
           return parseInt(this.addsectionData.index);
         }
       };
+      if(this.addsectionData.type === "1"){
+        uri = this.setUrl(this.addsectionData.url);
+      }else{
+        uri = this.addsectionData.url;
+      }
       let addSectionParam = {
         classId: classId,
         isSort: sectionIndex(),
         section: {
           title: this.addsectionData.title,
-          url: this.addsectionData.url,
+          url: uri,
           type: parseInt(this.addsectionData.type)
         },
         question: this.addsectionData.questionData
@@ -157,7 +163,6 @@ export default {
       });
       addSection(addSectionParam)
         .then(() => {
-          // this.messageControl(1, "儲存成功");
           this.$Message.success("儲存成功");
           this.addsectionData.title = "";
           this.addsectionData.url = "";
@@ -165,7 +170,6 @@ export default {
           this.$emit("reload");
         })
         .catch(() => {
-          // this.messageControl(0, "儲存失敗");
           this.$Message.error("儲存失敗");
         });
         this.onChange(false);
@@ -182,7 +186,6 @@ export default {
           sort: timeStamp
         });
       } else {
-        // this.messageControl(0, "問題最多五個");
         this.$Message.error("問題最多五個");
       }
     },
@@ -193,10 +196,28 @@ export default {
         1,
         questionData
       );
-      // this.messageControl(1, "儲存成功");
       this.$Message.success("儲存成功");
     },
- }
+    setUrl(videoCode) {
+			let video = videoCode.trim();
+			let start = video.indexOf("v=");
+			let last = video.indexOf("&");
+			if (start === -1) {
+        this.$Message["error"]({
+          background: true,
+          content: "找不到影片！請確認網址是否正確"
+        });
+      } else {
+        if (last === -1) {
+          video = video.slice(start + 2);
+        } else {
+          video = video.slice(start + 2, last);
+        }
+        return video;
+      }
+      return false
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
