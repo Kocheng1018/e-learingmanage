@@ -117,77 +117,16 @@
       |
       Button(type="primary", @click="updateQuestion") 更新
   //- ======================================新增章節內容Modal================================================================== 
-  Modal.verCenterModel(
-    title="新增章節",
-    v-model="modalStatus.addsection",
-    width="60%"
-  )
-    .stepFrank
-      .setps
-        Steps(:current="modalStatus.addstep")
-          step(title="設定新的章節資料")
-          step(title="新增問題")
-          step(title="確認資料")
-      .step1(v-show="this.modalStatus.addstep == 0")
-        Form(ref="addsection", :model="addsectionData")
-          FormItem(prop="title", label="章節標題")
-            Input(v-model="addsectionData.title")
-          FormItem(prop="type", label="請選擇內容：")
-            RadioGroup(v-model="addsectionData.type")
-              Radio(label="0") 文章
-              Radio(label="1") 影片
-            FormItem(
-              v-if="addsectionData.type == 0",
-              prop="url",
-              label="請輸入內容"
-            )
-              Input(v-model="addsectionData.url", type="textarea")
-            FormItem(v-else, prop="url", label="請輸入網址")
-              Input(v-model="addsectionData.url")
-            FormItem(prop="index", label="請選擇章節位置")
-              RadioGroup(v-model="addsectionData.index")
-                Radio(label="0") 第一個
-                Radio(label="-1") 最後一個
-                Radio(label="-2") 其他
-              Select(
-                v-if="addsectionData.index == -2",
-                v-model="addsectionData.selectNum"
-              )
-                Option(
-                  v-for="(item, index) in lessons",
-                  :value="index",
-                  :key="index"
-                ) {{ item.lessonTitle }} 之後
-      .step2(v-show="this.modalStatus.addstep == 1")
-        QuestionCard(ref="addQestionCard")
-      .step3(v-show="this.modalStatus.addstep == 2")
-        .addSectionList
-          h1 標題: {{ addsectionData.title }}
-          h1(v-if="addsectionData.type === '0'") 網址: {{ addsectionData.url }}
-          h1(v-else) 文章: {{ addsectionData.url }}
-          h1(v-if="addsectionData.index === '0'") 位置: 第一個
-          h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
-          h1(v-else) 位置: 在 {{ lessons[addsectionData.selectNum].title }}
-        Divider
-      .addQuestionList
-        QuestionListCard(
-          v-for="(item, index) in addsectionData.questionData",
-          :key="index",
-          :question="item"
-        )
-    div(slot="footer")
-      Button(type="default", @click="previous") 上一步
-      |
-      Button(type="primary", @click="next") 下一步
+  AddSectionModal(v-model="modalStatus.addsection" @reload="getSection")
 </template>
 <script>
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
 import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
 import QuestionListCard from "@/components/LessonMod/QuestionListCard";
+import AddSectionModal from "@/components/LessonMod/AddSectionModal";
 import Success from "@/assets/success.gif";
 import LineQRcode from "@/assets/LineQRcode.png";
 import {
-  addSection,
   delSection,
   getSection,
   updQuestion,
@@ -205,7 +144,8 @@ export default {
   components: {
     LessonVideo,
     QuestionCard,
-    QuestionListCard
+    QuestionListCard,
+    AddSectionModal
   },
   data() {
     return {
@@ -217,14 +157,6 @@ export default {
         addsection: false,
         addstep: 0,
         bindLineStep: 0
-      },
-      addsectionData: {
-        title: "",
-        url: "",
-        type: "0",
-        index: "-1",
-        selectNum: "0",
-        questionData: []
       },
       classInfo: {
         invite: "",
@@ -456,41 +388,6 @@ export default {
         }
       });
     },
-    addSection() {
-      let classId = this.$route.params.classID;
-      let sectionIndex = () => {
-        if (this.addsectionData.index === "-2") {
-          return parseInt(this.addsectionData.selectNum) + 1;
-        } else {
-          return parseInt(this.addsectionData.index);
-        }
-      };
-      let addSectionParam = {
-        classId: classId,
-        isSort: sectionIndex(),
-        section: {
-          title: this.addsectionData.title,
-          url: this.addsectionData.url,
-          type: parseInt(this.addsectionData.type)
-        },
-        question: this.addsectionData.questionData
-      };
-      addSectionParam.question.forEach(el => {
-        el.type = parseInt(el.type);
-      });
-      addSection(addSectionParam)
-        .then(() => {
-          this.messageControl(1, "儲存成功");
-          this.modalStatus.addsection = false;
-          this.addsectionData.title = "";
-          this.addsectionData.url = "";
-          this.modalStatus.addstep = 0;
-          this.getSection();
-        })
-        .catch(() => {
-          this.messageControl(0, "儲存失敗");
-        });
-    },
     messageControl(type, msg) {
       switch (type) {
         case 0:
@@ -521,51 +418,6 @@ export default {
     selectTopic(index) {
       this.selectLesson = index;
     },
-    addNewQuestion() {
-      let sort = this.addsectionData.questionData.length;
-      if (sort < 5) {
-        let timeStamp = new Date().getTime();
-        this.addsectionData.questionData.push({
-          content: "",
-          answer: [],
-          select: [],
-          type: "0",
-          sort: timeStamp
-        });
-      } else {
-        this.messageControl(0, "問題最多五個");
-      }
-    },
-    next() {
-      switch (this.modalStatus.addstep) {
-        case 0:
-          this.modalStatus.addstep += 1;
-          break;
-        case 1:
-          this.addsectionData.questionData = Object.assign([], this.$refs.addQestionCard.refReturnData());
-          this.addsectionData.questionData.length < 1
-            ? this.$Message.error("最少需要一個問題")
-            : this.modalStatus.addstep += 1;
-          break;
-        case 2:
-          this.addSection();
-          break;
-      }
-    },
-    previous() {
-      switch (this.modalStatus.addstep) {
-        case 0:
-          this.modalStatus.addstep = 0;
-          break;
-        case 1:
-          this.modalStatus.addstep -= 1;
-          break;
-        case 2:
-          this.$refs.addQestionCard.refInitData(this.addsectionData.questionData);
-          this.modalStatus.addstep -= 1;
-          break;
-      }
-    },
     saveEditQA(questionData) {
       const rule = el => el.sort === questionData.sort;
       this.lessons[this.selectLesson].question.splice(
@@ -582,15 +434,6 @@ export default {
         1
       );
       this.messageControl(1, "刪除成功");
-    },
-    saveQA(questionData) {
-      const rule = el => el.sort === questionData.sort;
-      this.addsectionData.questionData.splice(
-        this.addsectionData.questionData.findIndex(rule),
-        1,
-        questionData
-      );
-      this.messageControl(1, "儲存成功");
     },
     cancelDrawer() {
       this.modalStatus.editQuestion = false;

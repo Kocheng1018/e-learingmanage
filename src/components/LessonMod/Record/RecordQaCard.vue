@@ -4,8 +4,8 @@
     p.title(slot="title") 第{{ index + 1 }}題 : {{ item.content }}
     .cardArea
       .rate
-        i-circle(:percent="100" stroke-color="#5cb85c")
-          span {{ percent[index].rate }}%
+        //- i-circle(:percent="100" stroke-color="#5cb85c")
+        //-   span {{ percent[index].rate }}%
       .content
         p 解答
         p(v-if="item.answer.length === 0") 填空

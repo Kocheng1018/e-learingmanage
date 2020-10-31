@@ -12,7 +12,7 @@
           Radio(label='1') 公開
           Radio(label='0') 非公開
     input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change="addImage")
-    img(:src="imgData.add" width='300')
+    img(:src="imgData.addPreview" width='300')
     div(slot='footer')
       Button(type='default' @click='cancel') 取消
       |
@@ -24,7 +24,7 @@
       FormItem(prop='intro' label='主題簡介')
         Input(v-model='editClassData.intro' type="textarea")
     input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change="editImage")
-    img(:src="editClassData.imgUrl" width='300')
+    img(:src="imgData.editPreview" width='300')
     div(slot='footer')
       Button(type='default' @click='cancel') 取消
       |
@@ -63,7 +63,9 @@ export default {
       },
       imgData: {
         add: new FormData(),
-        edit: new FormData()
+        addPreview: "",
+        edit: new FormData(),
+        editPreview: ""
       },
       addClassData: {
         topic: "",
@@ -119,16 +121,6 @@ export default {
           }else{
             this.ApiAddClass("");
           }
-
-        //   if(this.imgData.add.has("file")){
-        //     uploadImg(this.imgData.add).then(res => {
-        //       if(res.data.status.code === 0){
-        //         url = res.data.data.url;
-        //       }
-        //     }).then(this.ApiAddClass(url))
-        //   }else{
-        //     this.ApiAddClass("");
-        //   }
           this.addClass = false;
         }
       });
@@ -154,14 +146,24 @@ export default {
       );
     },
     addImage(event) {
-      let input = event.target;
-      if (input.files && input.files[0]) {
-        this.imgData.add.append("file" ,event.target.files[0]);
+      if (event.target.files && event.target.files[0]) {
+        let reader = new FileReader();
+        reader.onload = e => {
+          this.imgData.addPreview = e.target.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+        this.imgData.add.delete("file");
+        this.imgData.add.append("file", event.target.files[0]);
       }
     },
     editImage(event) {
-      let input = event.target;
-      if (input.files && input.files[0]) {
+      if (event.target.files && event.target.files[0]) {
+        let reader = new FileReader();
+        reader.onload = e => {
+          this.imgData.editPreview = e.target.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+        this.imgData.edit.delete("file");
         this.imgData.edit.append("file", event.target.files[0]);
       }
     },
@@ -177,22 +179,27 @@ export default {
 			this.editClassData.intro = d.intro;
 			this.editClass = true;
 		},
-		updClassData(){
-			updClass(this.editClassData.classId, {
+		async updClassData(){
+      let url = "";
+      if(this.imgData.edit.has("file")){
+        let res = await uploadImg(this.imgData.edit)
+        if(res.data.status.code === 0){
+          url = res.data.data.url;
+        }
+      }
+			let req = await updClass(this.editClassData.classId, {
 				topic: this.editClassData.topic,
-				imgUrl: this.editClassData.imgUrl,
+				imgUrl: url,
 				intro: this.editClassData.intro
-			})
-				.then(req => {
-					if (req.data.status.code === 0){
-						this.$Message.success("更新成功");
-						this.getClassList();
-						this.editClass = false;
-					}
-				})
-				.catch(err => {
-					this.$Message.error(`err: ${ err }`)
-				})
+      })
+      if (req.data.status.code === 0){
+        this.$Message.success("更新成功");
+        this.getClassList();
+        this.editClassData.topic = "";
+        this.editClassData.intro = "";
+        this.imgData.edit.delete("file");
+        this.editClass = false;
+      }
 		},
     delClass(classId) {
       delClass(classId).then(req => {

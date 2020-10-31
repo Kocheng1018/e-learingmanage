@@ -1,0 +1,247 @@
+<template lang="pug">
+Modal.verCenterModel(
+    title="新增章節",
+    v-model="visible",
+    width="60%"
+    @on-visible-change="onChange"
+  )
+    .stepFrank
+      .setps
+        Steps(:current="addstep")
+          step(title="設定新的章節資料")
+          step(title="新增問題")
+          step(title="確認資料")
+      .step1(v-show="addstep == 0")
+        Form(ref="addsection", :model="addsectionData")
+          FormItem(prop="title", label="章節標題")
+            Input(v-model="addsectionData.title")
+          FormItem(prop="type", label="請選擇內容：")
+            RadioGroup(v-model="addsectionData.type")
+              Radio(label="0") 文章
+              Radio(label="1") 影片
+            FormItem(
+              v-if="addsectionData.type == 0",
+              prop="url",
+              label="請輸入內容"
+            )
+              Input(v-model="addsectionData.url", type="textarea")
+            FormItem(v-else, prop="url", label="請輸入網址")
+              Input(v-model="addsectionData.url")
+            FormItem(prop="index", label="請選擇章節位置")
+              RadioGroup(v-model="addsectionData.index")
+                Radio(label="0") 第一個
+                Radio(label="-1") 最後一個
+                Radio(label="-2") 其他
+              Select(
+                v-if="addsectionData.index == -2",
+                v-model="addsectionData.selectNum"
+              )
+                Option(
+                  v-for="(item, index) in lessons",
+                  :value="index",
+                  :key="index"
+                ) {{ item.lessonTitle }} 之後
+      .step2(v-show="addstep == 1")
+        QuestionCard(ref="addQestionCard")
+      .step3(v-show="addstep == 2")
+        .addSectionList
+          h1 標題: {{ addsectionData.title }}
+          h1(v-if="addsectionData.type === '0'") 網址: {{ addsectionData.url }}
+          h1(v-else) 文章: {{ addsectionData.url }}
+          h1(v-if="addsectionData.index === '0'") 位置: 第一個
+          h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
+          h1(v-else) 位置: 在 {{ lessons[addsectionData.selectNum].title }}
+        Divider
+      .addQuestionList
+        QuestionListCard(
+          v-for="(item, index) in addsectionData.questionData",
+          :key="index",
+          :question="item"
+        )
+    div(slot="footer")
+      Button(type="default", @click="previous") 上一步
+      |
+      Button(type="primary", @click="next") 下一步
+</template>
+<script>
+import QuestionCard from "@/components/LessonMod/QuestionCard.vue";
+import QuestionListCard from "@/components/LessonMod/QuestionListCard"
+import { addSection } from "@/apis/course.js";
+export default {
+ name: "AddSectionModal",
+ components: {
+   QuestionCard,
+   QuestionListCard
+ },
+ props:{
+   value: {
+     type: Boolean,
+     default: () => false
+   }
+ },
+ watch: {
+   value(val){
+     this.visible = val;
+   }
+ },
+ data() {
+  return{
+    visible: this.value,   
+    addstep: 0,
+    addsectionData: {
+      title: "",
+      url: "",
+      type: "0",
+      index: "-1",
+      selectNum: "0",
+      questionData: []
+    },
+  }
+ },
+ methods: {
+  onChange(val){
+    this.visible = val;
+    this.$emit("input", val);
+  },
+  next() {
+      switch (this.addstep) {
+        case 0:
+          this.addstep += 1;
+          break;
+        case 1:
+          this.addsectionData.questionData = Object.assign([], this.$refs.addQestionCard.refReturnData());
+          this.addsectionData.questionData.length < 1
+            ? this.$Message.error("最少需要一個問題")
+            : this.addstep += 1;
+          break;
+        case 2:
+          this.addSection();
+          break;
+      }
+    },
+    previous() {
+      switch (this.addstep) {
+        case 0:
+          this.addstep = 0;
+          break;
+        case 1:
+          this.addstep -= 1;
+          break;
+        case 2:
+          this.$refs.addQestionCard.refInitData(this.addsectionData.questionData);
+          this.addstep -= 1;
+          break;
+      }
+    },
+    addSection() {
+      let classId = this.$route.params.classID;
+      let sectionIndex = () => {
+        if (this.addsectionData.index === "-2") {
+          return parseInt(this.addsectionData.selectNum) + 1;
+        } else {
+          return parseInt(this.addsectionData.index);
+        }
+      };
+      let addSectionParam = {
+        classId: classId,
+        isSort: sectionIndex(),
+        section: {
+          title: this.addsectionData.title,
+          url: this.addsectionData.url,
+          type: parseInt(this.addsectionData.type)
+        },
+        question: this.addsectionData.questionData
+      };
+      addSectionParam.question.forEach(el => {
+        el.type = parseInt(el.type);
+      });
+      addSection(addSectionParam)
+        .then(() => {
+          // this.messageControl(1, "儲存成功");
+          this.$Message.success("儲存成功");
+          this.addsectionData.title = "";
+          this.addsectionData.url = "";
+          this.addstep = 0;
+          this.$emit("reload");
+        })
+        .catch(() => {
+          // this.messageControl(0, "儲存失敗");
+          this.$Message.error("儲存失敗");
+        });
+        this.onChange(false);
+    },
+     addNewQuestion() {
+      let sort = this.addsectionData.questionData.length;
+      if (sort < 5) {
+        let timeStamp = new Date().getTime();
+        this.addsectionData.questionData.push({
+          content: "",
+          answer: [],
+          select: [],
+          type: "0",
+          sort: timeStamp
+        });
+      } else {
+        // this.messageControl(0, "問題最多五個");
+        this.$Message.error("問題最多五個");
+      }
+    },
+    saveQA(questionData) {
+      const rule = el => el.sort === questionData.sort;
+      this.addsectionData.questionData.splice(
+        this.addsectionData.questionData.findIndex(rule),
+        1,
+        questionData
+      );
+      // this.messageControl(1, "儲存成功");
+      this.$Message.success("儲存成功");
+    },
+ }
+}
+</script>
+<style lang="scss" scoped>
+.stepFrank {
+  margin: 20px;
+  .step2 {
+    margin-top: 10px;
+  }
+  .step3 {
+    display: flex;
+    flex-direction: column;
+    .addSectionList {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      flex: 1;
+    }
+    .addQuestionList {
+      flex: 2;
+    }
+  }
+  .stepVercode {
+    margin: auto;
+    margin-top: 10px;
+    .lineInfo {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      .Info {
+        margin: 5px;
+      }
+    }
+    .resendVer {
+      margin: 5px;
+    }
+  }
+  .stepImg {
+    margin: auto;
+  }
+}
+.verCenterModel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
