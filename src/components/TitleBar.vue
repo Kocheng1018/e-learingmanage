@@ -18,6 +18,8 @@
           MenuItem(name="4-1") 亮
           MenuItem(name="4-2") 黑
           MenuItem(name="4-3") 藍色
+      .logOut
+        MenuItem(name="5") 登出
 </template>
 <style lang="scss" scoped>
 .bar {
@@ -32,11 +34,15 @@
     float: left;
     width: 100%;
     height: 70px;
+    .logOut {
+      float: right;
+    }
   }
 }
 </style>
 <script>
 import logo from "@/assets/elearningIcon.png";
+import { signOut } from "@/apis/course";
 export default {
   name: "TitleBar",
   data() {
@@ -71,11 +77,25 @@ export default {
         case `4-3`:
           this.theme1 = (`primary`);
           break;
+        case `5`:
+          console.log("???");
+          this.logOut();
+          break;
         default:
       }
     },
     topath(path) {
       this.$router.push({ path });
+    },
+    async logOut(){
+      let res = await signOut();
+      if (res.data.status.code === 0){
+        this.$Message.success("登出成功！");
+        localStorage.clear();
+        this.topath("/");
+      }else{
+        this.$Message.error("登出失敗 code: " + res.data.status.code);
+      }
     }
   }
 };

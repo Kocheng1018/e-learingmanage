@@ -14,6 +14,9 @@ export const signUp = params => req('post', '/management/signup', params);
  */ 
 export const signIn = params => req('post', '/auth/management/signin', params);
 
+// 登出
+export const signOut = () => req("post", `/auth/signout`);
+
 /** 取得老師class資料
  * @returns { ObjectArray } [{
  * @returns { String } classId
@@ -135,6 +138,18 @@ export const bindCheck = params => req("post", `/group/checkbind`, params);
  * @param {Object} params time(number) isNow(number)
  */
 export const remind = (cid, step, params) =>req("post", `/remind/exam/${cid}/${step}`, params);
+
+
+//line 推送訊息
+/**
+ * 
+ * @param {Object} params
+ *   @param {String} to
+ *   @param {Array} messages
+ *      @param {String} type
+ *      @param {String} text 
+ */
+export const pushMsg = params => req("post", `/lineBot/pushMsg`, params);
 
 // =================================圖片上傳=============================
 export const uploadImg = formdata => req("uploadimg", `/stroage/upload`, formdata);

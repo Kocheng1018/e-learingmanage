@@ -22,67 +22,66 @@ export default {
 			type: Object,
 			default: () => {
 				return {
-					content: "範例",
-					answer: ["1"],
-					select: ["問題一", "問題二", "問題三", "問題四"],
+					content: "", // 範例
+					answer: [],	// "1"
+					select: [], // "問題一", "問題二", "問題三", "問題四"
 					type: 0,
 					sort: 0,
 				};
-			}
-    },
-  },
-  data(){
-    return {
-    }
-  },
-  methods: {
-    recover(i){
-      let a = parseInt(this.question.answer[i]);
-      return this.question.select[a];
-    }
-  }
+			},
+		},
+	},
+	data() {
+		return {};
+	},
+	methods: {
+		recover(i) {
+			let a = parseInt(this.question.answer[i]);
+			return this.question.select[a];
+		},
+	},
 };
 </script>
 <style lang="scss" scoped>
-.content{
-  text-align: left;
-  font-size: 18px;
+.content {
+	text-align: left;
+	font-size: 18px;
 }
-#QuestionListCard{
-  width: 100%;
-  border-style: solid;
-  border-color: rgb(200, 220, 220);
-  border-radius: 2rem;
-  padding: 20px 20px;
-  margin: 10px;
-  background-color: azure;
-  display: flex;
-  flex-direction: column;
-  .selects{
-    display: flex;
-    .select{
-      min-width: 80px;
-      font-size: 16px;
-      margin: 2px 5px;
-      padding: 3px 10px;
-      border-style: solid;
-      border-radius: 10px;
-      border-color: gray;
-      background-color: white;
-    }
-  }
-  .answers{
-    display: flex;
-    .answer{
-      min-width: 80px;
-      font-size: 16px;
-      margin: 2px 5px;
-      padding: 3px 10px;
-      border-style: solid;
-      border-radius: 10px;
-      border-color: green;
-      background-color: white;
-    }
-  }
+#QuestionListCard {
+	width: 100%;
+	border-style: solid;
+	border-color: rgb(200, 220, 220);
+	border-radius: 2rem;
+	padding: 20px 20px;
+	margin: 10px;
+	background-color: azure;
+	display: flex;
+	flex-direction: column;
+	.selects {
+		display: flex;
+		.select {
+			min-width: 80px;
+			font-size: 16px;
+			margin: 2px 5px;
+			padding: 3px 10px;
+			border-style: solid;
+			border-radius: 10px;
+			border-color: gray;
+			background-color: white;
+		}
+	}
+	.answers {
+		display: flex;
+		.answer {
+			min-width: 80px;
+			font-size: 16px;
+			margin: 2px 5px;
+			padding: 3px 10px;
+			border-style: solid;
+			border-radius: 10px;
+			border-color: green;
+			background-color: white;
+		}
+	}
 }
 </style>

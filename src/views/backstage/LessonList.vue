@@ -34,6 +34,7 @@
       .videoScreen
         LessonVideo(
           :sectionData="lessons[this.selectLesson]",
+          :lineIsBind="classInfo.isBind",
           @updSection="updSection" @delSection="delSection" :index="selectLesson"
         )
       .questionScreen

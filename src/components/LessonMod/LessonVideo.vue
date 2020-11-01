@@ -1,10 +1,10 @@
 <template lang="pug">
 .LessonVideo
 	.setingArea
-		.lineArea
+		.lineArea(v-if="lineIsBind === 1")
 			img(:src="LineIcon" width="32" height="32")
 			Button(@click="modalStatus.lineRemind = true") 課程提醒
-			Button() 發送訊息
+			Button(@click="modalStatus.lineMsg = true") 發送訊息
 		.editArea
 			Button(v-if="!isEdit" icon="md-create" @click="openEdit") 編輯內容
 			Poptip(confirm title="確定要刪除這個章節嗎？" ok-text="確定" cancel-text="取消" @on-ok="delSection" @on-cancel="")
@@ -25,14 +25,17 @@
 		Button.updBtn(v-if="isEdit" type="warning" long @click="cancelEdit") 取消
 		Button.updBtn(v-if="isEdit" type="success" long @click="updSection") 更新
 	LineRemindModal(v-model="modalStatus.lineRemind" :secIndex="index")
+	LineMsgModal(v-model="modalStatus.lineMsg")
 </template>
 <script>
 import LineRemindModal from "@/components/LessonMod/Line/LineRemindModal";
+import LineMsgModal from "@/components/LessonMod/Line/LineMsgModal";
 import LineIcon from "@/assets/LINE_APP.png";
 export default {
 	name: "LessonVideo",
-	components:{
-    LineRemindModal,
+	components: {
+		LineRemindModal,
+		LineMsgModal
 	},
 	props: {
 		sectionData: {
@@ -42,53 +45,58 @@ export default {
 					sectionId: "",
 					title: "",
 					type: "",
-					url: ""
+					url: "",
 				};
-			}
+			},
 		},
 		index: {
 			type: Number,
-			default: () => -1
+			default: () => -1,
+		},
+		lineIsBind: {
+			type: Number,
+			default: () => 0
 		}
 	},
 	data() {
 		return {
-			modalStatus:{
-        lineRemind: false,
+			modalStatus: {
+				lineRemind: false,
+				lineMsg: false
 			},
 			LineIcon,
 			isEdit: false,
 			newUrl: "",
-			copyData: {}
+			copyData: {},
 		};
 	},
 	methods: {
-		delSection(){
+		delSection() {
 			this.$emit("delSection");
 		},
-		openEdit(){
+		openEdit() {
 			this.copyData = {};
 			this.copyData = {
 				sectionId: this.sectionData.sectionId,
 				title: this.sectionData.title,
 				url: this.sectionData.url,
-				type: this.sectionData.type
-			}
+				type: this.sectionData.type,
+			};
 			this.isEdit = true;
 		},
-		cancelEdit(){
+		cancelEdit() {
 			this.sectionData.sectionId = this.copyData.sectionId;
 			this.sectionData.title = this.copyData.title;
 			this.sectionData.url = this.copyData.url;
 			this.sectionData.type = this.copyData.type;
 			this.isEdit = false;
 		},
-		updSection(){
+		updSection() {
 			let section = {
 				sectionId: this.sectionData.sectionId,
 				title: this.sectionData.title,
 				url: this.sectionData.url,
-				type: this.sectionData.type
+				type: this.sectionData.type,
 			};
 			this.$emit("updSection", section);
 			this.copyData = {};
@@ -120,7 +128,7 @@ export default {
 				this.newUrl = "";
 			}
 		},
-	}
+	},
 };
 </script>
 <style lang="scss" scoped>
@@ -145,7 +153,7 @@ export default {
 			justify-content: center;
 			flex: 1;
 		}
-		.editArea{
+		.editArea {
 			flex: 2;
 			text-align: right;
 			padding: 3px;
@@ -188,7 +196,7 @@ export default {
 	.comit {
 		display: flex;
 		flex-direction: row;
-		Button{
+		button {
 			flex: 1;
 			margin: 10px;
 		}

@@ -47,7 +47,7 @@
               Input(
                 v-model="ansText[index]",
                 @on-enter="addChoose(index)",
-                placeholder='Enter something...',
+                placeholder="Enter something...",
                 clearable
               )
               Button.addText(type="default", @click="addChoose(index)") 新增
@@ -77,160 +77,161 @@
 //     answer: ["", "", ""],
 //     select: ["", "", ""],
 //     type: "1",
-//     sort: 
+//     sort:
 //   }
 // ];
 export default {
-  name: `QuestionCard`,
-  // props: {
-  //   value: {
-  //     type: Array,
-  //     default: () => {
-  //       let a = [
-  //         {
-  //           questionId: "",
-  //           classId: "",
-  //           sectionId: "",
-  //           content: "",
-  //           answer: [],
-  //           select: [],
-  //           type: "1",
-  //           sort: "1"
-  //         }
-  //       ];
-  //       return a
-  //     } 
-  //   },
-  // },
-  data() {
-    return {
-      allQuestions: [],
-      ansText: [null, null, null, null, null],
-    };
-  },
-  mounted() {
-    this.allQuestions.forEach(el => {
-      el.type = el.type.toString();
-      el.answer.forEach((item) => {
-        let num = parseInt(item);
-        item = el.select[num];
-      })
-    });
-  },
-  methods: {
-    refInitData(d){
-      this.allQuestions = d;
-      this.allQuestions.forEach(el => {
-        el.type = el.type.toString();
-        el.answer.forEach((item, index) => {
-          let num = parseInt(item);
-          el.answer[index] = el.select[num];
-        })
-      });
-      // window.reload()
-    },
-    // 回傳資料
-    refReturnData() {
-      // 處理答案換算index
-      this.allQuestions.forEach( qa => {
-        let ans = [];
-        for(let i = 0; i < qa.select.length; i++) {
-          for(let j = 0; j < qa.answer.length; j++){
-            if (qa.answer[j] === qa.select[i]){
-              // qa.answer[j] = i.toString();
-              ans.push(i.toString());
-              break;
-            }
-          }
-        }
-        qa.answer = Object.assign([], ans);
-      })
-      return this.allQuestions;
-    },
-    //新增選項tag
-    addChoose(index) {
-      if (this.isEmpty(this.ansText[index])) {
-        this.$Message.error("請輸入選項文字");
-        return;
-      }
-      const findTag = this.allQuestions[index].select.find(tag => tag === this.ansText[index]);
-      if (findTag) {
-        this.$Message.error("請勿輸入重複選項");
-        this.ansText[index] = null;
-        return;
-      }
-      this.allQuestions[index].select.push(this.ansText[index]);
-      this.ansText[index] = null;
-    },
-    addQuestion() {
-      let sort = this.allQuestions.length;
-      if (sort < 5) {
-        let timeStamp = new Date().getTime();
-        this.allQuestions.push({
-          content: "",
-          answer: [],
-          select: [],
-          type: "0",
-          sort: timeStamp
-        });
-      } else {
-        this.$Message.error("最多五個問題");
-      }
-    },
-    removeSelect(selIndex, qaIndex) {
-      this.allQuestions[qaIndex].select.splice(selIndex, 1);
-    },
-    deleteQA(index) {
-      const rule = el => el.sort === index;
-      this.allQuestions.splice(this.allQuestions.findIndex(rule), 1);
-      this.$Message.success("刪除成功");
-    },
-    isEmpty(value) {
-      if (value == null) return true;
-      if (value == "")
-      if (typeof value === "string") return !value.length;
-      return false;
-    }
-  }
+	name: `QuestionCard`,
+	// props: {
+	//   value: {
+	//     type: Array,
+	//     default: () => {
+	//       let a = [
+	//         {
+	//           questionId: "",
+	//           classId: "",
+	//           sectionId: "",
+	//           content: "",
+	//           answer: [],
+	//           select: [],
+	//           type: "1",
+	//           sort: "1"
+	//         }
+	//       ];
+	//       return a
+	//     }
+	//   },
+	// },
+	data() {
+		return {
+			allQuestions: [],
+			ansText: [null, null, null, null, null],
+		};
+	},
+	mounted() {
+		this.allQuestions.forEach((el) => {
+			el.type = el.type.toString();
+			el.answer.forEach((item) => {
+				let num = parseInt(item);
+				item = el.select[num];
+			});
+		});
+	},
+	methods: {
+		refInitData(d) {
+			this.allQuestions = d;
+			this.allQuestions.forEach((el) => {
+				el.type = el.type.toString();
+				el.answer.forEach((item, index) => {
+					let num = parseInt(item);
+					el.answer[index] = el.select[num];
+				});
+			});
+			// window.reload()
+		},
+		// 回傳資料
+		refReturnData() {
+			// 處理答案換算index
+			this.allQuestions.forEach((qa) => {
+				let ans = [];
+				for (let i = 0; i < qa.select.length; i++) {
+					for (let j = 0; j < qa.answer.length; j++) {
+						if (qa.answer[j] === qa.select[i]) {
+							// qa.answer[j] = i.toString();
+							ans.push(i.toString());
+							break;
+						}
+					}
+				}
+				qa.answer = Object.assign([], ans);
+			});
+			return this.allQuestions;
+		},
+		//新增選項tag
+		addChoose(index) {
+			if (this.isEmpty(this.ansText[index])) {
+				this.$Message.error("請輸入選項文字");
+				return;
+			}
+			const findTag = this.allQuestions[index].select.find(
+				(tag) => tag === this.ansText[index]
+			);
+			if (findTag) {
+				this.$Message.error("請勿輸入重複選項");
+				this.ansText[index] = null;
+				return;
+			}
+			this.allQuestions[index].select.push(this.ansText[index]);
+			this.ansText[index] = null;
+		},
+		addQuestion() {
+			let sort = this.allQuestions.length;
+			if (sort < 5) {
+				let timeStamp = new Date().getTime();
+				this.allQuestions.push({
+					content: "",
+					answer: [],
+					select: [],
+					type: "0",
+					sort: timeStamp,
+				});
+			} else {
+				this.$Message.error("最多五個問題");
+			}
+		},
+		removeSelect(selIndex, qaIndex) {
+			this.allQuestions[qaIndex].select.splice(selIndex, 1);
+		},
+		deleteQA(index) {
+			const rule = (el) => el.sort === index;
+			this.allQuestions.splice(this.allQuestions.findIndex(rule), 1);
+			this.$Message.success("刪除成功");
+		},
+		isEmpty(value) {
+			if (value == null) return true;
+			if (value == "") if (typeof value === "string") return !value.length;
+			return false;
+		},
+	},
 };
 </script>
 <style lang="scss" scoped>
 .qaInfo {
-  border-style: solid;
-  border-color: rgb(200, 220, 220);
-  border-radius: 2rem;
-  padding: 25px 20px;
-  margin: 10px 0px;
-  background-color: azure;
-  .delBtn {
-    text-align: right;
-  }
-  .select {
-    background-color: white;
-    margin-bottom: 10px;
-    min-height: 30px;
-    padding-right: 0px;
-    .delStyle {
-      color: red;
-    }
-  }
-  .insertText {
-    display: flex;
-    flex-direction: row;
-  }
-  .footer {
-    display: flex;
-    justify-content: flex-end;
-    button {
-      margin: 0px 5px;
-    }
-  }
-  .addText {
-    margin-left: 5px;
-  }
+	border-style: solid;
+	border-color: rgb(200, 220, 220);
+	border-radius: 2rem;
+	padding: 25px 20px;
+	margin: 10px 0px;
+	background-color: azure;
+	.delBtn {
+		text-align: right;
+	}
+	.select {
+		background-color: white;
+		margin-bottom: 10px;
+		min-height: 30px;
+		padding-right: 0px;
+		.delStyle {
+			color: red;
+		}
+	}
+	.insertText {
+		display: flex;
+		flex-direction: row;
+	}
+	.footer {
+		display: flex;
+		justify-content: flex-end;
+		button {
+			margin: 0px 5px;
+		}
+	}
+	.addText {
+		margin-left: 5px;
+	}
 }
 .editQuestionArea {
-  display: flex;
-  justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
 </style>
