@@ -12,14 +12,14 @@ Modal.verCenterModel(
           step(title="新增問題")
           step(title="確認資料")
       .step1(v-show="addstep == 0")
-        Form(ref="addsection", :model="addsectionData")
+        Form(ref="addsection", :rules="rules" :model="addsectionData")
           FormItem(prop="title", label="章節標題")
             Input(v-model="addsectionData.title")
           FormItem(prop="type", label="請選擇內容：")
             RadioGroup(v-model="addsectionData.type")
               Radio(label="0") 文章
               Radio(label="1") 影片
-            FormItem(
+            FormItem.validSpace(
               v-if="addsectionData.type == 0",
               prop="url",
               label="請輸入內容"
@@ -37,10 +37,10 @@ Modal.verCenterModel(
                 v-model="addsectionData.selectNum"
               )
                 Option(
-                  v-for="(item, index) in lessons",
+                  v-for="(item, index) in lessonList",
                   :value="index",
                   :key="index"
-                ) {{ item.lessonTitle }} 之後
+                ) {{ item.title }} 之後
       .step2(v-show="addstep == 1")
         QuestionCard(ref="addQestionCard")
       .step3(v-show="addstep == 2")
@@ -50,7 +50,7 @@ Modal.verCenterModel(
           h1(v-else) 文章: {{ addsectionData.url }}
           h1(v-if="addsectionData.index === '0'") 位置: 第一個
           h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
-          h1(v-else) 位置: 在 {{ lessons[addsectionData.selectNum].title }}
+          h1(v-else) 位置: 在 {{ lessonList[addsectionData.selectNum].title }}
         Divider
       .addQuestionList
         QuestionListCard(
@@ -59,7 +59,7 @@ Modal.verCenterModel(
           :question="item"
         )
     div(slot="footer")
-      Button(type="default", @click="previous") 上一步
+      Button(v-if="addstep !== 0" type="default", @click="previous") 上一步
       |
       Button(type="primary", @click="next") 下一步
 </template>
@@ -77,6 +77,10 @@ export default {
    value: {
      type: Boolean,
      default: () => false
+   },
+   lessonList: {
+     type: Array,
+     default: () => []
    }
  },
  watch: {
@@ -96,6 +100,11 @@ export default {
       selectNum: "0",
       questionData: []
     },
+    rules: {
+      title: [{ required: true, message: "請輸入章節名稱", tigger: "blur" }],
+      type: [{ required: true, message: "請選擇類型", tigger: "blur" }],
+      url: [{ required: true, message: "需要輸入內容或網址", tigger: "blur" }],
+   }
   }
  },
  methods: {
@@ -103,10 +112,16 @@ export default {
     this.visible = val;
     this.$emit("input", val);
   },
-  next() {
+  async next() {
       switch (this.addstep) {
         case 0:
-          this.addstep += 1;
+          await this.$refs.addsection.validate(valid => {
+            if(!valid){
+              return;
+            }else{
+              this.addstep += 1;
+            }
+          })
           break;
         case 1:
           this.addsectionData.questionData = Object.assign([], this.$refs.addQestionCard.refReturnData());
@@ -221,8 +236,14 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
 .stepFrank {
   margin: 20px;
+  .step1{
+    .validSpace{
+     margin: 15px auto;
+    }
+  }
   .step2 {
     margin-top: 10px;
   }

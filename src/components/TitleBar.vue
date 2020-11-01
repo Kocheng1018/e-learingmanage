@@ -85,7 +85,8 @@ export default {
       }
     },
     topath(path) {
-      this.$router.push({ path });
+      let originPath = this.$route.path;
+      if(originPath !== path) this.$router.push({ path });
     },
     async logOut(){
       let res = await signOut();

@@ -142,6 +142,7 @@ export default {
 		flex-direction: row;
 		width: 80%;
 		justify-content: flex-end;
+		margin-bottom: 10px;
 		.lineArea {
 			padding: 3px;
 			border: 2px;

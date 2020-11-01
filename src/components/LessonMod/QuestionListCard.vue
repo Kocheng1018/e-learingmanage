@@ -7,10 +7,10 @@
       p.content(v-else) 填空
     FormItem(label="問題內容: ")
       p.content {{ question.content }}
-    FormItem(label="選項: " v-if="question.type !== 2")
+    FormItem(label="選項: " v-if="question.type != 2")
       .selects
         .select(v-for="(item, index) in question.select" :key="index") {{ item }}
-    FormItem(label="答案: " v-if="question.type !== 2")
+    FormItem(label="答案: " v-if="question.type != 2")
       .answers  
         .answer(v-for="(item, index) in question.answer" :key="index") {{ recover(index) }}
 </template>

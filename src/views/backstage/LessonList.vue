@@ -20,7 +20,7 @@
           type="info",
           @click="modalStatus.lineConnect = true"
         ) 開始line綁定
-    Card.addLesson.cardborder(@click.native="modalStatus.addsection = true") 新增章節
+    Button.cardborder(type="success" icon="md-add" @click="modalStatus.addsection = true") 新增課程
     Card.cardborder(
       dis-hover=true
       v-for="(lesson, index) in lessons",
@@ -66,7 +66,7 @@
       |
       Button(type="primary", @click="updateQuestion") 更新
   //- ======================================新增章節內容Modal================================================================== 
-  AddSectionModal(v-model="modalStatus.addsection" @reload="getSection")
+  AddSectionModal(v-model="modalStatus.addsection" :lessonList="lessons" @reload="getSection")
 </template>
 <script>
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";
@@ -292,8 +292,8 @@ export default {
   border: 2px;
   border-style: solid;
   border-color: black;
-  background-color: #2d8cf0;
-  color: white;
+  background-color: #2db7f5;
+  color: black;
 }
 .topicList {
   flex: 2;
@@ -312,11 +312,8 @@ export default {
   }
   .cardborder {
     width: 200px;
-    margin: 10px;
-  }
-  .addLesson {
-    color: white;
-    background-color: brown;
+    margin: 10px auto;
+    min-height: 55px;
   }
 }
 .topicScreen {
