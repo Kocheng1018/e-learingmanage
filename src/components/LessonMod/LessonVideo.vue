@@ -6,10 +6,9 @@
 			Button(@click="modalStatus.lineRemind = true") 課程提醒
 			Button(@click="modalStatus.lineMsg = true") 發送訊息
 		.editArea
-			Button(v-if="!isEdit" icon="md-create" @click="openEdit") 編輯內容
+			Button(v-if="!isEdit" type="info" ghost icon="md-create" @click="openEdit") 編輯內容
 			Poptip(confirm title="確定要刪除這個章節嗎？" ok-text="確定" cancel-text="取消" @on-ok="delSection" @on-cancel="")
-				Button(type="text")
-					Icon(type="md-trash" size="24")
+				Button(type="error" icon="md-trash" shape="circle")
 	.title
 		h1 標題:
 		Input.content(v-if="isEdit" placeholder="請輸入標題" v-model="sectionData.title" size="large")
@@ -176,7 +175,7 @@ export default {
 	.video {
 		width: 100%;
 		iframe {
-			width: 70%;
+			width: 80%;
 			min-height: 400px;
 		}
 		.urlset {
