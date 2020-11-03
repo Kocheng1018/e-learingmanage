@@ -25,7 +25,7 @@ Modal.verCenterModel(
               label="請輸入內容"
             )
               Input(v-model="addsectionData.url", type="textarea")
-            FormItem(v-else, prop="url", label="請輸入網址")
+            FormItem.validSpace(v-else, prop="url", label="請輸入網址")
               Input(v-model="addsectionData.url")
             FormItem(prop="index", label="請選擇章節位置")
               RadioGroup(v-model="addsectionData.index")
@@ -46,18 +46,19 @@ Modal.verCenterModel(
       .step3(v-show="addstep == 2")
         .addSectionList
           h1 標題: {{ addsectionData.title }}
-          h1(v-if="addsectionData.type === '0'") 網址: {{ addsectionData.url }}
+          h1 網址:
+          a(v-if="addsectionData.type === '1'" :href="addsectionData.url") {{ addsectionData.url }}
           h1(v-else) 文章: {{ addsectionData.url }}
           h1(v-if="addsectionData.index === '0'") 位置: 第一個
           h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
           h1(v-else) 位置: 在 {{ lessonList[addsectionData.selectNum].title }}
         Divider
-      .addQuestionList
-        QuestionListCard(
-          v-for="(item, index) in addsectionData.questionData",
-          :key="index",
-          :question="item"
-        )
+        .addQuestionList
+          QuestionListCard(
+            v-for="(item, index) in addsectionData.questionData",
+            :key="index",
+            :question="item"
+          )
     div(slot="footer")
       Button(v-if="addstep !== 0" type="default", @click="previous") 上一步
       |
@@ -111,6 +112,16 @@ export default {
   onChange(val){
     this.visible = val;
     this.$emit("input", val);
+    this.addsectionData = {};
+    this.addsectionData = {
+      title: "",
+      url: "",
+      type: "0",
+      index: "-1",
+      selectNum: "0",
+      questionData: []
+    };
+    this.addstep = 0
   },
   async next() {
       switch (this.addstep) {
@@ -241,7 +252,7 @@ export default {
   margin: 20px;
   .step1{
     .validSpace{
-     margin: 15px auto;
+     margin: 20px auto;
     }
   }
   .step2 {

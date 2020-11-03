@@ -59,6 +59,7 @@ export default {
 	flex-direction: column;
 	.selects {
 		display: flex;
+		flex-wrap: wrap;
 		.select {
 			min-width: 80px;
 			font-size: 16px;
@@ -72,6 +73,7 @@ export default {
 	}
 	.answers {
 		display: flex;
+		flex-wrap: wrap;
 		.answer {
 			min-width: 80px;
 			font-size: 16px;

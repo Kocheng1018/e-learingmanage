@@ -1,5 +1,5 @@
 <template lang="pug">
-Modal(v-model="visible" title="課程提醒" @on-visible-change="onChange" @on-cancel="cancel" @on-ok="sendMsg")
+Modal(v-model="visible" title="傳送訊息" @on-visible-change="onChange" @on-cancel="cancel" @on-ok="sendMsg")
   .lineCard
     .title
       p 有什麼話可以藉由機器人在群組跟大家說喔～
@@ -36,7 +36,7 @@ export default {
     },
     async sendMsg(){
       let param = {
-        to: this.classId,
+        classId: this.classId,
         messages: []
       }
       await param.messages.push({type: "text", text: this.content});
@@ -44,6 +44,9 @@ export default {
       if (res.data.status.code === 0){
         this.$Message.success("發送成功！");
         this.onChange(false);
+      }else if(res.data.status.code === 9489) {
+        this.$Message.error("目前沒有學生參加此課程課堂");
+        
       }else{
         this.$Message.error("失敗 錯誤碼: " + res.data.status.code);
         this.onChange(false);

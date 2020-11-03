@@ -9,7 +9,7 @@
       p 公開 / 私密：	{{ classInfo.isPublic === 1 ? '公開' : '私密' }}
       p line綁定狀態： {{ classInfo.isBind === 1 ? '已綁定' : '尚未綁定' }}
       .classInfoBtn
-        Button(v-if="classInfo.isOpen === 0", type="info", @click="openClass") 發布課程
+        Button(v-if="classInfo.isOpen === 0", type="info", @click="openClass") 發佈課程
         Button(
           v-if="classInfo.isOpen === 0",
           type="info",
@@ -20,7 +20,7 @@
           type="info",
           @click="modalStatus.lineConnect = true"
         ) 開始line綁定
-    Button.cardborder(type="success" icon="md-add" @click="modalStatus.addsection = true") 新增課程
+    Button.cardborder(type="success" icon="md-add" @click="modalStatus.addsection = true") 新增章節
     Card.cardborder(
       dis-hover=true
       v-for="(lesson, index) in lessons",
@@ -31,10 +31,13 @@
       div {{ lesson.title }}
   .topicScreen
     div(v-if="lessons.length !== 0")
+      h1 {{ classTopic }}
+      Divider
       .videoScreen
         LessonVideo(
           :sectionData="lessons[this.selectLesson]",
           :lineIsBind="classInfo.isBind",
+          :isOpen="classInfo.isOpen"
           @updSection="updSection" @delSection="delSection" :index="selectLesson"
         )
       .questionScreen
@@ -50,7 +53,7 @@
             :question="item"
           )
     div(v-else)
-      h1 點選右邊新增章節
+      h1 點選左邊新增章節按鈕
   //-===========================================line 綁定modal==================================================================== 
   BindLineModal(v-model="modalStatus.lineConnect" @reload="getClassInviteData")
   //- ==========================================編輯問題modal============================================================= 
@@ -106,6 +109,7 @@ export default {
         isPublic: -1,
         isBind: -1
       },
+      classTopic: "",
       firstOpen: "1",
       selectLesson: 0,
       lessons: []
@@ -217,7 +221,8 @@ export default {
           if (req.data.data.length === 0) {
             this.messageControl(0, "目前沒有章節資料喔");
           }
-          this.lessons = req.data.data;
+          this.lessons = req.data.data.sections;
+          this.classTopic = req.data.data.topic
         }
       });
     },

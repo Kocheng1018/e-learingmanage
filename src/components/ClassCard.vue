@@ -11,7 +11,7 @@ Card.cardInfo
 		p 課程數：{{ this.classDetail.sectionNum }} 個
 		p 教師名稱： {{ this.classDetail.teacherName }}
 		p 課程型態： {{ this.classDetail.isPublic == 0 ? "私密" : "公開" }}
-		p 發布狀態： {{ this.classDetail.isOpen == 0 ? "尚未發佈" : "已發布" }}
+		p 發佈狀態： {{ this.classDetail.isOpen == 0 ? "尚未發佈" : "已發佈" }}
 		p(style="text-align: left") 簡介：
 		p.intro {{ this.classDetail.intro }}
 	.enter
@@ -52,11 +52,12 @@ Card.cardInfo
 		.intro{
 			flex: 1;
 			width: 90%;
-			height: 100px;
+			height: 110px;
 			margin: auto;
 			padding: 5px;
 			display: -webkit-box;
-			-webkit-line-clamp: 4; //行數
+			overflow: hidden;
+			-webkit-line-clamp: 5; //行數
 			-webkit-box-orient: vertical;
 			white-space: normal;
 		}
@@ -93,7 +94,7 @@ export default {
     },
     delClass() {
 			if (this.classDetail.isOpen === 1){
-				this.$Message.error("已發布的課程不可以刪除喔！");
+				this.$Message.error("已發佈的課程不可以刪除喔！");
 				return;
 			}
       this.$emit("deleClass", this.classDetail.classId);

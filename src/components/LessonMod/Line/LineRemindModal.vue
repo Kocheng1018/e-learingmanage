@@ -58,7 +58,7 @@ export default {
     },
     datachange(date){
       let timestamp = Date.parse(date);
-      this.remindData.time = timestamp;
+      this.remindData.time = timestamp/1000;
     },
     async setTime(){
       let index = this.sectionIndex + 1;
@@ -73,6 +73,8 @@ export default {
       if(res.data.status.code === 0){
         this.$Message.success("設定成功！");
         this.onChange(false);
+      }else if(res.data.status.code === 9489){
+        this.$Message.error("目前沒有學生參加此課程課堂");
       }else{
         this.$Message.error("設定失敗！" + res.data.status.code);
       }

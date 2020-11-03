@@ -1,17 +1,18 @@
 <template lang="pug">
 .allclass
-  Modal(v-model='addClass' title='新增主題')
+  Modal(v-model='addClass' title='新增課程')
     Form(ref='addClassData' :model='addClassData' :rules="addClassRule")
-      FormItem(prop='topic' label='請輸入主題名稱')
+      FormItem(prop='topic' label='請輸入課程名稱')
         Input(v-model='addClassData.topic')
-      FormItem(prop='intro' label='請輸入主題簡介')
+      FormItem(prop='intro' label='請輸入課程簡介')
         Input(v-model='addClassData.intro' type="textarea")
       FormItem(prop='type' label="課程是否公開")
         br
         RadioGroup(v-model='addClassData.type')
           Radio(label='1') 公開
           Radio(label='0') 非公開
-    input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change="addImage")
+      FormItem(label="請上傳課程封面")
+      input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change="addImage")
     img(:src="imgData.addPreview" width='300')
     div(slot='footer')
       Button(type='default' @click='cancel') 取消
@@ -19,9 +20,9 @@
       Button(type='primary' @click='addNewClass') 建立
   Modal(v-model="editClass" title="修改課程內容")
     Form(ref='editClassData' :model='editClassData')
-      FormItem(prop='topic' label='主題名稱')
+      FormItem(prop='topic' label='課程名稱')
         Input(v-model='editClassData.topic')
-      FormItem(prop='intro' label='主題簡介')
+      FormItem(prop='intro' label='課程簡介')
         Input(v-model='editClassData.intro' type="textarea")
     input(type='file' accept='image/gif, image/png, image/jpg, image/jpeg' @change="editImage")
     img(:src="imgData.editPreview" width='300')
@@ -29,8 +30,7 @@
       Button(type='default' @click='cancel') 取消
       |
       Button(type='primary' @click='updClassData') 更新
-  
-  Card(@click.native='addClass = true').addcard 新增主題
+  Card(@click.native='addClass = true').addcard 新增課程
   .cardList
     ClassCard(v-for="(item, index) in classList" :key=`item.classCode` :classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass" @editClass="editClassModal")
 </template>

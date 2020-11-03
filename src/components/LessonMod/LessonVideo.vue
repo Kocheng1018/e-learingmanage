@@ -3,12 +3,12 @@
 	.setingArea
 		.lineArea(v-if="lineIsBind === 1")
 			img(:src="LineIcon" width="32" height="32")
-			Button(@click="modalStatus.lineRemind = true") 課程提醒
+			Button(@click="modalStatus.lineRemind = true") 章節提醒
 			Button(@click="modalStatus.lineMsg = true") 發送訊息
 		.editArea
 			Button(v-if="!isEdit" type="info" ghost icon="md-create" @click="openEdit") 編輯內容
 			Poptip(confirm title="確定要刪除這個章節嗎？" ok-text="確定" cancel-text="取消" @on-ok="delSection" @on-cancel="")
-				Button(type="error" icon="md-trash" shape="circle")
+				Button(v-if="isOpen === 0" type="error" icon="md-trash" shape="circle")
 	.title
 		h1 標題:
 		Input.content(v-if="isEdit" placeholder="請輸入標題" v-model="sectionData.title" size="large")
@@ -53,6 +53,10 @@ export default {
 			default: () => -1,
 		},
 		lineIsBind: {
+			type: Number,
+			default: () => 0
+		},
+		isOpen: {
 			type: Number,
 			default: () => 0
 		}
