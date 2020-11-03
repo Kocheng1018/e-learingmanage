@@ -4,7 +4,7 @@
     h1 註冊
     Form(:ref="signUp")
       FormItem(label="Account", prop="account")
-        Input(type="text", placeholder="請輸入帳號", v-model="signUp.account")
+        Input(type="email", placeholder="請輸入帳號", v-model="signUp.account")
       FormItem(label="Password", prop="password")
         Input(type="password", placeholder="請輸入密碼", v-model="signUp.password")
       FormItem(label="姓名", prop="name")

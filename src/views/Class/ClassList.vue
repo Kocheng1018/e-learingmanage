@@ -85,6 +85,7 @@ export default {
   },
   methods: {
     getClassList() {
+      this.$Spin.show();
       getTeacherClass()
         .then(res => {
           if(res.data.status.code === 0){
@@ -98,6 +99,9 @@ export default {
               this.$router.push("/signin");
             }
           }
+        })
+        .then(() => {
+          this.$Spin.hide();
         })
         .catch(err => {
           this.$Message.error(`error: ${err}`);

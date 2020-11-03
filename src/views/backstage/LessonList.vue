@@ -6,15 +6,14 @@
     )
       p 邀請碼：{{ classInfo.invite }}
       p 發佈狀態：{{ classInfo.isOpen === 1 ? '已發佈' : '尚未發佈' }}
-      p 公開 / 私密：	{{ classInfo.isPublic === 1 ? '公開' : '私密' }}
+      p 公開 / 私密：	
+        i-switch(:value="checkPublic" size="large" true-color="#19be6b" false-color="#ff9900" @on-change="changePublic")
+          span(slot="open") 公開
+          span(slot="close") 私密
+      //- p {{ classInfo.isPublic === 1 ? '公開' : '私密' }}
       p line綁定狀態： {{ classInfo.isBind === 1 ? '已綁定' : '尚未綁定' }}
       .classInfoBtn
         Button(v-if="classInfo.isOpen === 0", type="info", @click="openClass") 發佈課程
-        Button(
-          v-if="classInfo.isOpen === 0",
-          type="info",
-          @click="changePublic"
-        ) 更改成{{ classInfo.isPublic === 1 ? '私密' : '公開' }}狀態
         Button(
           v-if="classInfo.isBind === 0",
           type="info",
@@ -122,9 +121,18 @@ export default {
       // }]
     };
   },
-  mounted() {
-    this.getSection();
-    this.getClassInviteData();
+  computed: {
+    checkPublic(){
+      if(this.classInfo.isPublic === 1){
+        return true;
+      }else{
+        return false;
+      }
+    }
+  },
+  async mounted() {
+    await this.getSection();
+    await this.getClassInviteData();
   },
   methods: {
     openEditQa(){
@@ -216,14 +224,17 @@ export default {
     },
     getSection() {
       let classId = this.$route.params.classID;
+      this.$Spin.show();
       getSection(classId).then(req => {
         if (req.data.status.code === 0) {
           if (req.data.data.length === 0) {
             this.messageControl(0, "目前沒有章節資料喔");
           }
           this.lessons = req.data.data.sections;
-          this.classTopic = req.data.data.topic
+          this.classTopic = req.data.data.topic;
         }
+      }).then(() => {
+        this.$Spin.hide();
       });
     },
     delSection() {

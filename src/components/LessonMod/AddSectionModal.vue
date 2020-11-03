@@ -46,8 +46,9 @@ Modal.verCenterModel(
       .step3(v-show="addstep == 2")
         .addSectionList
           h1 標題: {{ addsectionData.title }}
-          h1 網址:
-          a(v-if="addsectionData.type === '1'" :href="addsectionData.url") {{ addsectionData.url }}
+          .showUrl(v-if="addsectionData.type === '1'")
+            h1 網址:
+            a(:href="addsectionData.url") {{ addsectionData.url }}
           h1(v-else) 文章: {{ addsectionData.url }}
           h1(v-if="addsectionData.index === '0'") 位置: 第一個
           h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
@@ -266,6 +267,9 @@ export default {
       flex-direction: column;
       justify-content: flex-start;
       flex: 1;
+      .showUrl{
+        font-size: 20px;
+      }
     }
     .addQuestionList {
       flex: 2;

@@ -8,8 +8,7 @@
       Icon(v-if="item.records.isTrue === 1" type="md-checkmark" color="green" size="30")
       Icon(v-else type="md-close" color="red" size="30")
       .name {{ item.userName }}
-      .ans {{ changeAns(itecm.records.selects) }}
-      //- .ans dfhgjhgfrrtyjfhgfdtyjhyfgfdfghgfdrghbvcfgvcfgvcfgvgfdfhgfdfghgfdfghjhgfdrfghjhytrrtyhgfdertgvcdghvcdvb
+      .ans {{ changeAns(item.records.selects) }}
       .timestamp
         .date {{ changeDate(item.examAt) }}
         .time {{ changeTime(item.examAt) }}
@@ -19,17 +18,11 @@
   display: flex;
   justify-content: space-around;
   font-size: 20px;
-  .name {
-
-  }
   .ans{
     max-width: 300px;
     word-wrap: break-word;
   }
   .stamptime{
-    .date{
-
-   }
     .time{
       font-size: 20px;
     }
@@ -52,7 +45,35 @@ export default {
   },
   data(){
     return {
-      records: []  
+      records: [
+        {
+          userName: "name1",
+          records: {
+            selects: [ 'a' ],
+            isTrue: 0
+          },
+          examAt: 1602580927
+        },
+        {
+          userName: "name2",
+          records: {
+            selects: [ 'b' ],
+            isTrue: 1
+          },
+          examAt: 1602580927
+        }
+
+      ]
+      // [{
+      //   userName: "",
+      //   records: {
+      //     selects: [
+      //       "b",
+      //       "q"
+      //     ]
+      //     isTrue: 0
+      //   }
+      // }]
     }
   },
   mounted(){
@@ -62,7 +83,7 @@ export default {
   },
   methods: {
     ApiGetUserRecords(){
-      getUserRecords("5f856332522271575237cfd9")
+      getUserRecords(this.questionId)
         .then(res => {
           if (res.data.status.code === 0){
             this.records = [];

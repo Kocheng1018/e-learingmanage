@@ -1,7 +1,7 @@
 <template lang="pug">
 #RecordQaCard
   Card.qaCard(v-for="(item, index) in questionData" :key="index" @click.native="getInfo(index)")
-    p.title(slot="title") 第{{ index + 1 }}題 : {{ item.content }}
+    p.title(slot="title") {{ item.content }}
     .cardArea
       .rate
         //- i-circle(:percent="100" stroke-color="#5cb85c")
