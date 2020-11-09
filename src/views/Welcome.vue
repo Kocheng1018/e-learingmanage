@@ -1,13 +1,16 @@
 <script>
 import logo from "@/assets/logo.png";
 import mainIcon from "@/assets/elearningIcon.png";
+import Footer from '@/components/Footer.vue';
+import OutsideHeader from '@/components/OutsideHeader.vue';
 export default {
   name: "Welcome",
-  components: {},
+  components: {Footer,OutsideHeader},
   data() {
     return {
 			logo,
-			mainIcon
+			mainIcon,
+			
     };
   }
 };
@@ -15,18 +18,28 @@ export default {
 
 <template lang="pug">
 #Welcome.Welcome
-	h1 學海無涯-管理後台
-	img.icon(:src="mainIcon")
-	router-view
+	OutsideHeader
+	.content
+		h1 學海無涯-管理後台
+		img.icon(:src="mainIcon")
+		router-view
+	Footer
 </template>
 
 <style lang='scss' scoped>
 .Welcome {
+	.content{
+		min-height: 900px;
+		background-color: #f0f5ff;
+	}
 	.icon{
-		max-height: 250px;
+		max-height: 60px;
 		margin: 0px auto;
 	}
   height: 100%;
-	background-color: rgba(252, 237, 220, 0.979);
+  
+}
+Footer{
+	height: 500px;
 }
 </style>

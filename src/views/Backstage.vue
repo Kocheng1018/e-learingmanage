@@ -4,13 +4,17 @@
         TitleBar
     .view        
         router-view
+    Footer
 </template>
 <script>
-import TitleBar from '../components/TitleBar.vue'
+import TitleBar from '../components/TitleBar.vue';
+import Footer from '../components/Footer.vue'
+
 export default {
     name: 'Backstage',
     components: {
-        TitleBar
+        TitleBar,
+        Footer
     },
 	data(){
 		return {
@@ -30,6 +34,9 @@ export default {
     z-index: 10;
 }
 .view {
-    margin-top: 90px;
+    background-color:#f0f5ff;
+    min-height: 900px;
+    padding-top: 90px;
+    padding-bottom: 50px;
 }
 </style>

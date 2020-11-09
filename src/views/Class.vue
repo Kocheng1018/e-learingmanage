@@ -1,15 +1,19 @@
+
 <template lang="pug">
 .backstage
-    .topbar
+    OutsideHeader
     .view        
         router-view
+    Footer
 </template>
 <script>
-// import TitleBar from '../components/TitleBar.vue'
+import OutsideHeader from '@/components/OutsideHeader.vue';
+import Footer from '@/components/Footer.vue';
 export default {
     name: 'Class',
     components: {
-        // TitleBar
+        OutsideHeader,
+        Footer
     },
 	data(){
 		return {
@@ -19,16 +23,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.topbar{
-    position: fixed;
-    width: 100%;
-    background-color: white;
-    top: 0px;
-    right: 0px;
-    left: 0px;
-    z-index: 10;
-}
 .view {
-    margin-top: 90px;
+    margin-top: 0px;
+    min-height: 900px;
+    padding-top: 90px;
+    background-color:#f0f5ff;
+}
+Footer {
+    height: 500px;
 }
 </style>

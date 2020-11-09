@@ -4,22 +4,14 @@
     Menu(
       mode="horizontal",
       @on-select="change",
-      active-name="2",
+      active-name="1",
       :theme="theme1"
     )
-      //- MenuItem(name="1") 返回至全部課程
       MenuItem(name="1")
         .img
           img(:src="logo")
-      MenuItem(name="2") 當前課程
-      MenuItem(name="3") 課程紀錄
-      Submenu(name="4")
-        MenuGroup(title="主題")
-          MenuItem(name="4-1") 亮
-          MenuItem(name="4-2") 黑
-          MenuItem(name="4-3") 藍色
       .logOut
-        MenuItem(name="5") 登出
+        MenuItem(name="2") 登出
 </template>
 <style lang="scss" scoped>
 .bar {
@@ -33,7 +25,7 @@
   .menu {
     float: left;
     width: 100%;
-    height: 60px;
+    height: 70px;
     .logOut {
       float: right;
     }
@@ -44,7 +36,7 @@
 import logo from "@/assets/elearningIcon.png";
 import { signOut } from "@/apis/course";
 export default {
-  name: "TitleBar",
+  name: "OutsideHeader",
   data() {
     return {
       logo,
@@ -54,30 +46,7 @@ export default {
   methods: {
     change(name) {
       switch (name) {
-        case `1`:
-          this.topath(`/class`);
-          break;
         case `2`:
-          this.topath(
-            `/backstage/classlist/${localStorage.getItem("nowClassID")}`
-          );
-          break;
-        case `3`:
-          // let classID = localStorage.getItem("nowClassID");
-          this.topath(
-            `/backstage/classrecord/${localStorage.getItem("nowClassID")}`
-          );
-          break;
-        case `4-1`:
-          this.theme1 = (`light`);
-          break;
-        case `4-2`:
-          this.theme1 = (`dark`);
-          break;
-        case `4-3`:
-          this.theme1 = (`primary`);
-          break;
-        case `5`:
           console.log("???");
           this.logOut();
           break;
