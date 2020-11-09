@@ -8,7 +8,7 @@
 </template>
 <script>
 import TitleBar from '../components/TitleBar.vue';
-import Footer from '../components/Footer.vue'
+import Footer from '../components/Footer.vue';
 
 export default {
     name: 'Backstage',
