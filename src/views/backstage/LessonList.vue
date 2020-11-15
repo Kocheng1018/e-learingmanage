@@ -53,9 +53,9 @@
           )
     div(v-else)
       h1 點選左邊新增章節按鈕
-  //-===========================================line 綁定modal==================================================================== 
+  //- line 綁定modal
   BindLineModal(v-model="modalStatus.lineConnect" @reload="getClassInviteData")
-  //- ==========================================編輯問題modal============================================================= 
+  //- 編輯問題modal
   Modal.verCenterModel(
     v-if="lessons.length !== 0",
     title="編輯問題",
@@ -67,7 +67,7 @@
       Button(type="default", @click="cancelDrawer") 取消
       |
       Button(type="primary", @click="updateQuestion") 更新
-  //- ======================================新增章節內容Modal================================================================== 
+  //- 新增章節內容Modal
   AddSectionModal(v-model="modalStatus.addsection" :lessonList="lessons" @reload="getSection")
 </template>
 <script>

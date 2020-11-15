@@ -5,7 +5,10 @@ import Footer from '@/components/Footer.vue';
 import OutsideHeader from '@/components/OutsideHeader.vue';
 export default {
   name: "Welcome",
-  components: {Footer,OutsideHeader},
+  components: {
+		Footer,
+		OutsideHeader
+	},
   data() {
     return {
 			logo,

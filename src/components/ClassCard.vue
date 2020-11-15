@@ -8,7 +8,7 @@ Card.cardInfo
 		img(v-else :src="defaultClass") 
 	.detail
 		.title {{ this.classDetail.topic }}
-		p 課程數：{{ this.classDetail.sectionNum }} 個
+		p 章節數：{{ this.classDetail.sectionNum }} 個
 		p 教師名稱： {{ this.classDetail.teacherName }}
 		p 課程型態： {{ this.classDetail.isPublic == 0 ? "私密" : "公開" }}
 		p 發佈狀態： {{ this.classDetail.isOpen == 0 ? "尚未發佈" : "已發佈" }}

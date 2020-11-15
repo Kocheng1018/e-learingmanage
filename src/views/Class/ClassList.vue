@@ -73,7 +73,7 @@ export default {
         imgUrl: "",
         intro: "",
         type: 0,
-        teacherId: ""
+        // teacherId: ""
 			},
 			editClassData: {
 				classId: "",
@@ -135,7 +135,7 @@ export default {
         imgUrl: url,
         intro: this.addClassData.intro,
         isPublic: parseInt(this.addClassData.type),
-        teacherId: localStorage.getItem("teacherId")
+        // teacherId: localStorage.getItem("teacherId")
       }).then(res => {
         if (res.data.status.code === 0) {
           this.getClassList();

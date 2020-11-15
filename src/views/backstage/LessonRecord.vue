@@ -74,6 +74,7 @@ export default {
           if (res.data.status.code === 0){
             this.questionCardData = [];
             this.questionCardData = res.data.data;
+            console.log(this.questionCardData[0].answer[0]);
           }
           this.status.qaCard = true;
         })

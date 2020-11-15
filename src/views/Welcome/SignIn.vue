@@ -8,9 +8,9 @@
       :rules="ruleInline",
       @keyup.enter.native="loginStage('signIn')"
     )
-      FormItem(label="Account", prop="account")
+      FormItem(label="帳號", prop="account")
         Input(type="text", placeholder="請輸入帳號", v-model="signIn.account")
-      FormItem(label="Password", prop="passwd")
+      FormItem(label="密碼", prop="passwd")
         Input(type="password", placeholder="請輸入密碼", v-model="signIn.passwd")
       FormItem
         Button(type="primary", @click="loginStage('signIn')") 登入
@@ -60,9 +60,9 @@ export default {
             password: this.signIn.passwd
           }).then(async req => {
             if (req.data.status.code == 0) {
-							localStorage.setItem("teacherId", req.data.data.id);
-							await localStorage.removeItem("accessToken");
-              await localStorage.setItem("accessToken", req.data.data.accessToken);
+							// localStorage.setItem("teacherId", req.data.data.id);
+							await localStorage.removeItem("teacherToken");
+              await localStorage.setItem("teacherToken", req.data.data.accessToken);
               await localStorage.setItem("teacherName", req.data.data.name);
 							this.$Message.success("登入成功");
 							this.$router.push("/class");

@@ -29,7 +29,7 @@ let file = axios.create({
 	}
 });
 file.interceptors.request.use((config) => {
-    config.headers.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
+    config.headers.Authorization = `Bearer ${localStorage.getItem("teacherToken")}`;
     return config;
 }, (error) => {
     return Promise.reject(error);
@@ -62,7 +62,7 @@ let instance = axios.create({
 })
 
 instance.interceptors.request.use((config) => {
-    config.headers.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
+    config.headers.Authorization = `Bearer ${localStorage.getItem("teacherToken")}`;
     return config;
 }, (error) => {
     return Promise.reject(error);

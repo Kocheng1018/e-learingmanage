@@ -2,10 +2,10 @@
 #SignUp.signup
   Card.signinCard
     h1 註冊
-    Form(:ref="signUp")
-      FormItem(label="Account", prop="account")
+    Form(:ref="signUp" :rules="rules")
+      FormItem(label="帳號", prop="account")
         Input(type="email", placeholder="請輸入帳號", v-model="signUp.account")
-      FormItem(label="Password", prop="password")
+      FormItem(label="密碼", prop="password")
         Input(type="password", placeholder="請輸入密碼", v-model="signUp.password")
       FormItem(label="姓名", prop="name")
         Input(type="text", placeholder="請輸入姓名", v-model="signUp.name")
@@ -15,21 +15,6 @@
         Button(type="primary", @click="register()") 註冊
         Button(type="primary", @click.native="toSingIn()") 返回登入
 </template>
-
-<style lang='scss' scoped>
-.signup {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.signinCard {
-  width: 600px;
-  button {
-    margin: 10px;
-  }
-}
-</style>
-
 <script>
 import { signUp } from "@/apis/course.js";
 export default {
@@ -41,7 +26,12 @@ export default {
         password: "",
         name: "",
 				department: ""
-			}
+      },
+      rules: {
+        account: [{ required: true, message: "請輸入帳號", trigger: "blur" }],
+        password: [{ required: true, message: "請輸入密碼", trigger: "blur" }],
+        name: [{ required: true, message: "請輸入姓名以便做課程導師名", trigger: "blur" }]
+      }
     };
   },
   methods: {
@@ -60,9 +50,24 @@ export default {
 				if (req.data.status.code === 0) {
 					this.$Message.success("註冊成功");
 					this.toSingIn();
-				}
+				} else {
+          this.$Message.error("註冊失敗 請檢查資料後再作嘗試");
+        }
       });
     }
   }
 };
 </script>
+<style lang='scss' scoped>
+.signup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.signinCard {
+  width: 600px;
+  button {
+    margin: 10px;
+  }
+}
+</style>

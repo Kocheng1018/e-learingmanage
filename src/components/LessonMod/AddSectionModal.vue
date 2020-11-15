@@ -194,6 +194,7 @@ export default {
           this.addsectionData.title = "";
           this.addsectionData.url = "";
           this.addstep = 0;
+          this.addsectionData.questionData = [];
           this.$emit("reload");
         })
         .catch(() => {

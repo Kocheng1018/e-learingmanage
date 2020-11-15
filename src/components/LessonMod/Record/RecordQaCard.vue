@@ -7,10 +7,12 @@
         //- i-circle(:percent="100" stroke-color="#5cb85c")
         //-   span {{ percent[index].rate }}%
       .content
-        p 解答
-        p(v-if="item.answer.length === 0") 填空
-        p(v-else-if="item.answer.length === 1") {{ item.answer[0] }}
-        p(v-else v-for="ans in item.answer ") {{ ans }}
+        p(v-show="item.answer.length === 0") 填空題
+        p(v-show="item.answer.length === 1") 單選題
+        p(v-show="item.answer.length === 2") 多選題
+        p(v-if="item.answer.length !== 0") 解答
+        p(v-if="item.answer.length === 1") {{ changeAns(item.answer[0]) }}
+        p(v-else v-for="ans in item.answer ") {{ changeAns(ans) }}
       .area
 </template>
 <style lang="scss" scoped>
@@ -49,11 +51,12 @@ export default {
 // total: 0
     }
   },
-  mounted(){
-  },
   methods: {
     getInfo(index){
       this.$emit("onSelect", index)
+    },
+    changeAns(question){
+      return Number(question) + 1;
     }
   }
 }

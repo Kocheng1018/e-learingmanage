@@ -54,7 +54,6 @@ export const getSection = classId => req("get", `/section/${classId}`);
  * @param { string } imgUrl base64
  * @param { string } intro 簡介
  * @param { number } type (0/1 公開/非公開)
- * @param { string } teacherId 教師Id  
  */
 export const addClass = param => req("post", `/class`, param);
 
