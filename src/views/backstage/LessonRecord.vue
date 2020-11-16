@@ -3,7 +3,7 @@
   .searchArea
     h1 請選擇你的課程章節
     Select(v-model="selected" size="large")
-      Option(v-for="item in selects" :value="item.sectionId") {{ item.title }}    
+      Option(v-for="item in selects" :key="item.sectionId" :value="item.sectionId") {{ item.title }}    
   .sectionArea
     RecordQA(v-if="status.qaCard" :questionData="questionCardData" @onSelect="openQuestion")
     RecordStu(v-else :questionId="selectedQuestion"  @goBack="closeQuestion")

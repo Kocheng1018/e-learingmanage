@@ -87,7 +87,11 @@ export default {
     },
     changeAns(answer){
       let a = answer.map(x => parseInt(x) + 1);
-      return a.join();
+      if (isNaN(a[0])){
+        return answer[0];
+      }else{
+        return a.join();
+      }
     },
     goback(){
     this.$emit("goBack");
