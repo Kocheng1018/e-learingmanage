@@ -68,7 +68,7 @@
       |
       Button(type="primary", @click="updateQuestion") 更新
   //- 新增章節內容Modal
-  AddSectionModal(v-model="modalStatus.addsection" :lessonList="lessons" @reload="getSection")
+  AddSectionModal(v-model="modalStatus.addsection" :isOpen="classInfo.isOpen" :lessonList="lessons" @reload="getSection")
 </template>
 <script>
 import LessonVideo from "@/components/LessonMod/LessonVideo.vue";

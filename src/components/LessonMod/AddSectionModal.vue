@@ -28,19 +28,22 @@ Modal.verCenterModel(
             FormItem.validSpace(v-else, prop="url", label="請輸入網址")
               Input(v-model="addsectionData.url")
             FormItem(prop="index", label="請選擇章節位置")
-              RadioGroup(v-model="addsectionData.index")
-                Radio(label="0") 第一個
-                Radio(label="-1") 最後一個
-                Radio(label="-2") 其他
-              Select(
-                v-if="addsectionData.index == -2",
-                v-model="addsectionData.selectNum"
-              )
-                Option(
-                  v-for="(item, index) in lessonList",
-                  :value="index",
-                  :key="index"
-                ) {{ item.title }} 之後
+              div(v-if="isOpen === 1")
+                p 因為課程已經發佈，所以只能增加在最後一個喔！
+              div(v-else)
+                RadioGroup(v-model="addsectionData.index")
+                  Radio(label="0") 第一個
+                  Radio(label="-1") 最後一個
+                  Radio(label="-2") 其他
+                Select(
+                  v-if="addsectionData.index == -2",
+                  v-model="addsectionData.selectNum"
+                )
+                  Option(
+                    v-for="(item, index) in lessonList",
+                    :value="index",
+                    :key="index"
+                  ) {{ item.title }} 之後
       .step2(v-show="addstep == 1")
         QuestionCard(ref="addQestionCard")
       .step3(v-show="addstep == 2")
@@ -83,11 +86,20 @@ export default {
    lessonList: {
      type: Array,
      default: () => []
+   },
+   isOpen: {
+     type: Number,
+     default: () => -1
    }
  },
  watch: {
    value(val){
      this.visible = val;
+   },
+   isOpen(val){
+    if(val === 1){
+      this.addsectionData.index = "-1"
+    }
    }
  },
  data() {
