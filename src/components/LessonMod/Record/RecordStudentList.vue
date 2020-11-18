@@ -1,7 +1,9 @@
 <template lang="pug">
 #RecordStudentList
   .gobackBtn
-    Button(@click.native="goback" type="text" icon="md-arrow-round-back" size="large") 返回
+    Button(@click.native="goback" type="default" icon="md-arrow-round-back" size="large") 返回
+  .title 題目 : {{ questionInfo.content }}
+  Divider
   p(v-if="records.length <= 0") 目前尚無學生作答
   table.tableStyle(v-else)
     tr
@@ -9,14 +11,15 @@
       th 姓名
       th 他的答案
       th 時間
-    tr(v-for="(item, index) in records" :key="index")
+    tr(v-for="(item, index) in records" :key="index" :class="backg(item.records.isTrue)")
       th 
         Icon(v-if="item.records.isTrue === 1" type="md-checkmark" color="green" size="30")
         Icon(v-else type="md-close" color="red" size="30")
       th 
         p {{ item.userName }}
       th 
-        p {{ changeAns(item.records.selects) }}
+        p(v-if="questionInfo.type !== '2'") {{ changeAns(item.records.selects) }}
+        p(v-else) {{ item.records.selects[0] }}
       th 
         p {{ changeDate(item.examAt) }}
         p {{ changeTime(item.examAt) }}
@@ -25,6 +28,17 @@
 .tableStyle{
   width: 100%;
   font-size: 20px;
+  border: 0px;
+  .green{
+    background-color: hsl(120, 80%, 90%);
+  }
+  .red{
+    background-color: hsl(0, 100%, 90%)
+  }
+}
+.title{
+  font-size: 20px;
+  color: black;
 }
 .gobackBtn {
   display: flex;
@@ -32,7 +46,7 @@
 }
 </style>
 <script>
-import { getUserRecords } from "@/apis/course";
+import { getUserRecords, getQuestionInfo } from "@/apis/course";
 export default {
   name: "RecordStudentList",
   props:{
@@ -43,15 +57,29 @@ export default {
   },
   data(){
     return {
+      questionInfo: {},
       records: []
     }
   },
-  mounted(){
+
+  async mounted(){
     if(this.questionId !== ""){
       this.ApiGetUserRecords();
+      await this.ApiGetQuestionInfo();
     }
   },
   methods: {
+    backg(isTrue) {
+      if(isTrue == 1){
+        return {
+          green: true
+        }
+      }else{
+        return {
+          red: true
+        }
+      }
+    },
     ApiGetUserRecords(){
       getUserRecords(this.questionId)
         .then(res => {
@@ -60,6 +88,12 @@ export default {
             this.records = res.data.data;
           }
         })
+    },
+    async ApiGetQuestionInfo(){
+      let res = await getQuestionInfo(this.questionId);
+      if(res.data.status.code === 0){
+        this.questionInfo = res.data.data;
+      }
     },
     changeDate(timestamp){
       let date = new Date(timestamp * 1000);
@@ -86,12 +120,13 @@ export default {
       return `${h}:${m}`;
     },
     changeAns(answer){
-      let a = answer.map(x => parseInt(x) + 1);
-      if (isNaN(a[0])){
-        return answer[0];
-      }else{
-        return a.join();
-      }
+      let re = [];
+      answer.forEach(e => {
+        let num = parseInt(e) 
+        let a = this.questionInfo.select[num];
+        re.push(a);
+      });
+      return re.join();
     },
     goback(){
     this.$emit("goBack");

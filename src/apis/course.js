@@ -114,6 +114,9 @@ export const getAllQuestion = sectionId => req("get", `/question/all/${sectionId
 // 取得所有學生在問題中的考試答案
 export const getUserRecords = qid => req("get", `/record/username/${qid}`);
 
+// 取得單題目的資訊
+export const getQuestionInfo = qid => req("get", `/question/one/${qid}`);
+
 // ===========================Line綁定===================================
 
 // step1 抓取LINE 查詢的群組資料

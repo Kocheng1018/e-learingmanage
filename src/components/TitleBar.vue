@@ -78,7 +78,6 @@ export default {
           this.theme1 = (`primary`);
           break;
         case `5`:
-          console.log("???");
           this.logOut();
           break;
         default:

@@ -47,7 +47,6 @@ export default {
     change(name) {
       switch (name) {
         case `2`:
-          console.log("???");
           this.logOut();
           break;
         default:

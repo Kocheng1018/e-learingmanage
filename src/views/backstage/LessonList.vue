@@ -182,7 +182,6 @@ export default {
         okText: "確定",
         onCancel: () => {},
         onOk: () => {
-          console.log("???");
           changeOpen(this.$route.params.classID)
             .then(res => {
               if (res.data.status.code !== 0) {
@@ -205,7 +204,6 @@ export default {
         classId: this.$route.params.classID,
         question: a
       };
-      console.log(updQA);
       updQA.question.forEach(item => {
         item.type = parseInt(item.type);
       });
