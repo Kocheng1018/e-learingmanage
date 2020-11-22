@@ -12,9 +12,9 @@
           RadioGroup(v-model="item.type")
             Radio(label="0") 單選
             Radio(label="1") 多選
-            Radio(label="2") 填空
+            Radio(label="2") 問答
         FormItem(prop="content", label="請輸入問題")
-          Input(v-model="item.content", type="textarea")
+          Input(v-model="item.content", type="textarea" maxlength=500)
         .oneAns(v-if="item.type == `0`")
           FormItem(prop="select", label="輸入問題選項：")
             .insertText
@@ -23,6 +23,7 @@
                 @on-enter="addChoose(index)",
                 placeholder="Enter something...",
                 clearable
+								maxlength=50
               ) 
               Button.addText(type="default", @click="addChoose(index)") 新增
           FormItem(prop="radio", label="選項（已選擇的是正確答案！）")
@@ -49,6 +50,7 @@
                 @on-enter="addChoose(index)",
                 placeholder="Enter something...",
                 clearable
+								maxlength=50
               )
               Button.addText(type="default", @click="addChoose(index)") 新增
           FormItem(prop="checkbox", label="選項（已選擇的是正確答案！）")

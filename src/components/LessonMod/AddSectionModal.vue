@@ -14,7 +14,7 @@ Modal.verCenterModel(
       .step1(v-show="addstep == 0")
         Form(ref="addsection", :rules="rules" :model="addsectionData")
           FormItem(prop="title", label="章節標題")
-            Input(v-model="addsectionData.title")
+            Input(v-model="addsectionData.title" maxlength=20)
           FormItem(prop="type", label="請選擇內容：")
             RadioGroup(v-model="addsectionData.type")
               Radio(label="0") 文章

@@ -4,7 +4,7 @@
     FormItem(label="問題類型: ")
       p.content(v-if="question.type === 0") 單選
       p.content(v-else-if="question.type === 1") 多選
-      p.content(v-else) 填空
+      p.content(v-else) 問答
     FormItem(label="問題內容: ")
       p.content {{ question.content }}
     FormItem(label="選項: " v-if="question.type != 2")

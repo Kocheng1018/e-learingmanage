@@ -11,7 +11,7 @@
 				Button(v-if="isOpen === 0" type="error" icon="md-trash" shape="circle")
 	.title
 		h1 標題:
-		Input.content(v-if="isEdit" placeholder="請輸入標題" v-model="sectionData.title" size="large")
+		Input.content(v-if="isEdit" placeholder="請輸入標題" v-model="sectionData.title" size="large" maxlength=20)
 		h2(v-else) {{ sectionData.title }}
 	.video(v-if="sectionData.type === 1")
 		.urlset

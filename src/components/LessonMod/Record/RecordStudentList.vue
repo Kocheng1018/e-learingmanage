@@ -5,20 +5,19 @@
   p(v-if="records.length <= 0") 目前尚無學生作答
   table.tableStyle(v-else)
     tr
-      th 正確/錯誤
-      th 姓名
-      th 他的答案
-      th 時間
+      th.check 正確/錯誤
+      th.name 姓名
+      th.ans 他的答案
+      th.time 時間
     tr(v-for="(item, index) in records" :key="index" :class="backg(item.records.isTrue)")
-      th 
+      td.check
         Icon(v-if="item.records.isTrue === 1" type="md-checkmark" color="green" size="30")
         Icon(v-else type="md-close" color="red" size="30")
-      th 
+      td.name
         p {{ item.userName }}
-      th 
+      td.ans
         p {{ changeAns(item.records.selects) }}
-        //- p(v-else) {{ item.records.selects[0] }}??
-      th 
+      td.time
         p {{ changeDate(item.examAt) }}
         p {{ changeTime(item.examAt) }}
 </template>
@@ -27,7 +26,24 @@
   width: 100%;
   font-size: 20px;
   border: 0px;
-  .green{
+  td {
+    // white-space: pre;
+    padding: 10px;
+  }
+  .check {
+    min-width: 100px;
+  }
+  .name {
+    min-width: 100px;
+  }
+  .ans {
+    min-width: 100px;
+    white-space: pre;
+  }
+  .time {
+    min-width: 150px;
+  }
+  .green {
     background-color: hsl(120, 80%, 90%);
   }
   .red{
@@ -123,7 +139,8 @@ export default {
         let a = this.questionInfo.select[num];
         re.push(a);
       });
-      return re.join();
+      console.log(re.join("\n"));
+      return re.join("\n");
     },
   }
 }

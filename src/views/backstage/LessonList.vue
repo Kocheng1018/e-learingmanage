@@ -10,7 +10,6 @@
         i-switch(:value="checkPublic" size="large" true-color="#19be6b" false-color="#ff9900" @on-change="changePublic")
           span(slot="open") 公開
           span(slot="close") 私密
-      //- p {{ classInfo.isPublic === 1 ? '公開' : '私密' }}
       p line綁定狀態： {{ classInfo.isBind === 1 ? '已綁定' : '尚未綁定' }}
       .classInfoBtn
         Button(v-if="classInfo.isOpen === 0", type="info", @click="openClass") 發佈課程
@@ -314,6 +313,8 @@ export default {
   max-width: 250px;
   margin: 10px;
   .classInfoArea {
+    max-width: 200px;
+    margin: auto;
     .classInfoBtn {
       button {
         margin: 2px;

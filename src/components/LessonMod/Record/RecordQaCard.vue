@@ -7,15 +7,12 @@
         i-circle(:percent="percentCount(item.correct, item.total)" stroke-color="#5cb85c")
           span 答對率：{{ percentCount(item.correct, item.total) }}%
       .content
-        p(v-show="item.answer.length === 0") 填空題
+        p(v-show="item.answer.length === 0") 問答題
         p(v-show="item.answer.length === 1") 單選題
-        p(v-show="item.answer.length === 2") 多選題
+        p(v-show="item.answer.length >= 2") 多選題
         p.line
         p 作答人數 {{ item.total }} 人
         p 答對人數 {{ item.correct }} 人
-        //- p(v-if="item.answer.length !== 0") 解答
-        //- p(v-if="item.answer.length === 1") {{ changeAns(item.answer[0]) }}
-        //- p(v-else v-for="ans in item.answer ") {{ changeAns(ans) }}
       .area
 </template>
 <style lang="scss" scoped>

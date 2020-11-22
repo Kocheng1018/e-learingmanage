@@ -1,7 +1,7 @@
 <template lang="pug">
 Card.cardInfo
 	.delBtn
-		Poptip.poptext(confirm title="確定刪除此課程嗎？" ok-text="確定" cancel-text="取消" @on-ok="delClass" @on-cancel="")
+		Poptip(confirm title="確定刪除此課程嗎？" ok-text="確定" cancel-text="取消" @on-ok="delClass" @on-cancel="" width="200")
 			Icon(type="ios-close" size="30")
 	.imgframe
 		img(v-if='this.classDetail.imgUrl != "" ' :src="this.classDetail.imgUrl" )
