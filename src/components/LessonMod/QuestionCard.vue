@@ -68,40 +68,8 @@
               )
 </template>
 <script>
-// [
-//   {
-//     questionId: "",
-//     classId: "",
-//     sectionId: "",
-//     content: "",
-//     answer: ["", "", ""],
-//     select: ["", "", ""],
-//     type: "1",
-//     sort:
-//   }
-// ];
 export default {
 	name: `QuestionCard`,
-	// props: {
-	//   value: {
-	//     type: Array,
-	//     default: () => {
-	//       let a = [
-	//         {
-	//           questionId: "",
-	//           classId: "",
-	//           sectionId: "",
-	//           content: "",
-	//           answer: [],
-	//           select: [],
-	//           type: "1",
-	//           sort: "1"
-	//         }
-	//       ];
-	//       return a
-	//     }
-	//   },
-	// },
 	data() {
 		return {
 			allQuestions: [],

@@ -1,7 +1,5 @@
 <template lang="pug">
 #RecordStudentList
-  .gobackBtn
-    Button(@click.native="goback" type="default" icon="md-arrow-round-back" size="large") 返回
   .title 題目 : {{ questionInfo.content }}
   Divider
   p(v-if="records.length <= 0") 目前尚無學生作答
@@ -18,8 +16,8 @@
       th 
         p {{ item.userName }}
       th 
-        p(v-if="questionInfo.type !== '2'") {{ changeAns(item.records.selects) }}
-        p(v-else) {{ item.records.selects[0] }}
+        p {{ changeAns(item.records.selects) }}
+        //- p(v-else) {{ item.records.selects[0] }}??
       th 
         p {{ changeDate(item.examAt) }}
         p {{ changeTime(item.examAt) }}
@@ -39,10 +37,6 @@
 .title{
   font-size: 20px;
   color: black;
-}
-.gobackBtn {
-  display: flex;
-  justify-content: flex-start;
 }
 </style>
 <script>
@@ -120,6 +114,9 @@ export default {
       return `${h}:${m}`;
     },
     changeAns(answer){
+      if(this.questionInfo.type === 2) {
+        return answer[0];
+      }
       let re = [];
       answer.forEach(e => {
         let num = parseInt(e) 
@@ -128,9 +125,6 @@ export default {
       });
       return re.join();
     },
-    goback(){
-    this.$emit("goBack");
-    }
   }
 }
 </script>

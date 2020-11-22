@@ -1,12 +1,13 @@
 <template lang="pug">
 #LessonRecord
+  h1 請選擇你的課程章節
   .searchArea
-    h1 請選擇你的課程章節
     Select(v-model="selected" size="large")
       Option(v-for="item in selects" :key="item.sectionId" :value="item.sectionId") {{ item.title }}    
+    Button(v-show="!status.qaCard" @click.native="closeQuestion" type="default" icon="md-arrow-round-back" size="large") 返回題目列表
   .sectionArea
     RecordQA(v-if="status.qaCard" :questionData="questionCardData" @onSelect="openQuestion")
-    RecordStu(v-else :questionId="selectedQuestion"  @goBack="closeQuestion")
+    RecordStu(v-else :questionId="selectedQuestion")
 </template>
 <style lang="scss" scoped>
 #LessonRecord {
@@ -14,7 +15,13 @@
   align-items: center;
   flex-direction: column;
   .searchArea {
-    width: 30%
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    width: 40%;
+    Button {
+      margin: 5px 10px;
+    }
   }
   .sectionArea {
     width: 60%;
