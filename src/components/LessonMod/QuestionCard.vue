@@ -2,7 +2,6 @@
 #QA
   .editQuestionArea
     h1 問題數：{{ allQuestions.length }}/5
-    //- Button(type="primary", icon="md-add", @click="addQuestion") 新增問題
   .questionList
     .qaInfo(v-for="(item, index) in allQuestions", :key="index")
       .delBtn
@@ -89,6 +88,10 @@ export default {
 		});
 	},
 	methods: {
+		refReset(){
+			this.allQuestions = [];
+			this.ansText = [null, null, null, null, null];
+		},
 		refInitData(d) {
 			this.allQuestions = d;
 			this.allQuestions.forEach((el) => {
@@ -98,7 +101,6 @@ export default {
 					el.answer[index] = el.select[num];
 				});
 			});
-			// window.reload()
 		},
 		// 回傳資料
 		refReturnData() {

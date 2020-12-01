@@ -2,8 +2,8 @@
 #QuestionListCard
   Form
     FormItem(label="問題類型: ")
-      p.content(v-if="question.type === 0") 單選
-      p.content(v-else-if="question.type === 1") 多選
+      p.content(v-if="question.type == 0") 單選
+      p.content(v-else-if="question.type == 1") 多選
       p.content(v-else) 問答
     FormItem(label="問題內容: ")
       p.content {{ question.content }}
@@ -11,7 +11,7 @@
       .selects
         .select(v-for="(item, index) in question.select" :key="index") {{ item }}
     FormItem(label="答案: " v-if="question.type != 2")
-      .answers  
+      .answers
         .answer(v-for="(item, index) in question.answer" :key="index") {{ recover(index) }}
 </template>
 <script>

@@ -4,6 +4,7 @@ Modal.verCenterModel(
     v-model="visible",
     width="60%"
     @on-visible-change="onChange"
+    :mask-closable="false"
   )
     .stepFrank
       .setps
@@ -15,35 +16,35 @@ Modal.verCenterModel(
         Form(ref="addsection", :rules="rules" :model="addsectionData")
           FormItem(prop="title", label="章節標題")
             Input(v-model="addsectionData.title" maxlength=20)
-          FormItem(prop="type", label="請選擇內容：")
+          FormItem.radioList(prop="type", label="請選擇內容：")
             RadioGroup(v-model="addsectionData.type")
               Radio(label="0") 文章
               Radio(label="1") 影片
-            FormItem.validSpace(
-              v-if="addsectionData.type == 0",
-              prop="url",
-              label="請輸入內容"
-            )
-              Input(v-model="addsectionData.url", type="textarea")
-            FormItem.validSpace(v-else, prop="url", label="請輸入網址")
-              Input(v-model="addsectionData.url")
-            FormItem(prop="index", label="請選擇章節位置")
-              div(v-if="isOpen === 1")
-                p 因為課程已經發佈，所以只能增加在最後一個喔！
-              div(v-else)
-                RadioGroup(v-model="addsectionData.index")
-                  Radio(label="0") 第一個
-                  Radio(label="-1") 最後一個
-                  Radio(label="-2") 其他
-                Select(
-                  v-if="addsectionData.index == -2",
-                  v-model="addsectionData.selectNum"
-                )
-                  Option(
-                    v-for="(item, index) in lessonList",
-                    :value="index",
-                    :key="index"
-                  ) {{ item.title }} 之後
+          FormItem.validSpace(
+            v-if="addsectionData.type == 0",
+            prop="url",
+            label="請輸入內容"
+          )
+            Input(v-model="addsectionData.url", type="textarea")
+          FormItem.validSpace(v-else, prop="url", label="請輸入網址")
+            Input(v-model="addsectionData.url")
+          FormItem.radioList(prop="index", label="請選擇章節位置")
+            div(v-if="isOpen === 1")
+              h4 因為課程已經發佈，所以只能增加在最後一個喔！
+            div(v-else)
+              RadioGroup(v-model="addsectionData.index")
+                Radio(label="0") 第一個
+                Radio(label="-1") 最後一個
+                Radio(label="-2") 其他
+              Select(
+                v-if="addsectionData.index == -2",
+                v-model="addsectionData.selectNum"
+              )
+                Option(
+                  v-for="(item, index) in lessonList",
+                  :value="index",
+                  :key="index"
+                ) {{ item.title }} 之後
       .step2(v-show="addstep == 1")
         QuestionCard(ref="addQestionCard")
       .step3(v-show="addstep == 2")
@@ -51,7 +52,7 @@ Modal.verCenterModel(
           h1 標題: {{ addsectionData.title }}
           .showUrl(v-if="addsectionData.type === '1'")
             h1 網址:
-            a(:href="addsectionData.url") {{ addsectionData.url }}
+            a(:href="addsectionData.url" target="_blank") {{ addsectionData.url }}
           h1(v-else) 文章: {{ addsectionData.url }}
           h1(v-if="addsectionData.index === '0'") 位置: 第一個
           h1(v-else-if="addsectionData.index === '-1'") 位置: 最後一個
@@ -118,6 +119,7 @@ export default {
       title: [{ required: true, message: "請輸入章節名稱", tigger: "blur" }],
       type: [{ required: true, message: "請選擇類型", tigger: "blur" }],
       url: [{ required: true, message: "需要輸入內容或網址", tigger: "blur" }],
+      index: [{ required: true, message: "請選擇章節位置", tigger: "blur" }]
    }
   }
  },
@@ -143,7 +145,16 @@ export default {
             if(!valid){
               return;
             }else{
-              this.addstep += 1;
+              if (this.addsectionData.type === "1") { 
+                const check = this.setUrl(this.addsectionData.url);
+                if(check === false) {
+                  return;
+                }else {
+                  this.addstep += 1;
+                }
+              }else{
+                this.addstep += 1;
+              }
             }
           })
           break;
@@ -154,7 +165,7 @@ export default {
             : this.addstep += 1;
           break;
         case 2:
-          this.addSection();
+          this.addSections();
           break;
       }
     },
@@ -172,7 +183,7 @@ export default {
           break;
       }
     },
-    addSection() {
+    addSections() {
       let uri = "";
       let classId = this.$route.params.classID;
       let sectionIndex = () => {
@@ -200,21 +211,37 @@ export default {
       addSectionParam.question.forEach(el => {
         el.type = parseInt(el.type);
       });
-      addSection(addSectionParam)
-        .then(() => {
-          this.$Message.success("儲存成功");
-          this.addsectionData.title = "";
-          this.addsectionData.url = "";
-          this.addstep = 0;
-          this.addsectionData.questionData = [];
-          this.$emit("reload");
-        })
-        .catch(() => {
-          this.$Message.error("儲存失敗");
-        });
-        this.onChange(false);
+      this.ApiAddSection(addSectionParam)
+      // addSection(addSectionParam)
+      //   .then(() => {
+      //     this.$Message.success("儲存成功");
+      //     this.addsectionData.title = "";
+      //     this.addsectionData.url = "";
+      //     this.addstep = 0;
+      //     this.addsectionData.questionData = [];
+      //     this.$emit("reload");
+      //   })
+      //   .catch(() => {
+      //     this.$Message.error("儲存失敗");
+      //   });
+      //   this.onChange(false);
     },
-     addNewQuestion() {
+    async ApiAddSection(param) {
+      let res = await addSection(param);
+      if (res.data.status.code === 0) {
+        this.$Message.success("儲存成功");
+        this.addsectionData.title = "";
+        this.addsectionData.url = "";
+        this.addstep = 0;
+        this.addsectionData.questionData = [];
+        this.$emit("reload");
+        this.onChange(false);
+        this.$refs.addQestionCard.refReset();
+      }else{
+        this.$Message.error("儲存失敗");
+      }
+    },
+    addNewQuestion() {
       let sort = this.addsectionData.questionData.length;
       if (sort < 5) {
         let timeStamp = new Date().getTime();
@@ -264,9 +291,12 @@ export default {
 
 .stepFrank {
   margin: 20px;
-  .step1{
-    .validSpace{
-     margin: 20px auto;
+  .step1 {
+    .validSpace {
+      margin: 20px auto;
+    }
+    .radioList {
+      text-align: left;
     }
   }
   .step2 {
