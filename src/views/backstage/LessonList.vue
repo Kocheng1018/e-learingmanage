@@ -5,19 +5,22 @@
       v-if="classInfo.isOpen !== -1 && classInfo !== -1 && classInfo.isBind !== -1"
     )
       p 邀請碼：{{ classInfo.invite }}
-      p 發佈狀態：{{ classInfo.isOpen === 1 ? '已發佈' : '尚未發佈' }}
       p 公開 / 私密：	
         i-switch(:value="checkPublic" size="large" true-color="#19be6b" false-color="#ff9900" @on-change="changePublic")
           span(slot="open") 公開
           span(slot="close") 私密
-      p line綁定狀態： {{ classInfo.isBind === 1 ? '已綁定' : '尚未綁定' }}
+      hr.lines
+      p 發佈狀態：{{ classInfo.isOpen === 1 ? '已發佈' : '尚未發佈' }}
       .classInfoBtn
         Button(v-if="classInfo.isOpen === 0", type="info", @click="openClass") 發佈課程
+      hr.lines
+      p LINE綁定狀態： {{ classInfo.isBind === 1 ? '已綁定' : '尚未綁定' }}
+      .classInfoBtn
         Button(
           v-if="classInfo.isBind === 0",
           type="info",
           @click="modalStatus.lineConnect = true"
-        ) 開始line綁定
+        ) 開始LINE綁定
     Button.cardborder(type="success" icon="md-add" @click="modalStatus.addsection = true") 新增章節
     Card.cardborder(
       dis-hover=true
@@ -318,6 +321,10 @@ export default {
     padding: 10px;
     max-width: 200px;
     margin: auto;
+    .lines {
+      width: 100%;
+      margin: 5px 0px;
+    }
     .classInfoBtn {
       button {
         margin: 2px;

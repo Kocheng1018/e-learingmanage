@@ -30,7 +30,8 @@
       Button(type='default' @click='cancel') 取消
       |
       Button(type='primary' @click='updClassData') 更新
-  Card(@click.native='addClass = true').addcard 新增課程
+  .addClassArea
+    Button.addcard(type="success" icon="md-add" @click='addClass = true') 新增課程
   .cardList
     ClassCard(v-for="(item, index) in classList" :key=`item.classCode` :classDetail='item' @enterClass="LessonPage(item.classId)" @deleClass="delClass" @editClass="editClassModal")
 </template>
@@ -233,10 +234,14 @@ body {
   justify-content: center;
   flex-wrap: wrap;
 }
-.addcard {
-  background-color: brown;
-  color: white;
-  margin-left: 70%;
-  max-width: 200px;
+.addClassArea{
+  text-align: right;
+  width: 90%;
+  margin: auto;
+  .addcard {
+    width: 200px;
+    margin: 10px;
+    min-height: 55px;
+  }
 }
 </style>

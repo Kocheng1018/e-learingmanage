@@ -68,8 +68,6 @@ export default {
       return Number(question) + 1;
     },
     percentCount(correct, total) {
-      // console.log(` ${correct} : ${total} `);
-      // console.log(` ${(correct/total) * 100} `);
       const present = (correct / total) * 100;
       if (isNaN(present)) {
         return 0;

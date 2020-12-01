@@ -139,7 +139,6 @@ export default {
         let a = this.questionInfo.select[num];
         re.push(a);
       });
-      console.log(re.join("\n"));
       return re.join("\n");
     },
   }

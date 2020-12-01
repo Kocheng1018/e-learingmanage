@@ -1,9 +1,9 @@
 <template lang="pug">
-Modal(title="line綁定", v-model="visible", width="50%" @on-visible-change="onChange")
+Modal(title="LINE綁定", v-model="visible", width="50%" @on-visible-change="onChange")
   .stepFrank
     .steps
       Steps(:current="bindLineStep")
-        Step(title="找尋你的Line群組")
+        Step(title="找尋你的LINE群組")
         Step(title="請輸入綁定碼")
         Step(title="完成")
     .step1(v-if="bindLineStep === 0")
@@ -153,9 +153,9 @@ export default {
       sendLineId(this.line.groupId)
         .then(res => {
           if (res.data.status.code === 0) {
-            this.$Message.success("發送成功 請查看line並輸入綁定碼");
+            this.$Message.success("發送成功 請查看LINE並輸入綁定碼");
           } else {
-            this.$Message.error("line step2 error");
+            this.$Message.error("LINE step2 error");
           }
         })
         .catch(err => {
@@ -172,7 +172,7 @@ export default {
         if (res.data.status.code === 0) {
           this.line.searchResult = res.data.data;
         } else {
-          this.$Message.error(`backend Line step1 error`)
+          this.$Message.error(`backend LINE step1 error`)
         }
       });
     },
