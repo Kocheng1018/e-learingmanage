@@ -13,10 +13,10 @@
       FormItem(label="密碼", prop="passwd")
         Input(type="password", placeholder="請輸入密碼", v-model="signIn.passwd")
       FormItem
-        Button(type="primary", @click="loginStage('signIn')") 登入
-        Button(type="primary", @click="toSignUP") 註冊
+        Button(type="primary" @click="loginStage('signIn')") 登入
+        Button(type="primary" @click="toSignUP") 註冊
+      Button(type="info" @click="toStudent") 前往學生端
 </template>
-
 <style lang='scss' scoped>
 .signin {
   display: flex;
@@ -30,7 +30,6 @@
   }
 }
 </style>
-
 <script>
 import { signIn } from "@/apis/course.js";
 export default {
@@ -49,6 +48,9 @@ export default {
     };
   },
   methods: {
+    toStudent(){
+      location.href="https://lunchparty.nutc.edu.tw/student/";
+    },
     toSignUP() {
       this.$router.push("signup");
 		},

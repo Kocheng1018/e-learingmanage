@@ -13,12 +13,10 @@ export default {
     return {
 			logo,
 			mainIcon,
-			
     };
   }
 };
 </script>
-
 <template lang="pug">
 #Welcome.Welcome
 	OutsideHeader
@@ -28,7 +26,6 @@ export default {
 		router-view
 	Footer
 </template>
-
 <style lang='scss' scoped>
 .Welcome {
 	.content{
