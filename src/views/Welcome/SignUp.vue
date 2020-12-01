@@ -2,7 +2,7 @@
 #SignUp.signup
   Card.signinCard
     h1 註冊
-    Form(:ref="signUp" :rules="rules")
+    Form(ref="signUp" :rules="rules" :model="signUp")
       FormItem(label="帳號", prop="account")
         Input(type="email", placeholder="請輸入帳號", v-model="signUp.account")
       FormItem(label="密碼", prop="password")
@@ -39,21 +39,32 @@ export default {
       this.$router.push({
         path: "signin"
       });
-    },
+    },    
     register() {
-      signUp({
-        account: this.signUp.account,
-        password: this.signUp.password,
-        department: this.signUp.department,
-        name: this.signUp.name
-      }).then(req => {
-				if (req.data.status.code === 0) {
+      this.$refs.signUp.validate(async valid => {
+        if(valid) {
+          let param = {
+            account: this.signUp.account,
+            password: this.signUp.password,
+            department: this.signUp.department,
+            name: this.signUp.name
+          }
+          await this.ApisignUp(param);
+        }
+      });
+    },
+    async ApisignUp(params){
+      const res = await signUp(params);
+      if(res.data.status.code === 21107) {
+        this.$Message.error("帳號重複，請換個帳號或是前往登入");
+        return;
+      }
+      if (res.data.status.code === 0) {
 					this.$Message.success("註冊成功");
 					this.toSingIn();
 				} else {
           this.$Message.error("註冊失敗 請檢查資料後再作嘗試");
         }
-      });
     }
   }
 };

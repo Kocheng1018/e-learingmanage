@@ -2,7 +2,7 @@
 #QA
   .editQuestionArea
     h1 問題數：{{ allQuestions.length }}/5
-    Button(type="primary", icon="md-add", @click="addQuestion") 新增問題
+    //- Button(type="primary", icon="md-add", @click="addQuestion") 新增問題
   .questionList
     .qaInfo(v-for="(item, index) in allQuestions", :key="index")
       .delBtn
@@ -68,6 +68,7 @@
                 shape="circle",
                 @click="removeSelect(i, index)"
               )
+  Button(type="primary", icon="md-add", @click="addQuestion") 新增問題
 </template>
 <script>
 export default {

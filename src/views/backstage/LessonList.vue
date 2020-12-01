@@ -313,6 +313,9 @@ export default {
   max-width: 250px;
   margin: 10px;
   .classInfoArea {
+    border: 5px green solid;
+    border-radius: 10px;
+    padding: 10px;
     max-width: 200px;
     margin: auto;
     .classInfoBtn {

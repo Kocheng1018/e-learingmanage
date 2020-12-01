@@ -71,7 +71,7 @@ export default {
         .then(res => {
           if (res.data.status.code === 0){
             this.selects = [];
-            this.selects = res.data.data;
+            this.selects = res.data.data.data;
           }
         })
     },

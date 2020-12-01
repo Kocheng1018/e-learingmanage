@@ -2,7 +2,7 @@
 Footer.layout-footer-center
   .left 
     ul.teaminformation
-      li.teacher 指導教授 黃天騏
+      li.teacher 指導教授 黃天麒
       li.copyright(href="http://htc.nutc.edu.tw/") © 2020 國立臺中科技大學資訊管理系
         a.link(href="http://htc.nutc.edu.tw/", color="yellow") 天將麒軍
       li 聯絡我們 0988-818350
